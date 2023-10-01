@@ -1,0 +1,1 @@
+# sistema_codificacao_binaria_combinacao_palavras

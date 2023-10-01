@@ -1,1 +1,1 @@
-# sistema_codificacao_binaria_combinacao_palavras
+# binary_encryption_system_combinations_words

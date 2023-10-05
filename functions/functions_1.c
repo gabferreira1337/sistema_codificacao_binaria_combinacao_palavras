@@ -20,7 +20,7 @@ int main_functions_1(int argc , char **argv){
     set1.matrix1 = matrix_init_char(R,C);
 
     set1.matrix1[0][0]='a';
-    set1.matrix1[1][0]='b';
+    set1.matrix1[1][0]='d';
     //print_matrix(&set1);
     encode(&set1);
 
@@ -87,18 +87,16 @@ void encode(SET1 *set1){
 
     int  numCalc =0;
 
-    int j = CC;
+    int j = 0;
     for (int i = 0; i < R; ++i) {
         for (int k = 0; k < C; ++k) {
             numCalc = (int) set1->matrix1[i][k];
-
+            j = CC -1;
             while (numCalc != 0) {
                 set1->matrixc1[i][j] = numCalc % 2;
                 numCalc /= 2;
-
                 j--;
             }
-            j = CC;
         }
     }
 

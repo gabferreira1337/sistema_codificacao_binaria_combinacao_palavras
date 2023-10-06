@@ -34,6 +34,9 @@ void encode(SET1 *set1);
  * @params
  *
  */
+
+char gen_rnd_char(int length);
+
 int **matrix_init_int(int row ,int col);
 /**  initialize matrix of char to 0
  * @params

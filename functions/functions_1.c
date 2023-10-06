@@ -5,11 +5,12 @@
 #include "functions_1.h"
 
 
-#define R 3
-#define C 3
+#define R 6
+#define C 7
 
-#define RC 27 //8 * 3 store space for each char conversion to binary
-#define CC 27
+#define RC 56 //8 * 3 store space for each char conversion to binary
+#define CC 48
+#define WORD_LENGTH 7
 
 
 int main_functions_1(int argc , char **argv){
@@ -107,6 +108,24 @@ void print_matrix_int(SET1 *set1, SET2 *set2) {
             printf("%c",set1->matrix1[l][h]);
         }
         putchar('\n');
+        l++;
+    }
+}
+
+void print_matrix_char(SET1 *set1, SET2 *set2) {
+
+    for (int i = 0; i < R; ++i) {
+        for (int j = 0; j < C; ++j) {
+            printf("%c",set1->matrix1[i][j]);
+        }
+        putchar('\n');
+    }
+
+    for (int i = 0; i < R; ++i) {
+        for (int j = 0; j < C; ++j) {
+
+
+        }
     }
 }
 
@@ -117,6 +136,7 @@ void encode(SET1 *set1){
 
     int j = 0;
     for (int i = 0; i < R; ++i) {
+        j = CC - 1;
         for (int k = 0; k < C; ++k) {
             charCalc = (unsigned char) set1->matrix1[i][k];
 
@@ -174,4 +194,11 @@ void freemem(SET1 *set1, SET2 *set2) {
     free(set2->matrixc2);*/
 }
 
+char gen_rnd_char(int length){
+    int random_number;
+    // Generate random number between 'a' and 'z'
+    random_number = 'a' + rand() % 26;
+
+    return random_number;
+}
 

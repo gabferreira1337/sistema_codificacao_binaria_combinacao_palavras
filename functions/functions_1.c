@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "functions_1.h"
 
 
@@ -13,17 +14,25 @@
 
 int main_functions_1(int argc , char **argv){
 
+    // seed to generate random numbers
+    srand(time(NULL));
+
     SET1 set1;
     set1.matrixc1 = matrix_init_int(RC,CC);
     SET2 set2;
 
     set1.matrix1 = matrix_init_char(R,C);
 
-    set1.matrix1[0][0]='a';
-    set1.matrix1[1][0]='d';
-    //print_matrix(&set1);
+    set1.matrix1[0][0]='C';
+    set1.matrix1[0][1]='A';
+    set1.matrix1[0][2]='O';
+    set1.matrix1[1][0]='c';
     encode(&set1);
+    //print_matrix_int(&set1,NULL);
+    //print_matrix_char(&set1,NULL);
 
+
+    gen_rnd_char(WORD_LENGTH);
 
     freemem(&set1, &set2);
 
@@ -69,14 +78,33 @@ char **matrix_init_char(int row ,int col){
         }
     }
 
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            mat[i][j] = gen_rnd_char(7);
+        }
+    }
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            printf("%c",mat[i][j]);
+        }
+        putchar('\n');
+    }
+
+
+
     return mat;
 }
 
-void print_matrix_int(SET1 *set1) {
+void print_matrix_int(SET1 *set1, SET2 *set2) {
 
-    for (int i = 0; i < RC; ++i) {
+    int l=0;
+    for (int i = 0; i < R; ++i){
         for (int j = 0; j < CC; ++j) {
-            printf("%d",set1->matrix1[i][j]);
+            printf("%d",set1->matrixc1[i][j]);
+        }
+        putchar('-');
+        for (int h = 0; h < 3; ++h) {
+            printf("%c",set1->matrix1[l][h]);
         }
         putchar('\n');
     }
@@ -85,26 +113,42 @@ void print_matrix_int(SET1 *set1) {
 
 void encode(SET1 *set1){
 
-    int  numCalc =0;
+    int charCalc =0;
 
     int j = 0;
     for (int i = 0; i < R; ++i) {
         for (int k = 0; k < C; ++k) {
-            numCalc = (int) set1->matrix1[i][k];
-            j = CC -1;
-            while (numCalc != 0) {
-                set1->matrixc1[i][j] = numCalc % 2;
-                numCalc /= 2;
-                j--;
+            charCalc = (unsigned char) set1->matrix1[i][k];
+
+            if (charCalc >= '0' && charCalc <= '9') {
+                int digit = charCalc - '0';
+                for (int l = 0; l <= 4; ++l) {
+                    set1->matrixc1[i][j] = (digit >> l) & 1;
+                    j--;
+                }
+            } else if (charCalc >= 'a' && charCalc <= 'z') {
+                // 10 represents the beginning of letters
+                int letter = charCalc - 'a' + 10;
+                for (int l = 0; l <= 8; ++l) {
+                    // when last digit is 0 break from the loop so it won't store the left 0's
+                    if((letter >>l) == 0) break;
+                    set1->matrixc1[i][j] = (letter >> l) & 1;
+                    j--;
+
+                }
+            } else if (charCalc >= 'A' && charCalc<= 'Z') {
+                /* 10 represents the beginning of letters
+                 *  'a' is the value 36 (A = 10 a = 10 + 26)
+                */
+                int letter = charCalc - 'A' + 36;
+                for (int l = 0; l <= 8; ++l) {
+                    if((letter >>l) == 0) break;
+                    set1->matrixc1[i][j] = (letter >> l) & 1;
+                    j--;
+                }
+
             }
         }
-    }
-
-    for (int i = 0; i < RC; ++i) {
-        for (int k = 0; k < CC; ++k) {
-            printf("%d", set1->matrixc1[i][k]);
-        }
-        putchar('\n');
     }
 
 }
@@ -127,7 +171,6 @@ void freemem(SET1 *set1, SET2 *set2) {
     free(set1->matrixc1);
     set1->matrixc1 =NULL;
     /*free(set2->matrix2);
-    free(set1->matrixc1);
     free(set2->matrixc2);*/
 }
 

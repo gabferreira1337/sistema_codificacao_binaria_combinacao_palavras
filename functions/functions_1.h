@@ -11,7 +11,6 @@ typedef struct{
     short size1;
     short sizec1;
 
-
 }SET1;
 
 /**
@@ -45,7 +44,14 @@ char **matrix_init_char(int row ,int col);
  * @params
  *
  */
-void print_matrix_int(SET1 *set1);
+
+
+void print_matrix_int(SET1 *set1, SET2 *set2);
+/**  print matrix
+ * @params
+ *
+ */
+void print_matrix_char(SET1 *set1, SET2 *set2);
 /**  free memory allocated
  * @params
  *

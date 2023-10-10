@@ -6,30 +6,20 @@
  */
 typedef struct{
 
-    char **matrix1;
-    int  **matrixc1;
-    short size1;
-    short sizec1;
+    char **matrix;
+    int  **matrix_encode;
+    short size;
+    short size_encode;
 
-}SET1;
+}SETS;
 
-/**
- * set 2 struct
- */
-typedef struct{
 
-    char **matrix2;
-    int **matrixc2;
-    short size2;
-    short sizec2;
-
-}SET2;
 
 /**  encode a matrix of strings to UFP6 (binary)
  * @params
  *
  */
-void encode(SET1 *set1);
+void encode(SETS *set);
 /**  initialize matrix of ints to 0
  * @params
  *
@@ -37,7 +27,7 @@ void encode(SET1 *set1);
 
 char gen_rnd_char(int length);
 
-int **matrix_init_int(int row ,int col);
+short **matrix_init_short(int row ,int col);
 /**  initialize matrix of char to 0
  * @params
  *
@@ -49,17 +39,17 @@ char **matrix_init_char(int row ,int col);
  */
 
 
-void print_matrix_int(SET1 *set1, SET2 *set2);
+void print_matrix_int(SETS *set);
 /**  print matrix
  * @params
  *
  */
-void print_matrix_char(SET1 *set1, SET2 *set2);
+void print_matrix_char(SETS *set);
 /**  free memory allocated
  * @params
  *
  */
-void freemem(SET1 *set1, SET2 *set2);
+void freemem(SETS *set);
 
 int main_functions_1(int argc , char **argv);
 

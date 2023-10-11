@@ -165,11 +165,9 @@ void encode(SETS *set){
                     set->matrix_encode[i][j] = (letter >> l) & 1;
                     j--;
                 }
-
             }
         }
     }
-
 }
 
 void freemem(SETS *set) {
@@ -198,6 +196,6 @@ char gen_rnd_char(int length){
     // Generate random number between 'a' and 'z'
     random_number = 'a' + rand() % 26;
 
-    return random_number;
+    return (char) random_number;
 }
 

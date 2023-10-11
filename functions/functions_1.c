@@ -5,7 +5,7 @@
 #include "functions_1.h"
 
 
-#define R 6
+#define R 7
 #define C 7
 #define test 10
 #define RC 56 //8 * 3 store space for each char conversion to binary

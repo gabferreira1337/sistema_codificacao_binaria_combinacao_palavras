@@ -5,9 +5,8 @@
 #include "functions_1.h"
 
 
-#define R 6
+#define R 7
 #define C 7
-#define test 10
 #define RC 56 //8 * 3 store space for each char conversion to binary
 #define CC 48
 #define WORD_LENGTH 7
@@ -24,16 +23,19 @@ int main_functions_1(int argc , char **argv){
 
     set1.matrix = matrix_init_char(R,C);
 
-    set1.matrix[0][0]='C';
+    set1.colsize_char = C;
+    set1.rowsize = R;
+
+    /*set1.matrix[0][0]='C';
     set1.matrix[0][1]='A';
     set1.matrix[0][2]='O';
-    set1.matrix[1][0]='c';
-    encode(&set1);
-    //print_matrix_int(&set1,NULL);
-    //print_matrix_char(&set1,NULL);
+    set1.matrix[1][0]='c';*/
+    //encode(&set1);
+    //print_matrix_int(&set1);
+   // print_matrix_char(&set1);
 
-
-    gen_rnd_char(WORD_LENGTH);
+    matrix_rnd_char_gen(&set1, WORD_LENGTH);
+    print_matrix_char(&set1);
 
     freemem(&set1);
 
@@ -52,13 +54,13 @@ short **matrix_init_short(int row ,int col){
 
         for (int i = 0; i < row; ++i) {
             // Allocate memory for each pointer (cols)
-            mat[i] = (short*)calloc(col, sizeof(short));
-            if (mat[i] == NULL) {
+            *(mat+i) = (short*)calloc(col, sizeof(short));
+            if (*(mat+i) == NULL) {
                 printf("Matrix int col malloc\n");
+                free(mat);
                 exit(1);
             }
         }
-
     return mat;
 }
 char **matrix_init_char(int row ,int col){
@@ -72,24 +74,11 @@ char **matrix_init_char(int row ,int col){
 
     for (int i = 0; i < row; ++i) {
         // Allocate memory for each pointer (cols)
-        mat[i] = (char*)calloc(col, sizeof(char));
+        *(mat +i) = (char*)calloc(col, sizeof(char));
         if (mat[i] == NULL) {
             printf("Matrix int col malloc\n");
             exit(1);
         }
-    }
-
-    for (int i = 0; i < row; ++i) {
-        for (int j = 0; j < col; ++j) {
-            mat[i][j] = gen_rnd_char(7);
-        }
-    }
-
-    for (int i = 0; i < row; ++i) {
-        for (int j = 0; j < col; ++j) {
-            printf("%c",mat[i][j]);
-        }
-        putchar('\n');
     }
 
     return mat;
@@ -98,13 +87,13 @@ char **matrix_init_char(int row ,int col){
 void print_matrix_int(SETS *set) {
 
     int l=0;
-    for (int i = 0; i < R; ++i){
+    for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < CC; ++j) {
-            printf("%d",set->matrix_encode[i][j]);
+            printf("%d",*(*(set->matrix_encode + i) +j));
         }
         putchar('-');
-        for (int h = 0; h < 3; ++h) {
-            printf("%c",set->matrix[l][h]);
+        for (int h = 0; h < set->rowsize; ++h) {
+            printf("%c",*(*(set->matrix_encode + l) +h));
         }
         putchar('\n');
         l++;
@@ -113,36 +102,28 @@ void print_matrix_int(SETS *set) {
 
 void print_matrix_char(SETS *set) {
 
-    for (int i = 0; i < R; ++i) {
-        for (int j = 0; j < C; ++j) {
-            printf("%c",set->matrix_encode[i][j]);
+    for (int i = 0; i < set->rowsize; ++i) {
+        for (int j = 0; j < set->colsize_char; ++j) {
+            printf("%c",*(*(set->matrix + i) +j));
         }
         putchar('\n');
     }
 
-    for (int i = 0; i < R; ++i) {
-        for (int j = 0; j < C; ++j) {
-
-
-        }
-    }
 }
 
 
 void encode(SETS *set){
-
     int charCalc =0;
-
     int j = 0;
-    for (int i = 0; i < R; ++i) {
+    for (int i = 0; i < set->rowsize; ++i) {
         j = CC - 1;
-        for (int k = 0; k < C; ++k) {
+        for (int k = 0; k < set->colsize_encode; ++k) {
             charCalc = (unsigned char) set->matrix_encode[i][k];
 
             if (charCalc >= '0' && charCalc <= '9') {
                 int digit = charCalc - '0';
                 for (int l = 0; l <= 4; ++l) {
-                    set->matrix_encode[i][j] = (digit >> l) & 1;
+                    *(*(set->matrix_encode + i) +j) = (digit >> l) & 1;
                     j--;
                 }
             } else if (charCalc >= 'a' && charCalc <= 'z') {
@@ -151,7 +132,7 @@ void encode(SETS *set){
                 for (int l = 0; l <= 8; ++l) {
                     // when last digit is 0 break from the loop, so it won't store the left 0's
                     if((letter >>l) == 0) break;
-                    set->matrix_encode[i][j] = (letter >> l) & 1;
+                   *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
                     j--;
 
                 }
@@ -162,7 +143,7 @@ void encode(SETS *set){
                 int letter = charCalc - 'A' + 36;
                 for (int l = 0; l <= 8; ++l) {
                     if((letter >>l) == 0) break;
-                    set->matrix_encode[i][j] = (letter >> l) & 1;
+                    *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
                     j--;
                 }
             }
@@ -170,9 +151,28 @@ void encode(SETS *set){
     }
 }
 
+
+char gen_rnd_char(int length){
+    int random_number;
+    // Generate random number between 'a' and 'z'
+    random_number = 'a' + rand() % 26;
+    return (char) random_number;
+}
+
+char **matrix_rnd_char_gen(SETS *set,int word_length) {
+
+    for (int i = 0; i < set->rowsize; ++i) {
+        for (int j = 0; j < set->colsize_char; ++j) {
+            *(*(set->matrix + i) +j) = gen_rnd_char(word_length);
+        }
+    }
+
+    return NULL;
+}
+
 void freemem(SETS *set) {
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < set->rowsize; ++i) {
         free(set->matrix_encode[i]);
         set->matrix_encode[i] =NULL;
         free(set->matrix[i]);
@@ -187,15 +187,7 @@ void freemem(SETS *set) {
     set->matrix =NULL;
     free(set->matrix_encode);
     set->matrix_encode =NULL;
-    /*free(set2->matrix2);
-    free(set2->matrixc2);*/
+
 }
 
-char gen_rnd_char(int length){
-    int random_number;
-    // Generate random number between 'a' and 'z'
-    random_number = 'a' + rand() % 26;
-
-    return (char) random_number;
-}
 

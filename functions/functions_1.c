@@ -19,7 +19,7 @@ int main_functions_1(int argc , char **argv){
     srand(time(NULL));
 
     SETS set1;
-    set1.matrix_encode = matrix_init_int(RC,CC);
+    set1.matrix_encode = matrix_init_short(RC,CC);
     SETS set2;
 
     set1.matrix = matrix_init_char(R,C);

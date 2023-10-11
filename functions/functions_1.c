@@ -7,7 +7,7 @@
 
 #define R 6
 #define C 7
-
+#define test 1
 #define RC 56 //8 * 3 store space for each char conversion to binary
 #define CC 48
 #define WORD_LENGTH 7

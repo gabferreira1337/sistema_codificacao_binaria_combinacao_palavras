@@ -53,6 +53,23 @@ char **matrix_init_char(int row ,int col);
  */
 void print_matrix_int(SETS *set);
 
+/**  insert word into matrix char
+ * @params
+ *
+ */
+void insert_word_char(SETS *set,int start_row,  int number_words);
+/**  insert word into matrix short
+ * @params
+ *
+ */
+void insert_word_short(SETS *set, int start_row , int number_words);
+
+/** realloc matrixes
+ * @params
+ *
+ */
+void matrix_realloc(SETS *set);
+
 /** print matrix
  * @params
  *

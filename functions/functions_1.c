@@ -7,8 +7,8 @@
 
 #define R 7
 #define C 7
-#define RC 56 //8 * 3 store space for each char conversion to binary
-#define CC 48
+#define RC 7 //8 * 3 store space for each char conversion to binary
+#define CC 7
 #define WORD_LENGTH 7
 
 
@@ -36,6 +36,13 @@ int main_functions_1(int argc , char **argv){
 
     matrix_rnd_char_gen(&set1, WORD_LENGTH);
     print_matrix_char(&set1);
+
+    encode(&set1);
+    print_matrix_int(&set1);
+    print_matrix_char(&set1);
+
+
+    //insert_word_char(&set1, R, 5);
 
     freemem(&set1);
 
@@ -114,6 +121,7 @@ void print_matrix_char(SETS *set) {
 
 void encode(SETS *set){
     int charCalc =0;
+    char str[9];
     int j = 0;
     for (int i = 0; i < set->rowsize; ++i) {
         j = CC - 1;
@@ -123,7 +131,7 @@ void encode(SETS *set){
             if (charCalc >= '0' && charCalc <= '9') {
                 int digit = charCalc - '0';
                 for (int l = 0; l <= 4; ++l) {
-                    *(*(set->matrix_encode + i) +j) = (digit >> l) & 1;
+                    str[l] =(char) ((digit >> l) & 1) ;
                     j--;
                 }
             } else if (charCalc >= 'a' && charCalc <= 'z') {
@@ -132,22 +140,22 @@ void encode(SETS *set){
                 for (int l = 0; l <= 8; ++l) {
                     // when last digit is 0 break from the loop, so it won't store the left 0's
                     if((letter >>l) == 0) break;
-                   *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
+                    str[l] =(char) ((letter >> l) & 1) + '0';
                     j--;
-
                 }
             } else if (charCalc >= 'A' && charCalc<= 'Z') {
-                /* 10 represents the beginning of letters
-                 *  'a' is the value 36 (A = 10 a = 10 + 26)
-                */
                 int letter = charCalc - 'A' + 36;
                 for (int l = 0; l <= 8; ++l) {
                     if((letter >>l) == 0) break;
-                    *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
+                    str[l]  = (char) ((letter >> l) & 1) + '0';
                     j--;
                 }
+                str[8] ='\0';
+
             }
+
         }
+
     }
 }
 
@@ -170,6 +178,33 @@ char **matrix_rnd_char_gen(SETS *set,int word_length) {
     return NULL;
 }
 
+
+
+void insert_word_char(SETS *set,int start_row, int number_words) {
+    // Start_row é sempre o valor maximo no de linhas
+
+    set->rowsize += number_words;
+    /*Realloc mem for both matrix */
+    matrix_realloc(set);
+
+
+    for (int i = 0; i < set->rowsize; ++i) {
+        for (int j = 0; j < set->colsize_char; ++j) {
+           /// *(*(set->matrix + i) +j) = ;
+            // 1 palavra por linha - cada palavra max 7 caracteres
+        }
+
+    }
+
+}
+
+void insert_word_short(SETS *set,int start_row, int number_words) {
+    // Start_row é sempre o valor maximo no de linhas
+
+}
+
+
+
 void freemem(SETS *set) {
 
     for (int i = 0; i < set->rowsize; ++i) {
@@ -190,4 +225,46 @@ void freemem(SETS *set) {
 
 }
 
+void matrix_realloc(SETS *set) {
+
+    /* Realloc memory for char matrix */
+
+    set->matrix = (char **) realloc(set->matrix,set->rowsize * sizeof(char *));
+
+    if(set->matrix == NULL){
+        freemem(set);
+        exit(1);
+    }
+
+    for (int i = 0; i < set->rowsize; ++i) {
+        *(set->matrix +i) = (char*) realloc(*(set->matrix + i),set->colsize_char *sizeof(char));
+        if(*(set->matrix + i) == NULL){
+            printf("Matrix char realloc\n");
+            freemem(set);
+            exit(1);
+        }
+    }
+
+    /* Realloc memory for encode matrix*/
+
+    set->matrix = (short **) realloc(set->matrix,set->rowsize * sizeof(short *));
+
+    if(set->matrix == NULL){
+        printf("Matrix encode realloc\n");
+        freemem(set);
+        exit(1);
+    }
+
+    for (int i = 0; i < set->rowsize; ++i) {
+        *(set->matrix +i) = (short*) realloc(*(set->matrix + i),set->colsize_char *sizeof(short *));
+        if(*(set->matrix + i) == NULL){
+            printf("Matrix encode realloc\n");
+            freemem(set);
+            exit(1);
+        }
+
+    }
+
+
+}
 

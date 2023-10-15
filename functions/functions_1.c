@@ -18,12 +18,13 @@ int main_functions_1(int argc , char **argv){
     srand(time(NULL));
 
     SETS set1;
-    set1.matrix_encode = matrix_init_short(RC,CC);
+    set1.matrix_encode = matrix_init_int(RC,CC);
     SETS set2;
 
     set1.matrix = matrix_init_char(R,C);
 
     set1.colsize_char = C;
+    set1.colsize_encode =CC;
     set1.rowsize = R;
 
     /*set1.matrix[0][0]='C';
@@ -35,7 +36,8 @@ int main_functions_1(int argc , char **argv){
    // print_matrix_char(&set1);
 
     matrix_rnd_char_gen(&set1, WORD_LENGTH);
-    print_matrix_char(&set1);
+    /*print_matrix_char(&set1);
+    print_matrix_char(&set1);*/
 
     encode(&set1);
     print_matrix_int(&set1);
@@ -50,18 +52,18 @@ int main_functions_1(int argc , char **argv){
 }
 
 
-short **matrix_init_short(int row ,int col){
+unsigned int **matrix_init_int(int row ,int col){
         // Allocate memory for array of pointers
-        short** mat = (short**)calloc(row, sizeof(short*));
+        unsigned int** mat = (unsigned int**)calloc(row, sizeof(unsigned int*));
 
         if (mat == NULL) {
-            printf("Matrix int row malloc\n");
+            printf("Matrix_init_short - row malloc\n");
             exit(1);
         }
 
         for (int i = 0; i < row; ++i) {
             // Allocate memory for each pointer (cols)
-            *(mat+i) = (short*)calloc(col, sizeof(short));
+            *(mat+i) = (unsigned int*)calloc(col, sizeof(unsigned int));
             if (*(mat+i) == NULL) {
                 printf("Matrix int col malloc\n");
                 free(mat);
@@ -70,6 +72,7 @@ short **matrix_init_short(int row ,int col){
         }
     return mat;
 }
+
 char **matrix_init_char(int row ,int col){
     // Allocate memory for array of pointers
     char** mat = (char**)calloc(row, sizeof(char*));
@@ -92,37 +95,30 @@ char **matrix_init_char(int row ,int col){
 }
 
 void print_matrix_int(SETS *set) {
-
     int l=0;
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < CC; ++j) {
             printf("%d",*(*(set->matrix_encode + i) +j));
         }
-        putchar('-');
-        for (int h = 0; h < set->rowsize; ++h) {
-            printf("%c",*(*(set->matrix_encode + l) +h));
-        }
         putchar('\n');
-        l++;
     }
+
 }
 
 void print_matrix_char(SETS *set) {
-
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < set->colsize_char; ++j) {
-            printf("%c",*(*(set->matrix + i) +j));
+            printf(" %c",*(*(set->matrix + i) +j));
         }
         putchar('\n');
     }
-
 }
 
 
 void encode(SETS *set){
-    int charCalc =0;
-    char str[9];
-    int j = 0;
+    char charCalc ='\0';
+    unsigned int numbin = 0;
+
     for (int i = 0; i < set->rowsize; ++i) {
         j = CC - 1;
         for (int k = 0; k < set->colsize_encode; ++k) {
@@ -135,28 +131,27 @@ void encode(SETS *set){
                     j--;
                 }
             } else if (charCalc >= 'a' && charCalc <= 'z') {
-                // 10 represents the beginning of letters
-                int letter = charCalc - 'a' + 10;
-                for (int l = 0; l <= 8; ++l) {
-                    // when last digit is 0 break from the loop, so it won't store the left 0's
-                    if((letter >>l) == 0) break;
-                    str[l] =(char) ((letter >> l) & 1) + '0';
-                    j--;
-                }
+                // 10 represents the beginning of letters 0-9 a-z
+                unsigned int letter = charCalc - 'a' + 10;
+                numbin = int_to_bin(letter);
+                *(*(set->matrix_encode + i) +k) = numbin;
+
             } else if (charCalc >= 'A' && charCalc<= 'Z') {
                 int letter = charCalc - 'A' + 36;
-                for (int l = 0; l <= 8; ++l) {
-                    if((letter >>l) == 0) break;
-                    str[l]  = (char) ((letter >> l) & 1) + '0';
-                    j--;
-                }
-                str[8] ='\0';
-
+                numbin = int_to_bin(letter);
+                *(*(set->matrix_encode + i) +k) = numbin;
             }
 
         }
 
     }
+}
+
+
+unsigned int int_to_bin(unsigned int k) {
+    if (k == 0) return 0;
+    if (k == 1) return 1;
+    return (k % 2) + 10 * int_to_bin(k / 2);
 }
 
 

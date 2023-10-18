@@ -7,8 +7,8 @@
 
 #define R 7
 #define C 7
-#define RC 7 //8 * 3 store space for each char conversion to binary
-#define CC 7
+#define RC 27 //8 * 3 store space for each char conversion to binary
+#define CC 27
 #define WORD_LENGTH 7
 
 
@@ -114,7 +114,47 @@ void print_matrix_char(SETS *set) {
     }
 }
 
+void encode(SETS *set){
+    int charCalc =0;
+    int j = 0;
+    for (int i = 0; i < set->rowsize; ++i) {
+        j = CC - 1;
+        for (int k = 0; k < set->colsize_encode; ++k) {
+            charCalc = (unsigned char) set->matrix[i][k];
 
+            if (charCalc >= '0' && charCalc <= '9') {
+                int digit = charCalc - '0';
+                for (int l = 0; l < 8; ++l) {
+                    *(*(set->matrix_encode + i) +j) = (digit >> l) & 1;
+                    j--;
+                }
+            } else if (charCalc >= 'a' && charCalc <= 'z') {
+                // 10 represents the beginning of letters
+                int letter = charCalc - 'a' + 10;
+                for (int l = 0; l < 8; ++l) {
+                    // when last digit is 0 break from the loop, so it won't store the left 0's
+                    if((letter >>l) == 0) break;
+                    *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
+                    j--;
+
+                }
+            } else if (charCalc >= 'A' && charCalc<= 'Z') {
+                /* 10 represents the beginning of letters
+                 *  'a' is the value 36 (A = 10 a = 10 + 26)
+                */
+                int letter = charCalc - 'A' + 36;
+                for (int l = 0; l < 8; ++l) {
+                    if((letter >>l) == 0) break;
+                    *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
+                    j--;
+                }
+            }
+        }
+    }
+}
+
+
+/*
 void encode(SETS *set){
     char charCalc ='\0';
     unsigned int numbin = 0;
@@ -145,7 +185,7 @@ void encode(SETS *set){
         }
 
     }
-}
+}*/
 
 
 unsigned int int_to_bin(unsigned int k) {

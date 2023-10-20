@@ -80,6 +80,20 @@ void insert_word_short(SETS *set, int start_row , int number_words);
  */
 void matrix_realloc(SETS *set);
 
+/** Realloc mem on encode when we insert a new word
+ * @params
+ *
+ */
+
+void matrix_encode_realloc(SETS *set);
+
+/** print the size of the words
+ * @params
+ *
+ */
+
+void print_arr_word_size(SETS set);
+
 /** print matrix
  * @params
  *

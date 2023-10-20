@@ -7,8 +7,7 @@
 
 #define R 7
 #define C 7
-#define RC 27 //8 * 3 store space for each char conversion to binary
-#define CC 27
+#define CC 49 /// Number of cols of encode matrix
 #define WORD_LENGTH 7
 
 
@@ -31,9 +30,7 @@ int main_functions_1(int argc , char **argv){
     set1.matrix[0][1]='A';
     set1.matrix[0][2]='O';
     set1.matrix[1][0]='c';*/
-    //encode(&set1);
-    //print_matrix_int(&set1);
-   // print_matrix_char(&set1);
+    init_arr_word_size(&set1);
 
     matrix_rnd_char_gen(&set1, WORD_LENGTH);
     /*print_matrix_char(&set1);
@@ -45,8 +42,9 @@ int main_functions_1(int argc , char **argv){
     encode(&set1);
     print_matrix_int(&set1);
 
+    print_arr_word_size(set1);
+    print_matrix_char(&set1);
 
-    //insert_word_char(&set1, R, 5);
 
     freemem(&set1);
     return 0;
@@ -102,12 +100,11 @@ void print_matrix_int(SETS *set) {
 
     }
     for (int i = 0; i < set->rowsize; ++i){
-        for (int j = 0; j < CC; ++j) {
-            printf("%d",*(*(set->matrix_encode + i) +j));
+        for (int j = 0; j <(set->arr_word_size[i] -1) * 7; ++j) {
+            printf(" %d",*(*(set->matrix_encode + i) +j));
         }
         putchar('\n');
     }
-
 }
 
 void print_matrix_char(SETS *set) {
@@ -120,12 +117,13 @@ void print_matrix_char(SETS *set) {
 }
 
 void encode(SETS *set){
-    int charCalc =0;
-    int j = 0;
+    int charCalc = 0;
+    int j=0;
     for (int i = 0; i < set->rowsize; ++i) {
-        j = CC - 1;
-        for (int k = 0; k < set->colsize_encode; ++k) {
-            charCalc = (unsigned char) set->matrix[i][k];
+        j = 0;
+
+        for (int k = 0; k < set->arr_word_size[i]*7; ++k) { // colsize_encode-j
+            charCalc = (unsigned char) *(*(set->matrix + i) +k);
 
             if (charCalc >= '0' && charCalc <= '9') {
                 int digit = charCalc - '0';
@@ -163,6 +161,7 @@ char gen_rnd_char(int length){
     int random_number;
     // Generate random number between 'a' and 'z'
     random_number = 'a' + rand() % 26;
+    printf("%c", (char) random_number);
     return (char) random_number;
 }
 
@@ -192,12 +191,12 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
         if (fscanf(stdin, "%s", word) == EOF) {
             printf("Failed to read the word.\n");
             freemem(set);
-            exit(1);
+            return;
         }
-        //store size of new word in arr_word_size
+        //store size of new word in arr_word_size +1 for delim
         set->arr_word_size[i] = strlen(word);
 
-        for (int j = 0; j < set->colsize_char; ++j) {
+        for (int j = 0; j < set->arr_word_size[i]; ++j) {
             *(*(set->matrix + i) + j) = word[j];
             //if the word is smaller than colsize_char fill the rest with ' '
             if(j >= strlen(word))
@@ -259,7 +258,7 @@ void matrix_realloc(SETS *set) {
         if(*(set->matrix + i) == NULL){
             printf("Matrix char realloc\n");
             freemem(set);
-            exit(1);
+            return;
         }
     }
 
@@ -271,7 +270,7 @@ void init_arr_word_size(SETS *set) {
     if((set->arr_word_size) == NULL){
         printf("Array word size calloc\n");
         freemem(set);
-        exit(1);
+        return;
     }
 }
 

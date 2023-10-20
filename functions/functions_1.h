@@ -8,7 +8,7 @@ typedef struct{
 
     char **matrix;
     int **matrix_encode;
-    unsigned int *arr_word_size;
+    int *arr_word_size;
     int rowsize;
     int colsize_char;
     int colsize_encode;
@@ -55,7 +55,7 @@ char **matrix_init_char(int row ,int col);
  *
  */
 
-int  *init_arr_word_size(SETS *set);
+void init_arr_word_size(SETS *set);
 
 /**  print matrix
  * @params

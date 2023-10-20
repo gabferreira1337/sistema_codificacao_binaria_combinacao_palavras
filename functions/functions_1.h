@@ -7,7 +7,8 @@
 typedef struct{
 
     char **matrix;
-    unsigned int **matrix_encode;
+    int **matrix_encode;
+    unsigned int *arr_word_size;
     int rowsize;
     int colsize_char;
     int colsize_encode;
@@ -23,7 +24,6 @@ typedef struct{
  */
 void encode(SETS *set);
 
-unsigned int int_to_bin(unsigned int k);
 
 
 /** generate random char
@@ -42,13 +42,20 @@ char **matrix_rnd_char_gen(SETS *set,int word_length);
  * @params
  *
  */
-unsigned int **matrix_init_int(int row ,int col);
+ int **matrix_init_int(int row ,int col);
 
 /**  initialize matrix of char to 0
  * @params
  *
  */
 char **matrix_init_char(int row ,int col);
+
+/**  initialize the array that contains sizes of words
+ * @params
+ *
+ */
+
+int  *init_arr_word_size(SETS *set);
 
 /**  print matrix
  * @params

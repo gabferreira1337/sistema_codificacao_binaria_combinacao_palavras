@@ -18,7 +18,7 @@ int main_functions_1(int argc , char **argv){
     srand(time(NULL));
 
     SETS set1;
-    set1.matrix_encode = matrix_init_int(RC,CC);
+    set1.matrix_encode = matrix_init_int(7,CC);
     SETS set2;
 
     set1.matrix = matrix_init_char(R,C);
@@ -39,6 +39,9 @@ int main_functions_1(int argc , char **argv){
     /*print_matrix_char(&set1);
     print_matrix_char(&set1);*/
 
+
+    encode(&set1);
+    insert_word_char(&set1, 7, 2);
     encode(&set1);
     print_matrix_int(&set1);
     print_matrix_char(&set1);
@@ -51,10 +54,9 @@ int main_functions_1(int argc , char **argv){
     return 0;
 }
 
-
-unsigned int **matrix_init_int(int row ,int col){
+ int **matrix_init_int(int row ,int col){
         // Allocate memory for array of pointers
-        unsigned int** mat = (unsigned int**)calloc(row, sizeof(unsigned int*));
+        int** mat = (int**)calloc(row, sizeof(int*));
 
         if (mat == NULL) {
             printf("Matrix_init_short - row malloc\n");
@@ -63,7 +65,7 @@ unsigned int **matrix_init_int(int row ,int col){
 
         for (int i = 0; i < row; ++i) {
             // Allocate memory for each pointer (cols)
-            *(mat+i) = (unsigned int*)calloc(col, sizeof(unsigned int));
+            *(mat+i) = (int*)calloc(col, sizeof(int));
             if (*(mat+i) == NULL) {
                 printf("Matrix int col malloc\n");
                 free(mat);
@@ -124,74 +126,33 @@ void encode(SETS *set){
 
             if (charCalc >= '0' && charCalc <= '9') {
                 int digit = charCalc - '0';
-                for (int l = 0; l < 8; ++l) {
+                for (int l = 6; l >= 0; l--, j++) {
                     *(*(set->matrix_encode + i) +j) = (digit >> l) & 1;
-                    j--;
-                }
-            } else if (charCalc >= 'a' && charCalc <= 'z') {
-                // 10 represents the beginning of letters
-                int letter = charCalc - 'a' + 10;
-                for (int l = 0; l < 8; ++l) {
-                    // when last digit is 0 break from the loop, so it won't store the left 0's
-                    if((letter >>l) == 0) break;
-                    *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
-                    j--;
 
                 }
-            } else if (charCalc >= 'A' && charCalc<= 'Z') {
+            } else if (charCalc >= 'a' && charCalc <= 'z' || charCalc == ' ') {
+                // 10 represents the beginning of letters
+                int letter = charCalc - 'a' + 10;
+                for (int l = 6; l >= 0; l--, j++) {
+                    // when last digit is 0 break from the loop, so it won't store the left 0's
+                    if ((letter >> l) == 0 || charCalc == ' ') {
+                        *(*(set->matrix_encode + i) + j) = -1;
+                    } else {
+                        *(*(set->matrix_encode + i) + j) = (letter >> l) & 1;
+                    }
+                }
+            } else if (charCalc >= 'A' && charCalc <= 'Z') {
                 /* 10 represents the beginning of letters
                  *  'a' is the value 36 (A = 10 a = 10 + 26)
                 */
                 int letter = charCalc - 'A' + 36;
-                for (int l = 0; l < 8; ++l) {
+                for (int l = 6; l >= 0; l--, j++) {
                     if((letter >>l) == 0) break;
                     *(*(set->matrix_encode + i) +j) = (letter >> l) & 1;
-                    j--;
                 }
             }
         }
     }
-}
-
-
-/*
-void encode(SETS *set){
-    char charCalc ='\0';
-    unsigned int numbin = 0;
-
-    for (int i = 0; i < set->rowsize; ++i) {
-        j = CC - 1;
-        for (int k = 0; k < set->colsize_encode; ++k) {
-            charCalc = (unsigned char) set->matrix_encode[i][k];
-
-            if (charCalc >= '0' && charCalc <= '9') {
-                int digit = charCalc - '0';
-                for (int l = 0; l <= 4; ++l) {
-                    str[l] =(char) ((digit >> l) & 1) ;
-                    j--;
-                }
-            } else if (charCalc >= 'a' && charCalc <= 'z') {
-                // 10 represents the beginning of letters 0-9 a-z
-                unsigned int letter = charCalc - 'a' + 10;
-                numbin = int_to_bin(letter);
-                *(*(set->matrix_encode + i) +k) = numbin;
-
-            } else if (charCalc >= 'A' && charCalc<= 'Z') {
-                int letter = charCalc - 'A' + 36;
-                numbin = int_to_bin(letter);
-                *(*(set->matrix_encode + i) +k) = numbin;
-            }
-
-        }
-
-    }
-}*/
-
-
-unsigned int int_to_bin(unsigned int k) {
-    if (k == 0) return 0;
-    if (k == 1) return 1;
-    return (k % 2) + 10 * int_to_bin(k / 2);
 }
 
 
@@ -203,13 +164,11 @@ char gen_rnd_char(int length){
 }
 
 char **matrix_rnd_char_gen(SETS *set,int word_length) {
-
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < set->colsize_char; ++j) {
             *(*(set->matrix + i) +j) = gen_rnd_char(word_length);
         }
     }
-
     return NULL;
 }
 
@@ -217,20 +176,28 @@ char **matrix_rnd_char_gen(SETS *set,int word_length) {
 
 void insert_word_char(SETS *set,int start_row, int number_words) {
     // Start_row é sempre o valor maximo no de linhas
-
     set->rowsize += number_words;
     /*Realloc mem for both matrix */
     matrix_realloc(set);
 
+    char word[7+1] = " ";
+    for (int i = start_row; i < set->rowsize; ++i) {
 
-    for (int i = 0; i < set->rowsize; ++i) {
-        for (int j = 0; j < set->colsize_char; ++j) {
-           /// *(*(set->matrix + i) +j) = ;
-            // 1 palavra por linha - cada palavra max 7 caracteres
+        if (fscanf(stdin, "%s", word) == EOF) {
+            printf("Failed to read the word.\n");
+            freemem(set);
+            exit(1);
         }
+        //store size of new word in arr_word_size
+        set->arr_word_size[i] = strlen(word);
 
+        for (int j = 0; j < set->colsize_char; ++j) {
+            *(*(set->matrix + i) + j) = word[j];
+            //if the word is smaller than colsize_char fill the rest with ' '
+            if(j >= strlen(word))
+                *(*(set->matrix + i) + j) = ' ';
+            }
     }
-
 }
 
 void insert_word_short(SETS *set,int start_row, int number_words) {
@@ -258,6 +225,8 @@ void freemem(SETS *set) {
     free(set->matrix_encode);
     set->matrix_encode =NULL;
 
+    free(set->arr_word_size);
+
 }
 
 void matrix_realloc(SETS *set) {
@@ -280,26 +249,39 @@ void matrix_realloc(SETS *set) {
         }
     }
 
+
     /* Realloc memory for encode matrix*/
 
-    set->matrix = (short **) realloc(set->matrix,set->rowsize * sizeof(short *));
+    set->matrix_encode= (int **) realloc(set->matrix_encode,set->rowsize * sizeof(int *));
 
-    if(set->matrix == NULL){
+    if(set->matrix_encode == NULL){
         printf("Matrix encode realloc\n");
         freemem(set);
         exit(1);
     }
 
     for (int i = 0; i < set->rowsize; ++i) {
-        *(set->matrix +i) = (short*) realloc(*(set->matrix + i),set->colsize_char *sizeof(short *));
+        *(set->matrix_encode +i) = (int*) realloc(*(set->matrix_encode + i),set->colsize_encode *sizeof(int *));
         if(*(set->matrix + i) == NULL){
             printf("Matrix encode realloc\n");
             freemem(set);
             exit(1);
         }
-
     }
+}
 
+int *init_arr_word_size(SETS *set) {
+
+    // inicializa
+    // return array ->
+
+    set->arr_word_size = (unsigned int *) calloc(set->rowsize, sizeof(unsigned int));
+
+    if((set->arr_word_size) == NULL){
+        printf("Array word size calloc\n");
+        freemem(set);
+        exit(1);
+    }
 
 }
 

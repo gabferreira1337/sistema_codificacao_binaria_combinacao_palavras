@@ -35,7 +35,6 @@ void int_to_bin(SETS *set);
 void char_to_bin(SETS *set);
 
 
-
 /** generate random char
  * @params length - word length
  * @return  word generated
@@ -52,6 +51,7 @@ char **matrix_rnd_char_gen(SETS *set,int word_length);
  * @params
  *
  */
+
  int **matrix_init_int(int row ,int col);
 
 /**  initialize matrix of char to 0
@@ -71,7 +71,7 @@ void init_arr_word_size(SETS *set);
  * @params
  *
  */
-void print_matrix_int(SETS *set);
+void print_matrix_int(SETS set);
 
 /**  insert word into matrix char
  * @params
@@ -108,7 +108,7 @@ void print_arr_word_size(SETS set);
  * @params
  *
  */
-void print_matrix_char(SETS *set);
+void print_matrix_char(SETS set);
 
 /** free memory allocated
  * @params

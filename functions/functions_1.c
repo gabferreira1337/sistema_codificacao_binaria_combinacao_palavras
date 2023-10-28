@@ -69,12 +69,12 @@ int main_functions_1(int argc , char **argv){
 
     /* Print both sets  */
     puts("SET 1");
-    print_matrix_char(&set1);
-    print_matrix_int(&set1);
+    print_matrix_char(set1);
+    print_matrix_int(set1);
 
     puts("SET 2");
-    print_matrix_char(&set2);
-    print_matrix_int(&set2);
+    print_matrix_char(set2);
+    print_matrix_int(set2);
 
 
     //print_arr_word_size(set1);
@@ -91,13 +91,14 @@ int main_functions_1(int argc , char **argv){
         int** mat = (int**)calloc(row, sizeof(int*));
 
         if (mat == NULL) {
-            printf("Matrix_init_short - row malloc\n");
+            printf("Matrix_init_int - row malloc\n");
             exit(1);
         }
 
         for (int i = 0; i < row; ++i) {
             // Allocate memory for each pointer (cols)
             *(mat+i) = (int*)calloc(col * 7, sizeof(int));
+          
             if (*(mat+i) == NULL) {
                 printf("Matrix int col malloc\n");
                 free(mat);
@@ -127,20 +128,20 @@ char **matrix_init_char(int row ,int col){
     return mat;
 }
 
-void print_matrix_int(SETS *set) {
-    for (int i = 0; i < set->rowsize; ++i){
-        for (int j = 0; j < *(set->arr_word_size + i) * 7; ++j) {
-            if(*(*(set->matrix_encode + i) +j) == -1) continue;
-            printf(" %d",*(*(set->matrix_encode + i) +j));
+void print_matrix_int(SETS set) {
+    for (int i = 0; i < set.rowsize; ++i){
+        for (int j = 0; j < *(set.arr_word_size + i) * 7; ++j) {
+            if(*(*(set.matrix_encode + i) +j) == -1) continue;
+            printf(" %d",*(*(set.matrix_encode + i) +j));
         }
         putchar('\n');
     }
 }
 
-void print_matrix_char(SETS *set) {
-    for (int i = 0; i < set->rowsize; ++i) {
-        for (int j = 0; j < set->colsize_char; ++j) {
-            printf(" %c",*(*(set->matrix + i) +j));
+void print_matrix_char(SETS set) {
+    for (int i = 0; i < set.rowsize; ++i) {
+        for (int j = 0; j < set.colsize_char; ++j) {
+            printf(" %c",*(*(set.matrix + i) +j));
         }
         putchar('\n');
     }
@@ -189,6 +190,7 @@ void encode(SETS *set){
     }
 }
 
+
 char gen_rnd_char(int length){
     int random_number;
     /* Generate random number between 'a' and 'z' */
@@ -206,6 +208,7 @@ char **matrix_rnd_char_gen(SETS *set,int word_length) {
     }
     return NULL;
 }
+
 
 
 void insert_word_char(SETS *set,int start_row, int number_words) {
@@ -233,7 +236,6 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
             if(j >= strlen(word))
                 *(*(set->matrix + i) + j) = ' ';
             }
-    }
 }
 
 void insert_word_short(SETS *set,int start_row, int number_words) {
@@ -244,19 +246,21 @@ void insert_word_short(SETS *set,int start_row, int number_words) {
 
 
 void freemem(SETS *set) {
+
     for (int i = 0; i < set->rowsize; ++i) {
         free(set->matrix_encode[i]);
         set->matrix_encode[i] =NULL;
-
+      
         free(set->matrix[i]);
         set->matrix[i] =NULL;
     }
 
     free(set->matrix);
     set->matrix =NULL;
+      
     free(set->matrix_encode);
     set->matrix_encode =NULL;
-
+      
     free(set->arr_word_size);
     set->arr_word_size = NULL;
 }
@@ -344,5 +348,5 @@ void int_to_bin(SETS *set) {
 int fperror(char *message) {
     fprintf(stderr, "ERROR: %s", message);
     return -1;
-}
 
+ }

@@ -23,6 +23,16 @@ typedef struct{
  *
  */
 void encode(SETS *set);
+/**  encode a matrix of strings to UFP6 (binary)
+ * @params
+ *
+ */
+void int_to_bin(SETS *set);
+/**  encode a matrix of strings to UFP6 (binary)
+ * @params
+ *
+ */
+void char_to_bin(SETS *set);
 
 
 
@@ -105,6 +115,8 @@ void print_matrix_char(SETS *set);
  *
  */
 void freemem(SETS *set);
+
+int fperror(char *message);
 
 int main_functions_1(int argc , char **argv);
 

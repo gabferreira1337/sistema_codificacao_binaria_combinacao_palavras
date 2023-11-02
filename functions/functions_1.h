@@ -52,7 +52,9 @@ char **matrix_rnd_char_gen(SETS *set,int word_length);
  *
  */
 
+
 int **matrix_init_int(int row ,int col);
+
 
 /**  initialize matrix of char to 0
  * @params
@@ -119,4 +121,5 @@ void freemem(SETS *set);
 int fperror(char *message);
 
 int main_functions_1(int argc , char **argv);
+
 #endif //PROJETO_AED1_LP1_FUNCTIONS_1_H

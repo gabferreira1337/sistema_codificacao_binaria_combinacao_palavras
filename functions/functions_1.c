@@ -8,6 +8,7 @@
 #include "functions_1.h"
 
 
+
 #define R 3
 #define C 3
 #define WORD_LENGTH 3
@@ -71,6 +72,10 @@ int main_functions_1(int argc , char **argv){
     puts("SET 1");
     print_matrix_char(set1);
     print_matrix_int(set1);
+
+    puts("SET 2");
+    print_matrix_char(set2);
+    print_matrix_int(set2);
 
     puts("SET 2");
     print_matrix_char(set2);
@@ -315,13 +320,7 @@ void matrix_encode_realloc(SETS *set) {
         /* Realloc memory for encode matrix*/
         set->matrix_encode= (int **) realloc(set->matrix_encode,set->rowsize * sizeof(int *)); //allocate for n_words
 
-
         if (set->matrix_encode == NULL){
-            printf("Matrix encode realloc\n");
-            freemem(set);
-            exit(0);
-        }
-
          //allocate for words_size
          for (int i = 0; i < set->rowsize; ++i) {
             *(set->matrix_encode +i) = (int*) realloc(*(set->matrix_encode + i),(set->arr_word_size[i] * BITS) *sizeof(int));
@@ -330,9 +329,8 @@ void matrix_encode_realloc(SETS *set) {
                 freemem(set);
                 exit(0);
             }
-    }
+         }
 }
-
 /*void char_to_bin(SETS *set) {
     for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {
         // when last digit is 0 break from the loop, so it won't store the left 0's
@@ -342,10 +340,10 @@ void matrix_encode_realloc(SETS *set) {
             *(*(set->matrix_encode + i) + j) = (letter >> l) & 1;
         }
     }
+}*/
 
+/*void int_to_bin(SETS *set) {
 }*/
 int fperror(char *message){
     fprintf(stderr, "ERROR: %s", message);
     exit (0);
-}
-

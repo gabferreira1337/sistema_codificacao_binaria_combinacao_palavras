@@ -52,7 +52,9 @@ char **matrix_rnd_char_gen(SETS *set,int word_length);
  *
  */
 
- int **matrix_init_int(int row ,int col);
+
+int **matrix_init_int(int row ,int col);
+
 
 /**  initialize matrix of char to 0
  * @params

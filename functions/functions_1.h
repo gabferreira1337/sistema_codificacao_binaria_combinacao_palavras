@@ -7,7 +7,8 @@
 typedef struct{
 
     char **matrix;
-    unsigned int **matrix_encode;
+    int **matrix_encode;
+    int *arr_word_size;
     int rowsize;
     int colsize_char;
     int colsize_encode;
@@ -22,8 +23,16 @@ typedef struct{
  *
  */
 void encode(SETS *set);
-
-unsigned int int_to_bin(unsigned int k);
+/**  encode a matrix of strings to UFP6 (binary)
+ * @params
+ *
+ */
+void int_to_bin(SETS *set);
+/**  encode a matrix of strings to UFP6 (binary)
+ * @params
+ *
+ */
+void char_to_bin(SETS *set);
 
 
 /** generate random char
@@ -42,7 +51,8 @@ char **matrix_rnd_char_gen(SETS *set,int word_length);
  * @params
  *
  */
-unsigned int **matrix_init_int(int row ,int col);
+
+int **matrix_init_int(int row ,int col);
 
 /**  initialize matrix of char to 0
  * @params
@@ -50,11 +60,18 @@ unsigned int **matrix_init_int(int row ,int col);
  */
 char **matrix_init_char(int row ,int col);
 
+/**  initialize the array that contains sizes of words
+ * @params
+ *
+ */
+
+void init_arr_word_size(SETS *set);
+
 /**  print matrix
  * @params
  *
  */
-void print_matrix_int(SETS *set);
+void print_matrix_int(SETS set);
 
 /**  insert word into matrix char
  * @params
@@ -73,11 +90,25 @@ void insert_word_short(SETS *set, int start_row , int number_words);
  */
 void matrix_realloc(SETS *set);
 
+/** Realloc mem on encode when we insert a new word
+ * @params
+ *
+ */
+
+void matrix_encode_realloc(SETS *set);
+
+/** print the size of the words
+ * @params
+ *
+ */
+
+void print_arr_word_size(SETS set);
+
 /** print matrix
  * @params
  *
  */
-void print_matrix_char(SETS *set);
+void print_matrix_char(SETS set);
 
 /** free memory allocated
  * @params
@@ -85,6 +116,7 @@ void print_matrix_char(SETS *set);
  */
 void freemem(SETS *set);
 
-int main_functions_1(int argc , char **argv);
+int fperror(char *message);
 
+int main_functions_1(int argc , char **argv);
 #endif //PROJETO_AED1_LP1_FUNCTIONS_1_H

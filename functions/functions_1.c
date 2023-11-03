@@ -9,10 +9,11 @@
 
 
 
-#define R 3
-#define C 3
-#define WORD_LENGTH 3
+#define R 2
+#define C 5
+#define WORD_LENGTH 5
 #define BITS 7
+#define RADIX 37
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
 gettimeofday(&tv2, NULL);    \
@@ -57,31 +58,42 @@ int main_functions_1(int argc , char **argv){
     encode(&set1);
     encode(&set2);
 
-    TIMER_STOP();
-    fprintf(stdout, "%f secs\n", time_delta);
-
-    /*set1.matrix[0][0]='C';
-    set1.matrix[0][1]='A';
-    set1.matrix[0][2]='O';
-    set1.matrix[1][0]='c';*/
-
     /* Insert word */
-    //insert_word_char(&set1, set1.rowsize, 5);
+    insert_word_char(&set1, set1.rowsize, 2);
+    encode(&set1);
 
     /* Print both sets  */
     puts("SET 1");
     print_matrix_char(set1);
+    puts("SET 1 ENCODE");
     print_matrix_int(set1);
-
     puts("SET 2");
     print_matrix_char(set2);
+    puts("SET 2 ENCODE");
     print_matrix_int(set2);
 
-    //print_arr_word_size(set1);
+    /* Sort Both arrays */
+    msdRadixSort(&set1, 0, set1.rowsize );
+    puts("SET 1 . SORTED");
+    print_matrix_char(set1);
+    encode(&set1);
+    print_matrix_int(set1);
+    msdRadixSort(&set2, 0, set2.rowsize );
+    puts("SET 2 . SORTED");
+    print_matrix_char(set2);
+    encode(&set2);
+    print_matrix_int(set2);
+
+
+   /* Print array word size */
+   // print_arr_word_size(set1);
 
     /* free memory  */
     freemem(&set1);
     freemem(&set2);
+
+    TIMER_STOP();
+    fprintf(stdout, "%f secs\n", time_delta);
 
     return 0;
 }
@@ -131,7 +143,7 @@ char **matrix_init_char(int row ,int col){
 void print_matrix_int(SETS set) {
     for (int i = 0; i < set.rowsize; ++i){
         for (int j = 0; j < *(set.arr_word_size + i) * 7; ++j) {
-            if(*(*(set.matrix_encode + i) +j) == -1) continue;
+            if (*(*(set.matrix_encode + i) +j) == -1) continue;
             printf(" %d",*(*(set.matrix_encode + i) +j));
         }
         putchar('\n');
@@ -140,7 +152,7 @@ void print_matrix_int(SETS set) {
 
 void print_matrix_char(SETS set) {
     for (int i = 0; i < set.rowsize; ++i) {
-        for (int j = 0; j < set.colsize_char; ++j) {
+        for (int j = 0; j < *(set.arr_word_size + i); ++j) {
             printf(" %c",*(*(set.matrix + i) +j));
         }
         putchar('\n');
@@ -155,8 +167,11 @@ void encode(SETS *set){
         // printf("--%s",set->matrix[i]);
         j =0;
         int count = 0;
-        for (int k = 0;k < *(set->arr_word_size); k++) {
-            charCalc = (unsigned char) *(*(set->matrix + i) +k) ;
+        for (int k = 0;k < *(set->arr_word_size + i); k++) {
+          //  printf("j : %d\n", j);
+          //  printf("k - %d\n");
+            charCalc = (unsigned char) *(*(set->matrix + i) + k) ;
+            //printf("char - %c\n", charCalc);
             // printf("--%s",set->matrix[i]);
             //printf(" \n%d\n", count++);
             if (charCalc >= '0' && charCalc <= '9') {
@@ -165,7 +180,7 @@ void encode(SETS *set){
                     *(*(set->matrix_encode + i) +j) = (digit >> l) & 1;
                 }
             } else if (charCalc >= 'a' && charCalc <= 'z') {
-                // printf(" %c", charCalc);
+                 //printf("char %c\n", charCalc);
                 //printf(" %d", count);
                 /* 10 represents the beginning of letters */
                 int letter = charCalc - 'a' + 10;
@@ -215,8 +230,6 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
     /* Start_row always max num of lines */
     set->rowsize += number_words;
     /* Realloc mem for both matrix */
-    matrix_realloc(set);
-    matrix_encode_realloc(set);
 
     char word[BITS + 1] = " ";
     for (int i = start_row; i < set->rowsize; ++i) {
@@ -229,6 +242,9 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
         /* store size of new word in arr_word_size for delim */
         set->arr_word_size[i] = (int) strlen(word);
 
+        matrix_realloc(set);
+        matrix_encode_realloc(set);
+
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             //printf("%c", word[j]);
             *(*(set->matrix + i) + j) = word[j];
@@ -237,6 +253,7 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
                 *(*(set->matrix + i) + j) = ' ';
         }
     }
+
 
 }
 
@@ -284,7 +301,7 @@ void matrix_realloc(SETS *set){
         }
 
         for (int i = 0; i < set->rowsize; ++i) {
-            *(set->matrix +i) = (char*) realloc(*(set->matrix + i),set->colsize_char *sizeof(char));
+            *(set->matrix +i) = (char*) realloc(*(set->matrix + i),set->arr_word_size[i] *sizeof(char));
             if(*(set->matrix + i) == NULL){
                 printf("Matrix char realloc\n");
                 freemem(set);
@@ -316,17 +333,20 @@ void matrix_encode_realloc(SETS *set) {
     set->matrix_encode = (int **) realloc(set->matrix_encode, set->rowsize * sizeof(int *)); //allocate for n_words
 
     if (set->matrix_encode == NULL) {
+        printf("ERROR encode realloc\n");
+        exit(0);
+    }
         //allocate for words_size
         for (int i = 0; i < set->rowsize; ++i) {
-            *(set->matrix_encode + i) = (int *) realloc(*(set->matrix_encode + i),
-                                                        (set->arr_word_size[i] * BITS) * sizeof(int));
+            *(set->matrix_encode + i) = (int *) realloc(*(set->matrix_encode + i), *(set->arr_word_size + i) * BITS * sizeof(int));
+
             if (*(set->matrix_encode + i) == NULL) {
                 printf("Matrix encode realloc\n");
                 freemem(set);
                 exit(0);
             }
         }
-    }
+
 }
 /*void char_to_bin(SETS *set) {
     for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {
@@ -339,9 +359,101 @@ void matrix_encode_realloc(SETS *set) {
     }
 }*/
 
-/*void int_to_bin(SETS *set) {
-}*/
 int fperror(char *message) {
     fprintf(stderr, "ERROR: %s", message);
     exit(0);
+}
+
+void remove_word_matrix(SETS *set, int row){
+
+}
+
+
+void insertionSort(char** arr, int low, int high, int d) {
+    for (int i = low + 1; i <= high; i++) {
+        for (int j = i; j > low && strcmp(arr[j], arr[j - 1]) < 0; j--) {
+            char* temp = arr[j];
+            arr[j] = arr[j - 1];
+            arr[j - 1] = temp;
+        }
+    }
+}
+
+void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d) {
+    if (hi <= lo)return;
+
+    int count[RADIX + 2] = {0};
+
+    for (int i = lo; i <= hi; i++) {
+        //printf(" i : %d = %s\n",i, *(set->matrix + i));
+        char currentChar = *(*(set->matrix + i) + d);
+        if(currentChar == ' '){
+            currentChar = '0';
+        }
+        int charIndex = (int)currentChar;
+
+        if (charIndex >= '0' && charIndex <= '9') {
+           // printf(" i : %d = %s\n",i, *(set->matrix + i));
+            count[charIndex - '0' + 2]++;
+        } else if (charIndex >= 'a' && charIndex <= 'z') {
+            count[charIndex - 'a' + 10 + 2]++;
+        } else if (charIndex >= 'A' && charIndex <= 'Z') {
+            count[charIndex - 'A' + 36 + 2]++;
+        }
+    }
+
+    for (int r = 0; r < RADIX + 1; ++r) {
+        count[r + 1] += count[r];
+    }
+
+    /* Insert words into aux array in right order */
+    for (int i = lo; i <= hi; ++i) {
+        char currentChar = *(*(set->matrix + i) + d);
+
+        if(currentChar == ' '){
+            currentChar = '0';
+        }
+
+        int charIndex = (int)currentChar;
+
+        if (charIndex >= '0' && charIndex <= '9') {
+            aux[count[(charIndex - '0') + 1]++] = *(set->matrix + i);
+        } else if (charIndex >= 'a' && charIndex <= 'z') {
+            aux[count[(charIndex - 'a' + 10) + 1]++] = *(set->matrix + i);
+        } else if (charIndex >= 'A' && charIndex <= 'Z') {
+            aux[count[(charIndex - 'A' + 36) + 1]++] = *(set->matrix + i);
+        }
+    }
+    /* Copy values */
+    for (int i = lo; i <= hi; ++i) {
+        *(set->matrix + i) = aux[i - lo];
+    }
+
+    for (int r = 0; r < RADIX; ++r) {
+        int low = lo + count[r];
+        int high = lo + count[r + 1] - 1;
+
+        if (high > low + 1) {
+            msdRadixSort_r(set, aux, low, high, d + 1);
+        }
+    }
+}
+
+int msdRadixSort(SETS *set, int lo, int hi) {
+    char **aux = (char **)malloc((hi - lo + 1) * sizeof(char *));
+    if (aux == NULL) {
+        fperror("AUX in msdRadixSort Memory allocation\n");
+        return -1;
+    }
+
+    msdRadixSort_r(set, aux, lo, hi - 1, 0);
+    free(aux);
+    /* After sorting change array word sizes with current sizes */
+    FillArray_Word_Size(set);
+}
+
+void FillArray_Word_Size(SETS *set) {
+    for (int i = 0; i < set->rowsize; ++i) {
+        set->arr_word_size[i] =(int) strlen(set->matrix[i]);
+    }
 }

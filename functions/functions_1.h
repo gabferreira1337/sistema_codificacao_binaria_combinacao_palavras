@@ -80,6 +80,19 @@ void print_matrix_int(SETS set);
  *
  */
 void insert_word_char(SETS *set,int start_row,  int number_words);
+/** remove the a word from the matrix
+ * @params
+ *
+ */
+
+void remove_word_matrix(SETS *set, int row);
+/** remove the a word from the matrix
+ * @params
+ *
+ */
+
+void remove_word_matrix(SETS *set, int row);
+
 /**  insert word into matrix short
  * @params
  *
@@ -91,6 +104,11 @@ void insert_word_short(SETS *set, int start_row , int number_words);
  *
  */
 void matrix_realloc(SETS *set);
+/** free memory allocated
+ * @params
+ *
+ */
+void FillArray_Word_Size(SETS *set);
 
 /** Realloc mem on encode when we insert a new word
  * @params
@@ -117,7 +135,12 @@ void print_matrix_char(SETS set);
  *
  */
 void freemem(SETS *set);
-
+/** msdRadixSort
+ * @params
+ *
+ */
+int msdRadixSort(SETS *set, int lo, int hi);
+void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d);
 int fperror(char *message);
 
 int main_functions_1(int argc , char **argv);

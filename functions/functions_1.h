@@ -104,6 +104,11 @@ void insert_word_short(SETS *set, int start_row , int number_words);
  *
  */
 void matrix_realloc(SETS *set);
+/** free memory allocated
+ * @params
+ *
+ */
+void FillArray_Word_Size(SETS *set);
 
 /** Realloc mem on encode when we insert a new word
  * @params
@@ -134,7 +139,7 @@ void freemem(SETS *set);
  * @params
  *
  */
-void msdRadixSort(SETS *set, int lo, int hi);
+int msdRadixSort(SETS *set, int lo, int hi);
 void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d);
 int fperror(char *message);
 

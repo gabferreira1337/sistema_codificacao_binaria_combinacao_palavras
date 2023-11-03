@@ -62,7 +62,8 @@ int main_functions_1(int argc , char **argv){
     fprintf(stdout, "%f secs\n", time_delta);
 
     /* Insert word */
-    //insert_word_char(&set1, set1.rowsize, 5);
+    insert_word_char(&set1, set1.rowsize, 2);
+    encode(&set1);
 
     /* Print both sets  */
     puts("SET 1");
@@ -221,8 +222,6 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
     /* Start_row always max num of lines */
     set->rowsize += number_words;
     /* Realloc mem for both matrix */
-    matrix_realloc(set);
-    matrix_encode_realloc(set);
 
     char word[BITS + 1] = " ";
     for (int i = start_row; i < set->rowsize; ++i) {
@@ -246,6 +245,7 @@ void insert_word_char(SETS *set,int start_row, int number_words) {
                 *(*(set->matrix + i) + j) = ' ';
         }
     }
+
 
 }
 
@@ -355,4 +355,158 @@ void matrix_encode_realloc(SETS *set) {
 int fperror(char *message) {
     fprintf(stderr, "ERROR: %s", message);
     exit(0);
+}
+
+void remove_word_matrix(SETS *set, int row){
+
+}
+
+
+void insertionSort(char** arr, int low, int high, int d) {
+    for (int i = low + 1; i <= high; i++) {
+        for (int j = i; j > low && strcmp(arr[j], arr[j - 1]) < 0; j--) {
+            char* temp = arr[j];
+            arr[j] = arr[j - 1];
+            arr[j - 1] = temp;
+        }
+    }
+}
+
+
+
+/*void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d) {
+
+    if (hi <= lo) return;
+
+    int count[RADIX + 2] = {0};
+
+    for (int i = lo; i <= hi; i++) {
+        printf("char %c\n",(*(*set->matrix + i ) + d));
+        if ((*(*set->matrix + i ) + d) >= '0' && *(*(set->matrix + i ) + d) <= '9') {
+            count[*(*(set->matrix + i) + d) - '0' + 2]++;
+        }
+
+        if (*(*(set->matrix + i) +d) >= 'a' && *(*(set->matrix + i) +d)  <= 'z') {
+            count[*(*(set->matrix + i) + d) - 'a' + 10 + 2]++;
+        }
+
+        if (*(*(set->matrix + i) + d) >= 'A' && *(*(set->matrix + i) + d) <= 'Z') {
+            count[*(*(set->matrix + i) + d) - 'A' + 36 + 2]++;
+        }
+    }
+
+
+    /* insert words into aux array */
+    /*for (int r = 0; r < RADIX + 1; ++r) {
+        count[r + 1] += count[r];
+    }
+
+    /* insert words into aux array */
+   /* for (int i = lo; i <= hi; ++i) {
+        printf("char %c\n",(*(*set->matrix + i ) + d));
+        if ((*(*set->matrix + i ) + d) >= '0' && *(*(set->matrix + i ) + d) <= '9') {
+            aux[count[set->matrix[i][d] - '0' +1]++] = set->matrix[i];
+        }
+
+        if (*(*(set->matrix + i) +d) >= 'a' && *(*(set->matrix + i) +d)  <= 'z') {
+
+            aux[count[set->matrix[i][d] - 'a' + 10 +1]++] = set->matrix[i];
+
+        }
+
+        if (*(*(set->matrix + i) + d) >= 'A' && *(*(set->matrix + i) + d) <= 'Z'){
+            aux[count[set->matrix[i][d] - 'A' + 36 + 1]++] = set->matrix[i];
+
+        }
+    }
+
+    /* Copy values */
+   /* for (int i = lo; i <= hi ; ++i) {
+        set->matrix[i] = aux[i - lo];
+    }
+
+    for (int r = 0; r < RADIX; ++r) {
+        msdRadixSort_r(set, aux, lo + count[r], lo + count[r +1] - 1, d + 1);
+    }
+}
+*/
+void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d) {
+    if (hi <= lo) return;
+
+    int count[RADIX + 2] = {0};
+
+    for (int i = lo; i <= hi; i++) {
+        char currentChar = *(*(set->matrix + i)+ d);
+
+        if (currentChar >= '0' && currentChar <= '9') {
+            count[currentChar - '0' + 2]++;
+        }
+
+        if (currentChar >= 'a' && currentChar <= 'z') {
+            count[currentChar - 'a' + 10 + 2]++;
+        }
+
+        if (currentChar >= 'A' && currentChar <= 'Z') {
+            count[currentChar - 'A' + 36 + 2]++;
+        }
+    }
+
+    /* Compute cumulative count */
+    for (int r = 0; r < RADIX + 1; ++r) {
+        count[r + 1] += count[r];
+    }
+
+    /* Insert words into aux array */
+    for (int i = lo; i <= hi; ++i) {
+        char currentChar = *(*(set->matrix + i)+ d);
+        printf("char %c\n", currentChar);
+
+        if (currentChar >= '0' && currentChar <= '9') {
+            aux[count[currentChar - '0' + 1]++] = *(set->matrix + i);
+        }
+
+        if (currentChar >= 'a' && currentChar <= 'z') {
+            aux[count[currentChar - 'a' + 10 + 1]++] = *(set->matrix + i);
+            //printf("%d \n", count[currentChar - 'a' + 10 + 1]);
+        }
+
+        if (currentChar >= 'A' && currentChar <= 'Z') {
+            aux[count[currentChar - 'A' + 36 + 1]++] = *(set->matrix + i);
+        }
+    }
+       int *originalSizes = (int *)malloc((hi - lo + 1) * sizeof(int));
+       memcpy(originalSizes, set->arr_word_size + lo, (hi - lo + 1) * sizeof(int));
+
+
+       /* Copy values */
+    for (int i = lo; i <= hi; ++i) {
+        *(set->matrix + i) = aux[i - lo];
+        //set->arr_word_size[i] = originalSizes[i - lo];
+    }
+
+    for (int i = lo; i <=hi ; ++i) {
+        set->arr_word_size[i] = (int) strlen(set->matrix[i]);
+    }
+
+
+    free(originalSizes);
+
+    /* Recursive calls for each character position */
+    for (int r = 0; r < RADIX; ++r) {
+        msdRadixSort_r(set, aux, lo + count[r], lo + count[r + 1] - 1, d + 1);
+    }
+}
+
+
+void msdRadixSort(SETS *set, int lo, int hi) {
+
+    char **aux = (char **)malloc((hi - lo + 1) * sizeof(char *));
+    if (!aux) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    msdRadixSort_r(set, aux, 0, set->rowsize - 1 ,0);
+
+    free(aux);
 }

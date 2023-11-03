@@ -338,14 +338,15 @@ void matrix_encode_realloc(SETS *set) {
     }
         //allocate for words_size
         for (int i = 0; i < set->rowsize; ++i) {
-            *(set->matrix_encode + i) = (int *) realloc(*(set->matrix_encode + i), *(set->arr_word_size + i) * BITS *
-                    sizeof(int));
+            *(set->matrix_encode + i) = (int *) realloc(*(set->matrix_encode + i), *(set->arr_word_size + i) * BITS * sizeof(int));
+
             if (*(set->matrix_encode + i) == NULL) {
                 printf("Matrix encode realloc\n");
                 freemem(set);
                 exit(0);
             }
         }
+
 }
 /*void char_to_bin(SETS *set) {
     for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {

@@ -1,6 +1,10 @@
 #ifndef PROJETO_AED1_LP1_FUNCTIONS_1_H
 #define PROJETO_AED1_LP1_FUNCTIONS_1_H
 
+#include <stdbool.h>
+
+#define BITS 7
+
 /**
  * sets struct
  */
@@ -8,11 +12,10 @@ typedef struct{
 
     char **matrix;
     int **matrix_encode;
-    int *arr_word_size;
+    int *arr_word_size;         /// size of cols from each row
+    int *arr_bits_size;
     int rowsize;
-    int colsize_char;
     int colsize_encode;
-
 
 }SETS;
 
@@ -39,13 +42,13 @@ void char_to_bin(SETS *set);
  * @params length - word length
  * @return  word generated
  */
-char gen_rnd_char(int length);
+char gen_rnd_char();
 
 /** Initialize matrix with random words generated
  * @params length - word length
  * @return  word generated
  */
-char **matrix_rnd_char_gen(SETS *set,int word_length);
+void matrix_rnd_char_gen(SETS *set);
 
 /**  initialize matrix of ints to 0
  * @params
@@ -60,7 +63,7 @@ int **matrix_init_int(int row ,int col);
  * @params
  *
  */
-char **matrix_init_char(int row ,int col);
+char **matrix_init_char(int row ,int *size_cols);
 
 /**  initialize the array that contains sizes of words
  * @params
@@ -74,6 +77,11 @@ void init_arr_word_size(SETS *set);
  *
  */
 void print_matrix_int(SETS set);
+/**  random word size generator
+ * @params
+ *
+ */
+void rnd_word_size_gen(int *arr, int W);
 
 /**  insert word into matrix char
  * @params
@@ -130,18 +138,40 @@ void print_arr_word_size(SETS set);
  */
 void print_matrix_char(SETS set);
 
+int *arr_bits_size(int *arr, int N);
+
 /** free memory allocated
  * @params
  *
  */
 void freemem(SETS *set);
 /** msdRadixSort
- * @params
+ * @param set -
+ * @param lo -
+ * @param hi -
+ * @param flag - flag can only hold
  *
  */
-int msdRadixSort(SETS *set, int lo, int hi);
-void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d);
+int msdRadixSort(SETS *set, int lo, int hi, bool flag);
+void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d, bool flag);
+void reverseArray(char **arr, int start, int end);
+/** Create a dictionary of binary conversions of our ASCII table
+* @params
+*
+*/
+void binary_dictionary(int bin_dict[62][BITS + 1], int N,int *size_bin);
+void print_binary_dictionary(int bin_dict[62][BITS + 1], int *size_bin);
+/** Pre process all ASCII conversions
+* @params
+*
+*/
+void encode_matrix_words(SETS *set, int sizes_bin[],int bin_dict[62][BITS + 1]);
+void charToBinary(int c, int *result, int *size_bin);
 int fperror(char *message);
+void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS + 1]);
+void print_array(int *arr, int N);
+
+int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
 int main_functions_1(int argc , char **argv);
 

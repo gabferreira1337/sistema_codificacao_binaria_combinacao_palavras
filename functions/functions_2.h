@@ -7,9 +7,12 @@
  * sets struct
  */
 typedef struct{
-    char **matrix;
-    int **matrix_encode;
-    int *arr_word_size;
+    char **matrix1;
+    char **matrix2;
+    int **matrix_encode1;
+    int **matrix_encode2;
+    int *arr_word_size1;
+    int *arr_word_size2;
     int rowsize;
     int colsize_char;
     int colsize_encode;
@@ -19,7 +22,7 @@ typedef struct{
 
 typedef struct{
     WORDS_HOLDER words_holder;
-    time_t last_update;
+    char *last_update_date;
 
 }VAL_AD_WORDS_HOLDER;
 
@@ -42,7 +45,26 @@ AD_WORDS_HOLDER* dynamic_array_init(int size);
  */
 
 void dynamic_array_realloc(AD_WORDS_HOLDER *arr);
+/**
+ * sets struct
+ */
 
+void create_dynamic_array(AD_WORDS_HOLDER *arr);
+/**
+ * sets struct
+ */
+
+void init_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_holder);
+/**
+ * sets struct
+ */
+
+char *get_current_date();
+
+
+/**
+ * sets struct
+ */
 
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
 

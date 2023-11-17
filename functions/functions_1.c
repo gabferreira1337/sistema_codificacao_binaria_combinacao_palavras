@@ -114,7 +114,6 @@ int main_functions_1(int argc , char **argv){
    // print_kmp(dfa);
 
 
-
     /* Print both sets  */
     puts("SET 1");
     print_matrix_char(&set1);
@@ -123,7 +122,8 @@ int main_functions_1(int argc , char **argv){
    /* puts("SET 2");
     print_matrix_char(set2);
     puts("SET 2 ENCODE");
-    print_matrix_int(set2);
+    print_matrix_int(set2);*/
+
 
     /* Sort Both arrays in descending order*/
    /* msdRadixSort(&set1, 0, set1.rowsize,0);
@@ -152,7 +152,6 @@ int main_functions_1(int argc , char **argv){
    /* Print array word size */
     //print_arr_word_size(&set1);
     //print_array(set1.arr_bits_size, set1.rowsize);
-
    // write_matrix_char_txt(set1.matrix, set1.rowsize, set1.arr_word_size, "sets_test.txt");
 
     /* free memory  */
@@ -218,6 +217,7 @@ char **matrix_init_char(int row ,int *size_cols){
     return mat;
 }
 
+
 void print_matrix_int(const SETS *set) {
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < *(set->arr_bits_size + i); ++j) {
@@ -226,6 +226,7 @@ void print_matrix_int(const SETS *set) {
         putchar('\n');
     }
 }
+
 
 //Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
@@ -421,12 +422,14 @@ void matrix_encode_realloc(SETS *set) {
         for (int i = 0; i < set->rowsize; ++i) {
             *(set->matrix_encode + i) = (int *) realloc(*(set->matrix_encode + i), *(set->arr_word_size + i) * BITS *
                     sizeof(int));
+          
             if (*(set->matrix_encode + i) == NULL) {
                 printf("Matrix encode realloc\n");
                 freemem(set);
                 exit(0);
             }
         }
+
 }
 /*void char_to_bin(SETS *set) {
     for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {
@@ -468,6 +471,7 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
+
         if (currentChar == ' '){
             currentChar = '0';
         }
@@ -880,3 +884,4 @@ void realloc_row_add(SETS *set, int row) {
         }
     }
 }
+

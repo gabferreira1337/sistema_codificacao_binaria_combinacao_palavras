@@ -1,6 +1,12 @@
 #ifndef PROJETO_AED1_LP1_FUNCTIONS_1_H
 #define PROJETO_AED1_LP1_FUNCTIONS_1_H
 
+#include <stdbool.h>
+
+#define BITS 7
+#define MAX_UFP6 63
+#define M_KMP 8
+
 /**
  * sets struct
  */
@@ -8,11 +14,10 @@ typedef struct{
 
     char **matrix;
     int **matrix_encode;
-    int *arr_word_size;
+    int *arr_word_size;         /// size of cols from each row
+    int *arr_bits_size;
     int rowsize;
-    int colsize_char;
     int colsize_encode;
-
 
 }SETS;
 
@@ -39,13 +44,13 @@ void char_to_bin(SETS *set);
  * @params length - word length
  * @return  word generated
  */
-char gen_rnd_char(int length);
+char gen_rnd_char();
 
 /** Initialize matrix with random words generated
  * @params length - word length
  * @return  word generated
  */
-char **matrix_rnd_char_gen(SETS *set,int word_length);
+void matrix_rnd_char_gen(SETS *set);
 
 /**  initialize matrix of ints to 0
  * @params
@@ -60,7 +65,7 @@ int **matrix_init_int(int row ,int col);
  * @params
  *
  */
-char **matrix_init_char(int row ,int col);
+char **matrix_init_char(int row ,int *size_cols);
 
 /**  initialize the array that contains sizes of words
  * @params
@@ -73,7 +78,12 @@ void init_arr_word_size(SETS *set);
  * @params
  *
  */
-void print_matrix_int(SETS set);
+void print_matrix_int(const SETS *set);
+/**  random word size generator
+ * @params
+ *
+ */
+void rnd_word_size_gen(int *arr, int W);
 
 /**  insert word into matrix char
  * @params
@@ -122,13 +132,15 @@ void matrix_encode_realloc(SETS *set);
  *
  */
 
-void print_arr_word_size(SETS set);
+void print_arr_word_size(const SETS *set);
 
 /** print matrix
  * @params
  *
  */
-void print_matrix_char(SETS set);
+void print_matrix_char(const SETS *set);
+
+int *arr_bits_size(int *arr, int N);
 
 /** free memory allocated
  * @params
@@ -136,13 +148,58 @@ void print_matrix_char(SETS set);
  */
 void freemem(SETS *set);
 /** msdRadixSort
- * @params
- *
+ * @param set -
+ * @param lo -
+ * @param hi -
+ * @param flag - flag can only hold
+ * @return
  */
-int msdRadixSort(SETS *set, int lo, int hi);
-void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d);
+int msdRadixSort(SETS *set, int lo, int hi, bool flag);
+void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d, bool flag);
+void reverseArray(char **arr, int start, int end);
+/** Create a dictionary of binary conversions of our ASCII table
+* @params
+*
+*/
+void binary_dictionary(int bin_dict[62][BITS + 1], int N,int *size_bin);
+void print_binary_dictionary(int bin_dict[62][BITS + 1], int *size_bin);
+/** Pre process all ASCII conversions
+* @params
+*
+*/
+void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS + 1]);
+
+void charToBinary(int c, int *result, int *size_bin);
+
 int fperror(char *message);
 
+void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS + 1]);
+
+void print_array(int *arr, int N);
+
+void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w);
+
+int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
+
+void  KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
+
+int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
+
+void print_kmp(int dfa[MAX_UFP6][M_KMP]);
+
+void print_KMP_BinMatches(SETS *set, int *array_index);
+
+int *find_Word(SETS *set, int word_size, int *array_found_words_index);
+
+void remove_Word(SETS *set, int *arr_words);
+
+void realloc_row_delete(SETS *set, int row);
+
+void realloc_row_add(SETS *set, int row);
+
+int calculate_index_char(char currentChar);
+
 int main_functions_1(int argc , char **argv);
+
 
 #endif //PROJETO_AED1_LP1_FUNCTIONS_1_H

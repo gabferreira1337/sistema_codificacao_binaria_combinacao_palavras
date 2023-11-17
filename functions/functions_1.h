@@ -170,8 +170,11 @@ void print_binary_dictionary(int bin_dict[62][BITS + 1], int *size_bin);
 void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS + 1]);
 
 void charToBinary(int c, int *result, int *size_bin);
+
 int fperror(char *message);
+
 void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS + 1]);
+
 void print_array(int *arr, int N);
 
 void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w);

@@ -4,6 +4,8 @@
 #include <stdbool.h>
 
 #define BITS 7
+#define MAX_UFP6 63
+#define M_KMP 8
 
 /**
  * sets struct
@@ -76,7 +78,7 @@ void init_arr_word_size(SETS *set);
  * @params
  *
  */
-void print_matrix_int(SETS set);
+void print_matrix_int(const SETS *set);
 /**  random word size generator
  * @params
  *
@@ -130,13 +132,13 @@ void matrix_encode_realloc(SETS *set);
  *
  */
 
-void print_arr_word_size(SETS set);
+void print_arr_word_size(const SETS *set);
 
 /** print matrix
  * @params
  *
  */
-void print_matrix_char(SETS set);
+void print_matrix_char(const SETS *set);
 
 int *arr_bits_size(int *arr, int N);
 
@@ -150,7 +152,7 @@ void freemem(SETS *set);
  * @param lo -
  * @param hi -
  * @param flag - flag can only hold
- *
+ * @return
  */
 int msdRadixSort(SETS *set, int lo, int hi, bool flag);
 void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d, bool flag);
@@ -165,14 +167,36 @@ void print_binary_dictionary(int bin_dict[62][BITS + 1], int *size_bin);
 * @params
 *
 */
-void encode_matrix_words(SETS *set, int sizes_bin[],int bin_dict[62][BITS + 1]);
+void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS + 1]);
+
 void charToBinary(int c, int *result, int *size_bin);
 int fperror(char *message);
 void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS + 1]);
 void print_array(int *arr, int N);
 
+void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w);
+
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
+void  KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
+
+int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
+
+void print_kmp(int dfa[MAX_UFP6][M_KMP]);
+
+void print_KMP_BinMatches(SETS *set, int *array_index);
+
+int *find_Word(SETS *set, int word_size, int *array_found_words_index);
+
+void remove_Word(SETS *set, int *arr_words);
+
+void realloc_row_delete(SETS *set, int row);
+
+void realloc_row_add(SETS *set, int row);
+
+int calculate_index_char(char currentChar);
+
 int main_functions_1(int argc , char **argv);
+
 
 #endif //PROJETO_AED1_LP1_FUNCTIONS_1_H

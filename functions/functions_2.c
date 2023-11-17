@@ -15,14 +15,11 @@ int main_functions_2(int argc, char **argv) {
     AD_WORDS_HOLDER *arr;
     arr = dynamic_array_init(N);
 
+    strcpy(arr->array_val[0].last_update_date, get_current_date());
+
+    printf("date: %s\n",arr->array_val[0].last_update_date);
 
 
-    strcpy(arr[0].array_val->last_update_date, get_current_date());
-
-    printf("date: %s\n",arr[0].array_val->last_update_date);
-
-
-    free(arr[0].array_val->last_update_date);
 
     free_dynamic_array(arr);
     return 0;
@@ -39,19 +36,12 @@ AD_WORDS_HOLDER* dynamic_array_init(int size) {
     arr->count = 0;
     arr->array_val = malloc(sizeof(VAL_AD_WORDS_HOLDER) * size);
 
-    if(arr->array_val == NULL) {
-        fperror("Dynamic array malloc 2");
-    }
-
-
     for (int i = 0; i < size; ++i) {
-        arr->array_val->last_update_date = malloc(sizeof(char) * 20);
+        arr->array_val->last_update_date = malloc(sizeof(char) * 9);
         if(arr == NULL) {
-            fperror("Dynamic array malloc 1");
+            fperror("Dynamic array last_update_date_malloc ");
         }
     }
-
-
 
     return arr;
 }
@@ -78,5 +68,11 @@ char *get_current_date() {
     char *date_str = malloc(sizeof(char) * 20); // Adjust the size as needed
     strftime(date_str, 14, "%d/%m/%y", timeinfo);
     return date_str;
+}
+
+void insert_element_to_ad(VAL_AD_WORDS_HOLDER val_holder, AD_WORDS_HOLDER *ad_holder) {
+    ad_holder->array_val[ad_holder->count] = val_holder;
+
+
 }
 

@@ -34,7 +34,6 @@ typedef struct{
 }AD_WORDS_HOLDER;
 
 
-
 /**
  * sets struct
  */
@@ -55,17 +54,17 @@ void create_dynamic_array(AD_WORDS_HOLDER *arr);
  */
 
 void init_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_holder);
+
+void insert_element_to_ad(VAL_AD_WORDS_HOLDER val_holder, AD_WORDS_HOLDER *ad_holder);
 /**
  * sets struct
  */
 
 char *get_current_date();
 
-
 /**
  * sets struct
  */
-
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
 
 

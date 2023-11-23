@@ -9,8 +9,7 @@
 #include <fcntl.h>
 #include "functions_1.h"
 
-
-
+#define M_KMP 8
 #define R 5
 #define C 5
 #define WORD_LENGTH 5
@@ -21,7 +20,7 @@
 gettimeofday(&tv2, NULL);    \
 timersub(&tv2, &tv1, &tv);   \
 time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
-#define M_KMP 8
+
 
 
 
@@ -32,15 +31,8 @@ int main_functions_1(int argc , char **argv){
     /*
      * Initialize set1  *
                         */
-    SETS set1;
-    set1.rowsize = R;
-    set1.colsize_encode =C * BITS;
-    init_arr_word_size(&set1);
-    rnd_word_size_gen(set1.arr_word_size, set1.rowsize);
-    set1.matrix_encode = matrix_init_int(set1.rowsize,C);
-    set1.matrix = matrix_init_char(set1.rowsize,set1.arr_word_size);
-   // set1.arr_bits_size = arr_bits_size(set1.arr_bits_size, set1.rowsize);
-    set1.arr_bits_size = calloc(set1.rowsize, sizeof(int));
+   SETS set1;
+   sets_struct_init(&set1, R);
 
     /*
     * Initialize set2  *
@@ -66,17 +58,18 @@ int main_functions_1(int argc , char **argv){
     // encode(&set2);
 
    /* ENCODE V2 */
-    int dic[MAX_UFP6][BITS + 1];
+
+    int dic[MAX_UFP6][BITS];
     int sizes[MAX_UFP6];
 
-    binary_dictionary(dic, 3, sizes);
+    binary_dictionary(dic, sizes);
     // print_binary_dictionary(dic, sizes);
     //encode_matrix_words(&set1, sizes, dic);
 
     /* 3)*/
 
     /* Insert word */
-      insert_word_char(&set1, set1.rowsize, 2);
+      insert_word_char(&set1, set1.rowsize, 3);
       encode_matrix_words(&set1, sizes, dic);
 
     /* Remove word */
@@ -85,23 +78,24 @@ int main_functions_1(int argc , char **argv){
     int *index_words_found = calloc(set1.rowsize, sizeof(int));
     KMP(pattern,dfa);
     index_words_found =  search_KMP(&set1, dfa, strlen(pattern));
+  
+    const char *arr_words[100] = {"ola", "olas"};
+    int *arr_words_found = malloc(sizeof(int) * index_words_found[0]);
 
-    int *arr_words = malloc(sizeof(int) * index_words_found[0]);
-
-    arr_words = find_Word(&set1, strlen(pattern), index_words_found);
+    arr_words_found = find_Word(&set1, arr_words, index_words_found, 2);
 
     //start in 1 because pos 0 is storing size of array;
-    for (int i = 1; i < arr_words[0]; ++i) {
-        printf("%d\n", arr_words[i]);
+    for (int i = 1; i < arr_words_found[0]; ++i) {
+        printf("%d\n", arr_words_found[i]);
     }
-    remove_Word(&set1, arr_words);
+    print_matrix_int(&set1);
+    remove_Word(&set1, arr_words_found);
 
     encode_matrix_words(&set1,sizes,dic);
 
-    free(arr_words);
+    free(arr_words_found);
 
     /* 5) */
-
    /* char pattern[BITS + 1] = "ola";
     int dfa[MAX_UFP6][MAX_UFP6];
     int *index_words_found = calloc(set1.rowsize, sizeof(int));
@@ -113,7 +107,6 @@ int main_functions_1(int argc , char **argv){
 
    // print_kmp(dfa);
 
-
     /* Print both sets  */
     puts("SET 1");
     print_matrix_char(&set1);
@@ -123,7 +116,6 @@ int main_functions_1(int argc , char **argv){
     print_matrix_char(set2);
     puts("SET 2 ENCODE");
     print_matrix_int(set2);*/
-
 
     /* Sort Both arrays in descending order*/
    /* msdRadixSort(&set1, 0, set1.rowsize,0);
@@ -287,7 +279,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
 }
 
 
-
 char gen_rnd_char(){
     int random_number;
     /* Generate random number between 'a' and 'z' */
@@ -422,14 +413,12 @@ void matrix_encode_realloc(SETS *set) {
         for (int i = 0; i < set->rowsize; ++i) {
             *(set->matrix_encode + i) = (int *) realloc(*(set->matrix_encode + i), *(set->arr_word_size + i) * BITS *
                     sizeof(int));
-          
             if (*(set->matrix_encode + i) == NULL) {
                 printf("Matrix encode realloc\n");
                 freemem(set);
                 exit(0);
             }
         }
-
 }
 /*void char_to_bin(SETS *set) {
     for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {
@@ -471,7 +460,7 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
-
+      
         if (currentChar == ' '){
             currentChar = '0';
         }
@@ -557,7 +546,7 @@ void FillArray_Word_Size(SETS *set) {
     }
 }
 
-void binary_dictionary( int bin_d[62][8], int N , int *sizes_bin) {
+void binary_dictionary( int bin_d[RADIX][BITS], int *sizes_bin) {
     int index = 0;
 
     // Convert '0' to '9' to binary
@@ -566,7 +555,7 @@ void binary_dictionary( int bin_d[62][8], int N , int *sizes_bin) {
         if(digit - '0' == 0 || digit - '0' == 1){
             sizes_bin[index] = 1;
         }else{
-            sizes_bin[index] =(int) log2((digit- '0') ) + 1;
+            sizes_bin[index] =(int) log2((digit - '0') ) + 1;
         }
         index++;
     }
@@ -604,7 +593,7 @@ void charToBinary(int c, int *result, int *size_bin) {
     }
 }
 
-void print_binary_dictionary(int (*bin_d)[8], int *size_bin) {
+void print_binary_dictionary(int (*bin_d)[BITS], int *size_bin) {
     for (int i = 0; i < 62; i++) {
         if( i < 10){
             printf("Binary for %c: ",  ('0' + i) );
@@ -622,7 +611,7 @@ void print_binary_dictionary(int (*bin_d)[8], int *size_bin) {
 }
 
 
-void encode_word(char* word, int *encoded,int *word_bits_size,int k, int sizes_bin[],int bin_dict[RADIX][BITS + 1]) {
+void encode_word(char* word, int *encoded,int *word_bits_size,int k, int sizes_bin[],int bin_dict[RADIX][BITS]) {
     int index = 0;
     int len =(int) strlen(word);
 
@@ -652,10 +641,10 @@ void encode_word(char* word, int *encoded,int *word_bits_size,int k, int sizes_b
 }
 
 
-void encode_matrix_words(SETS *set, int *sizes_bin_dict, int (*bin_dict)[8]) {
+void encode_matrix_words(SETS *set, int *sizes_bin_dict, int (*bin_dict)[BITS]) {
 
     for (int i = 0; i < set->rowsize; ++i) {
-        set->arr_bits_size[i] = 0;
+        set->arr_bits_size[i] = 0; //clear previous val
         encode_word(set->matrix[i], set->matrix_encode[i],set->arr_bits_size,i, sizes_bin_dict, bin_dict);
     }
 }
@@ -785,7 +774,6 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size){
     arr_index[0] = -1;
 
     int l = 1;
-
     for (int k = 0; k < set->rowsize; ++k) {
         for (i = 0, j = 0; i < strlen(*(set->matrix + k)) && j < word_size ; ++i) {
             indexChar = calculate_index_char(*(*(set->matrix + k ) + i));
@@ -826,37 +814,42 @@ void print_KMP_BinMatches(SETS *set, int *array_index) {
     }
 }
 
-//
-//
-int *find_Word(SETS *set, int word_size, int *array_found_words_index) {
-    // Search for words with the exact size of the pattern
-    int *array_index = (int*) malloc(sizeof(int) * *(array_found_words_index));
+int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W) {
+    if (W == 0) {
+        exit(0);
+    }
 
-    int k = 1;
-    for (int i = 1; i < *array_found_words_index; ++i) {
-        //If it is equal it means we have a perfect word
-        if(word_size == *(set->arr_word_size + *(array_found_words_index + i))){
-            *(array_index + k++) = *(array_found_words_index + i);
+    // Search for words with the exact size of the pattern ex: ola has size 3 and the words we found can be ola , olas etc
+    int *array_index = (int *) malloc(sizeof(int) * *(array_found_words_index));
+
+    int k = 0;
+    for (int i = 0; i <W; ++i) {
+        for (int j = 1; j < *array_found_words_index; ++j) {
+            //If size it's equal we found the word
+            if ((int) strlen(*(words + i)) == *(set->arr_word_size + *(array_found_words_index + j))) {
+                *(array_index + k++) = *(array_found_words_index + j);
+            }
         }
     }
-    // Store size in index 0
+    // Store count of words in index 0
     *(array_index) = k;
 
     return array_index;
 }
 
 void remove_Word(SETS *set, int *arr_words) {
-
-    for (int i = *(arr_words + 1); i < set->rowsize - 1; ++i) {
-        realloc_row_add(set, i);
-
-        set->arr_word_size[i] = set->arr_word_size[i + 1];
-        set->arr_bits_size[i] = set->arr_bits_size[i + 1];
-
-        strcpy(set->matrix[i], set->matrix[i + 1]);
+    for (int i = 0; i < *(arr_words); ++i) {
+        printf("arr_words size: %d\n", set->rowsize );
+        for (int j = *(arr_words + 1); j < set->rowsize - 1; ++j) {
+            realloc_row_add(set, i);
+            //copy values from prev to current
+            *(set->arr_word_size + j) = *(set->arr_word_size + j + 1);
+            *(set->arr_bits_size + j) = *(set->arr_bits_size + j + 1);
+            strcpy(set->matrix[j], set->matrix[j + 1]);
+        }
     }
-    set->rowsize--;
-
+    // update number of words stored in matrix
+    set->rowsize-= *(arr_words);
     set->arr_bits_size =  realloc(set->arr_bits_size, sizeof(int) * set->rowsize);
 
     if(set->arr_bits_size == NULL){
@@ -864,7 +857,6 @@ void remove_Word(SETS *set, int *arr_words) {
         exit(0);
     }
 }
-
 
 /*void realloc_row_delete(SETS *set,int row) {
 
@@ -876,8 +868,6 @@ void remove_Word(SETS *set, int *arr_words) {
 void realloc_row_add(SETS *set, int row) {
     if(set->arr_word_size[row] < set->arr_word_size[row + 1] ){
         set->matrix[row] =  realloc(set->matrix[row], sizeof(char) * set->arr_word_size[row + 1]);
-
-
         if(set->matrix[row] == NULL){
             printf("ERROR REALLOC\n");
             exit(0);
@@ -885,3 +875,20 @@ void realloc_row_add(SETS *set, int row) {
     }
 }
 
+
+void compute_words_size(const char **words, int *words_index ,int W) {
+    for (int i = 0; i < W; ++i) {
+        words_index[i] = (int) strlen(words[i]);
+    }
+}
+
+void sets_struct_init(SETS *set, int num_words) {
+    set->rowsize = num_words;
+    set->colsize_encode =C * BITS;
+    init_arr_word_size(set);
+    rnd_word_size_gen(set->arr_word_size, set->rowsize);
+    set->matrix_encode = matrix_init_int(set->rowsize,C);
+    set->matrix = matrix_init_char(set->rowsize,set->arr_word_size);
+    // set1.arr_bits_size = arr_bits_size(set1.arr_bits_size, set1.rowsize);
+    set->arr_bits_size = (int*) calloc(set->rowsize, sizeof(int));
+}

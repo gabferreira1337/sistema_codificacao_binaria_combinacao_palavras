@@ -7,6 +7,7 @@
 #define MAX_UFP6 63
 #define M_KMP 8
 
+
 /**
  * sets struct
  */
@@ -21,8 +22,7 @@ typedef struct{
 
 }SETS;
 
-
-
+void sets_struct_init(SETS *set, int number_words);
 /**  encode a matrix of strings to UFP6 (binary)
  * @params
  *
@@ -155,25 +155,28 @@ void freemem(SETS *set);
  * @return
  */
 int msdRadixSort(SETS *set, int lo, int hi, bool flag);
+// small columns ///
 void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d, bool flag);
 void reverseArray(char **arr, int start, int end);
 /** Create a dictionary of binary conversions of our ASCII table
 * @params
 *
 */
-void binary_dictionary(int bin_dict[62][BITS + 1], int N,int *size_bin);
-void print_binary_dictionary(int bin_dict[62][BITS + 1], int *size_bin);
+
+void binary_dictionary(int bin_dict[62][BITS],int *size_bin);
+void print_binary_dictionary(int bin_dict[62][BITS], int *size_bin);
 /** Pre process all ASCII conversions
 * @params
 *
 */
-void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS + 1]);
+
+void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS]);
 
 void charToBinary(int c, int *result, int *size_bin);
 
 int fperror(char *message);
 
-void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS + 1]);
+void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS]);
 
 void print_array(int *arr, int N);
 
@@ -181,7 +184,7 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
-void  KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
+void KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
 
 int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
 
@@ -189,13 +192,17 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 
 void print_KMP_BinMatches(SETS *set, int *array_index);
 
-int *find_Word(SETS *set, int word_size, int *array_found_words_index);
+
+int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W);
+
 
 void remove_Word(SETS *set, int *arr_words);
 
 void realloc_row_delete(SETS *set, int row);
 
 void realloc_row_add(SETS *set, int row);
+
+void compute_words_size(const char **words,int *words_index, int W);
 
 int calculate_index_char(char currentChar);
 

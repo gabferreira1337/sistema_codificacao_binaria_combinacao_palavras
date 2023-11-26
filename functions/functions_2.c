@@ -2,14 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
-#include <sys/time.h>
 #include <ctype.h>
 #include "functions_2.h"
 #include "functions_1.h"
 
 #define R 5
-#define DATE_SIZE 20
+#define DATE_SIZE 9
 
 #define N 1
 
@@ -26,13 +24,14 @@ int main_functions_2(int argc, char **argv) {
     SETS set2 ;
     sets_struct_init(&set2, R);
 
-    //encode_matrix_words(&set1, sizes, dic);
+    //VAL_AD_WORDS_HOLDER *val_ad_words_holder = NULL;
 
-    insert_element_to_AD(arr_din, set1, set2);
-    insert_element_to_AD(arr_din, set1, set2);
-    /*insert_element_to_AD(arr_din, set1, set2);
-    insert_element_to_AD(arr_din, set1, set2);
-    insert_element_to_AD(arr_din, set1, set2);*/
+   // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
+
+
+    //encode_matrix_words(&set1, sizes, dic);
+    matrix_rnd_char_gen(&set1);
+    matrix_rnd_char_gen(&set2);
 
 
 
@@ -43,26 +42,27 @@ int main_functions_2(int argc, char **argv) {
             "2023-01-15",
             "2022-08-10",
     };
-    char **result = malloc(arr_din->count * sizeof(char *));
 
-    for (int i = 0; i < arr_din->count; i++) {
-        result[i] = malloc(9 * sizeof(char));
-    }
+   // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
+   // insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
 
-    for (int l = 0; l < arr_din->count ; ++l) {
-        result[l ] = arr_din->array_val[l].last_update_date;
-    }
-    for (int i = 0; i < arr_din->count; ++i) {
-        printf("time %s\n", result[i]);
-    }
-    sort(&arr_din->array_val,result, 0, arr_din->count);
+
+
+    encode_matrix_words(&set1, sizes, dic);
+
+    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
+
+   /* insert_element_to_AD_in_order(arr_din, set1, set2,testDates[3]);
+
+    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[0]);*/
+
+    //insert_element_to_index_AD(arr_din, val_ad_words_holder, testDates[0], 0);
+
+
     print_AD(arr_din);
-    for (int i = 0; i < arr_din->count; i++) {
-        free(result[i]);
-    }
 
-    free(result);
     free_dynamic_array(arr_din);
+
     return 0;
 }
 
@@ -90,7 +90,7 @@ AD_WORDS_HOLDER* dynamic_array_init(int size) {
 
 
 void free_dynamic_array(AD_WORDS_HOLDER *arr) {
-    for (int i = 0; i < arr->size; ++i) {
+    for (int i = 0; i < arr->count; ++i) {
         free(arr->array_val[i].last_update_date);
         arr->array_val[i].last_update_date = NULL;
     }
@@ -113,31 +113,38 @@ char *get_current_date() {
     return date_str;
 }
 
-void insert_element_to_AD(AD_WORDS_HOLDER *ad_holder,SETS s1 , SETS s2) {
+void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder, SETS s1, SETS s2, char *last_date) {
     // Double the size when array is full
-    if(ad_holder->count == ad_holder->size){
+    if (ad_holder->count == ad_holder->size) {
         realloc_AD(ad_holder, ad_holder->size * 2);
     }
 
-    ad_holder->array_val[ad_holder->count].words_holder.s1 = s1;
-    ad_holder->array_val[ad_holder->count].words_holder.s2 = s2;
-    ad_holder->array_val[ad_holder->count].last_update_date = malloc(sizeof(char) * DATE_SIZE);
+    int pos = bin_search_insert_pos(ad_holder, last_date);
 
+    for (int i = ad_holder->count; i > pos; i--) {
+        ad_holder->array_val[i] = ad_holder->array_val[i - 1];
+    }
 
-    if(ad_holder->array_val[ad_holder->count].last_update_date == NULL) {
+    ad_holder->array_val[pos].words_holder.s1 = s1;
+    ad_holder->array_val[pos].words_holder.s2 = s2;
+
+    ad_holder->array_val[pos].last_update_date = malloc(sizeof(char) * DATE_SIZE);
+
+    if (ad_holder->array_val[pos].last_update_date == NULL) {
         fperror("Dynamic array last_update_date_malloc ");
     }
 
-    ad_holder->array_val[ad_holder->count].last_update_date = get_current_date();
-    ad_holder->count++;
+    strcpy(ad_holder->array_val[pos].last_update_date, last_date);
 
+    ad_holder->count++;
 }
+
 
 // Double the size when array is full , halve the size when array is one-quarterfull
 void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size) {
     ad_holder->array_val = (VAL_AD_WORDS_HOLDER*) realloc(ad_holder->array_val, size * sizeof(VAL_AD_WORDS_HOLDER));
 
-    if(ad_holder->array_val == NULL){
+    if (ad_holder->array_val == NULL) {
         fperror("Realloc AD");
     }
 
@@ -145,8 +152,9 @@ void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size) {
 }
 
 void print_AD(const AD_WORDS_HOLDER *ad) {
-    printf("count: %d\n", ad->count);
+    printf("size: %d\n", ad->size);
     for (int i = 0; i < ad->count; ++i) {
+        printf("last update date: %s\n", ad->array_val[i].last_update_date);
         puts("SET 1 ");
         puts("Words ");
         print_matrix_char(&((*(ad->array_val + i)).words_holder.s1));
@@ -162,11 +170,8 @@ void print_AD(const AD_WORDS_HOLDER *ad) {
     }
 }
 
-void merge_sort(AD_WORDS_HOLDER ad) {
 
-}
-
-void sort(VAL_AD_WORDS_HOLDER **arr, char **result, int lo, int hi) {
+void sort(VAL_AD_WORDS_HOLDER *arr, char **result, int lo, int hi) {
     if(hi <= lo) return;
 
     /*if(hi < lo + CUTOFF - 1){
@@ -186,31 +191,135 @@ void sort(VAL_AD_WORDS_HOLDER **arr, char **result, int lo, int hi) {
     merge(arr, result, lo, mid, hi);
 }
 
-void merge(VAL_AD_WORDS_HOLDER **arr, char **result, int lo, int mid, int hi) {
+void merge(VAL_AD_WORDS_HOLDER *arr, char **result, int lo, int mid, int hi) {
     int i, j;
+
+    for (int l = lo; l <= hi ; ++l) {
+        memcpy(result[l], arr[l].last_update_date,DATE_SIZE);
+    }
 
     i = lo;
     j = mid + 1;
+    //printf("asalcnççpç%s\n", arr[0].last_update_date);
+    //printf("asalcnççpç1%s\n", arr[1].last_update_date);
 
     for (int k = lo; k <= hi; k++) {
-        printf("lo %d hi = %d k = %d\n", lo, hi, k);
-        if (i > mid) {
-            strcpy(arr[k]->last_update_date, result[j++]);
-        } else if (j > hi) {
-            strcpy(arr[k]->last_update_date, result[i++]);
-        } else if (strcmp(result[j], result[i]) < 0) {
-            //printf("Comparing: %s < %s  %d %d\n", result[j], result[i], strlen(result[j]), strlen(date[k]));
-            strcpy(arr[k]->last_update_date, result[j++]);
-        } else {
-            printf("i %s\n", result[i]);
-            printf("i %s\n", arr[k]->last_update_date);
-            for (int l = 0, m = 0; l < strlen(arr[k]->last_update_date) + 1; ++l, m++) {
-                arr[k]->last_update_date[l] = result[i][m];
+      //  printf("lo %d hi = %d k = %d\n", lo, hi, k);
+
+        if (i > mid && j < hi  ) {
+           // memcpy(arr[k]->last_update_date, result[j++], DATE_SIZE);
+            strcpy(arr[k].last_update_date, result[j++]);
+
+            //printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+        } else if (j > hi && i < mid ) {
+           // memcpy(arr[k]->last_update_date, result[i++], DATE_SIZE);
+            strcpy(arr[k].last_update_date, result[i++]);
+
+           // printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+        } else if (i <= mid && j <= hi) {
+            if (strcmp(result[j], result[i]) < 0) {
+                // memcpy(arr[k]->last_update_date, result[j++], DATE_SIZE);
+                strcpy(arr[k].last_update_date, result[j++]);
+
+                //printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+            } else {
+                //memcpy(arr[k]->last_update_date, result[i++], DATE_SIZE);
+                strcpy(arr[k].last_update_date, result[i++]);
+                //printf("Updated last_update_date: %s\n", arr[k].last_update_date);
             }
-            i++;
-            //strcpy(arr[k]->last_update_date, result[i++]);
+        }
+       // printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+    }
+}
+
+
+int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din, char *date) {
+    int lo = 0;
+    int hi = arr_din->count - 1;
+    int mid;
+
+    while(lo <= hi){
+        mid = lo + (hi - lo) / 2;
+
+        int cmp = strcmp(arr_din->array_val[mid].last_update_date, date);
+
+        if (cmp < 0) {
+            lo = mid + 1;
+        } else if (cmp > 0) {
+            hi = mid - 1;
+        } else {
+            //If elements are equal, insert at the current position
+            return mid;
         }
     }
-
+    // return insert position
+    return lo;
 }
+
+
+/*void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, VAL_AD_WORDS_HOLDER *val_words_holder ,char*last_date, int index) {
+    // Double the size when array is full
+    if (ad_holder->count == ad_holder->size) {
+        realloc_AD(ad_holder, ad_holder->size * 2);
+    }
+
+    for (int i = ad_holder->count; i > index; i--) {
+        ad_holder->array_val[i] = ad_holder->array_val[i - 1];
+    }
+
+    ad_holder->array_val[index] = *val_words_holder;
+
+    ad_holder->array_val[index].last_update_date = malloc(sizeof(char) * DATE_SIZE);
+
+    if (ad_holder->array_val[index].last_update_date == NULL) {
+        fperror("Dynamic array last_update_date_malloc ");
+    }
+
+    strcpy(ad_holder->array_val[index].last_update_date, last_date);
+
+    ad_holder->count++;
+}
+*/
+void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2) {
+    WORDS_HOLDER words_holder;
+    words_holder.s1 = *(set1);
+    words_holder.s2 = *(set2);
+
+    val_ad_words_holder = malloc(sizeof(VAL_AD_WORDS_HOLDER));
+
+    if(val_ad_words_holder == NULL){
+        fperror("val_ad_words_holder malloc in insert_to_VAL_AD_WORDS_HOLDER");
+    }
+
+    val_ad_words_holder->words_holder = words_holder;
+}
+
+void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index) {
+    // Double the size when array is full or when want to insert in index equal to ad size
+    if (ad_holder->count == ad_holder->size) {
+        realloc_AD(ad_holder, ad_holder->size * 2);
+    }else if(index >= ad_holder->size){
+        realloc_AD(ad_holder, index * 2);
+    }
+
+    for (int i = ad_holder->count; i > index; i--) {
+        ad_holder->array_val[i] = ad_holder->array_val[i - 1];
+    }
+
+    ad_holder->array_val[index].words_holder.s1 = *set1;
+    ad_holder->array_val[index].words_holder.s2 = *set2;
+
+    ad_holder->array_val[index].last_update_date = malloc(sizeof(char) * DATE_SIZE);
+
+    if (ad_holder->array_val[index].last_update_date == NULL) {
+        fperror("Dynamic array last_update_date_malloc ");
+    }
+
+    strcpy(ad_holder->array_val[index].last_update_date, last_date);
+
+    ad_holder->count++;
+}
+
+
+
 

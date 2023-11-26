@@ -266,7 +266,10 @@ void encode(SETS *set){
 
 void rnd_word_size_gen(int *word_length_arr, int W) {
     /* seed to generate random numbers */
-    srand((unsigned int)time(NULL));
+    seed_random();
+
+    //srand((unsigned int)time(NULL));
+   // sleep(10);
     for (int i = 0; i < W; ++i) {
         /* Generate numbers from 1 to BITS - 1 // sum + 1 to the result so never generates 0 */
         /* And store in word_length */
@@ -285,7 +288,8 @@ char gen_rnd_char(){
 
 void matrix_rnd_char_gen(SETS *set) {
     /* seed to generate random numbers */
-    srand((unsigned int)time(NULL));
+    seed_random();
+  //  srand((unsigned int)time(NULL));
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             *(*(set->matrix + i) +j) = gen_rnd_char();
@@ -888,4 +892,10 @@ void sets_struct_init(SETS *set, int num_words) {
     set->matrix = matrix_init_char(set->rowsize,set->arr_word_size);
     // set1.arr_bits_size = arr_bits_size(set1.arr_bits_size, set1.rowsize);
     set->arr_bits_size = (int*) calloc(set->rowsize, sizeof(int));
+}
+
+// clock function to measure processor time and use as a seed
+void seed_random() {
+    unsigned  int seed = (unsigned int)time(NULL) + (unsigned  int) clock();
+    srand(seed);
 }

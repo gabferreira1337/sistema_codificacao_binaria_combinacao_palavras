@@ -101,7 +101,6 @@ void remove_word_matrix(SETS *set, int row);
  *
  */
 
-void remove_word_matrix(SETS *set, int row);
 
 /**  insert word into matrix short
  * @params
@@ -199,6 +198,9 @@ void realloc_row_delete(SETS *set, int row);
 void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
+
+void seed_random();
+
 
 int main_functions_1(int argc , char **argv);
 

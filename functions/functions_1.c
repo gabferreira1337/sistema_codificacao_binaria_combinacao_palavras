@@ -58,7 +58,6 @@ int main_functions_1(int argc , char **argv){
     // encode(&set2);
 
    /* ENCODE V2 */
-
     int dic[MAX_UFP6][BITS];
     int sizes[MAX_UFP6];
 
@@ -78,7 +77,7 @@ int main_functions_1(int argc , char **argv){
     int *index_words_found = calloc(set1.rowsize, sizeof(int));
     KMP(pattern,dfa);
     index_words_found =  search_KMP(&set1, dfa, strlen(pattern));
-  
+
     const char *arr_words[100] = {"ola", "olas"};
     int *arr_words_found = malloc(sizeof(int) * index_words_found[0]);
 
@@ -144,6 +143,7 @@ int main_functions_1(int argc , char **argv){
    /* Print array word size */
     //print_arr_word_size(&set1);
     //print_array(set1.arr_bits_size, set1.rowsize);
+
    // write_matrix_char_txt(set1.matrix, set1.rowsize, set1.arr_word_size, "sets_test.txt");
 
     /* free memory  */
@@ -270,13 +270,17 @@ void encode(SETS *set){
 
 void rnd_word_size_gen(int *word_length_arr, int W) {
     /* seed to generate random numbers */
-    srand((unsigned int)time(NULL));
+    seed_random();
+
+    //srand((unsigned int)time(NULL));
+   // sleep(10);
     for (int i = 0; i < W; ++i) {
         /* Generate numbers from 1 to BITS - 1 // sum + 1 to the result so never generates 0 */
         /* And store in word_length */
         word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
     }
 }
+
 
 
 char gen_rnd_char(){
@@ -288,7 +292,8 @@ char gen_rnd_char(){
 
 void matrix_rnd_char_gen(SETS *set) {
     /* seed to generate random numbers */
-    srand((unsigned int)time(NULL));
+    seed_random();
+  //  srand((unsigned int)time(NULL));
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             *(*(set->matrix + i) +j) = gen_rnd_char();
@@ -460,7 +465,7 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
-      
+
         if (currentChar == ' '){
             currentChar = '0';
         }
@@ -814,6 +819,7 @@ void print_KMP_BinMatches(SETS *set, int *array_index) {
     }
 }
 
+
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W) {
     if (W == 0) {
         exit(0);
@@ -892,3 +898,10 @@ void sets_struct_init(SETS *set, int num_words) {
     // set1.arr_bits_size = arr_bits_size(set1.arr_bits_size, set1.rowsize);
     set->arr_bits_size = (int*) calloc(set->rowsize, sizeof(int));
 }
+
+// clock function to measure processor time and use as a seed
+void seed_random() {
+    unsigned  int seed = (unsigned int)time(NULL) + (unsigned  int) clock();
+    srand(seed);
+}
+

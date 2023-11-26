@@ -101,7 +101,6 @@ void remove_word_matrix(SETS *set, int row);
  *
  */
 
-void remove_word_matrix(SETS *set, int row);
 
 /**  insert word into matrix short
  * @params
@@ -184,6 +183,7 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
+
 void KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
 
 int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
@@ -195,16 +195,14 @@ void print_KMP_BinMatches(SETS *set, int *array_index);
 
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W);
 
-
 void remove_Word(SETS *set, int *arr_words);
 
 void realloc_row_delete(SETS *set, int row);
-
 void realloc_row_add(SETS *set, int row);
-
 void compute_words_size(const char **words,int *words_index, int W);
-
 int calculate_index_char(char currentChar);
+
+void seed_random();
 
 int main_functions_1(int argc , char **argv);
 

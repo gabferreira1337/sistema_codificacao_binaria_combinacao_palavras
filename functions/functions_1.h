@@ -161,12 +161,14 @@ void reverseArray(char **arr, int start, int end);
 * @params
 *
 */
+
 void binary_dictionary(int bin_dict[62][BITS],int *size_bin);
 void print_binary_dictionary(int bin_dict[62][BITS], int *size_bin);
 /** Pre process all ASCII conversions
 * @params
 *
 */
+
 void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS]);
 
 void charToBinary(int c, int *result, int *size_bin);
@@ -190,6 +192,7 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 
 void print_KMP_BinMatches(SETS *set, int *array_index);
 
+
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W);
 
 void remove_Word(SETS *set, int *arr_words);
@@ -200,7 +203,6 @@ void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
 
 void seed_random();
-
 
 int main_functions_1(int argc , char **argv);
 

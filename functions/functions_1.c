@@ -23,6 +23,7 @@ time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
 
 
 
+
 int main_functions_1(int argc , char **argv){
     struct timeval tv1, tv2, tv;
     float time_delta;
@@ -76,6 +77,7 @@ int main_functions_1(int argc , char **argv){
     int *index_words_found = calloc(set1.rowsize, sizeof(int));
     KMP(pattern,dfa);
     index_words_found =  search_KMP(&set1, dfa, strlen(pattern));
+
     const char *arr_words[100] = {"ola", "olas"};
     int *arr_words_found = malloc(sizeof(int) * index_words_found[0]);
 
@@ -112,7 +114,7 @@ int main_functions_1(int argc , char **argv){
    /* puts("SET 2");
     print_matrix_char(set2);
     puts("SET 2 ENCODE");
-    print_matrix_int(set2);
+    print_matrix_int(set2);*/
 
     /* Sort Both arrays in descending order*/
    /* msdRadixSort(&set1, 0, set1.rowsize,0);
@@ -207,6 +209,7 @@ char **matrix_init_char(int row ,int *size_cols){
     return mat;
 }
 
+
 void print_matrix_int(const SETS *set) {
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < *(set->arr_bits_size + i); ++j) {
@@ -215,6 +218,7 @@ void print_matrix_int(const SETS *set) {
         putchar('\n');
     }
 }
+
 
 //Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
@@ -461,6 +465,7 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
+
         if (currentChar == ' '){
             currentChar = '0';
         }
@@ -814,8 +819,7 @@ void print_KMP_BinMatches(SETS *set, int *array_index) {
     }
 }
 
-//tentar ver sem kmp pois conseguimos fazer com uma só passagem;
-//
+
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W) {
     if (W == 0) {
         exit(0);
@@ -877,6 +881,7 @@ void realloc_row_add(SETS *set, int row) {
     }
 }
 
+
 void compute_words_size(const char **words, int *words_index ,int W) {
     for (int i = 0; i < W; ++i) {
         words_index[i] = (int) strlen(words[i]);
@@ -899,3 +904,4 @@ void seed_random() {
     unsigned  int seed = (unsigned int)time(NULL) + (unsigned  int) clock();
     srand(seed);
 }
+

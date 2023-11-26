@@ -88,7 +88,7 @@ AD_WORDS_HOLDER* dynamic_array_init(int size) {
     return arr;
 }
 
-
+  
 void free_dynamic_array(AD_WORDS_HOLDER *arr) {
     for (int i = 0; i < arr->count; ++i) {
         free(arr->array_val[i].last_update_date);
@@ -319,7 +319,6 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
 
     ad_holder->count++;
 }
-
 
 
 

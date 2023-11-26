@@ -2,20 +2,14 @@
 #define PROJETO_AED1_LP1_FUNCTIONS_2_H
 
 #include <time.h>
+#include "functions_1.h"
 
 /**
  * sets struct
  */
 typedef struct{
-    char **matrix1;
-    char **matrix2;
-    int **matrix_encode1;
-    int **matrix_encode2;
-    int *arr_word_size1;
-    int *arr_word_size2;
-    int rowsize;
-    int colsize_char;
-    int colsize_encode;
+    SETS s1;
+    SETS s2;
 
 }WORDS_HOLDER;
 
@@ -54,16 +48,21 @@ void create_dynamic_array(AD_WORDS_HOLDER *arr);
  */
 
 void init_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_holder);
+void print_AD(const AD_WORDS_HOLDER *ad);
+void insert_element_to_AD(AD_WORDS_HOLDER *ad_holder,SETS s1 , SETS s2);
+void merge_sort(AD_WORDS_HOLDER ad);
+void sort(VAL_AD_WORDS_HOLDER **arr,char **result, int lo, int hi);
+void merge(VAL_AD_WORDS_HOLDER **arr,char **result, int lo, int mid, int hi);
 
-void insert_element_to_ad(VAL_AD_WORDS_HOLDER val_holder, AD_WORDS_HOLDER *ad_holder);
 /**
  * sets struct
  */
 
 char *get_current_date();
 
+void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size);
 /**
- * sets struct
+ * free
  */
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
 

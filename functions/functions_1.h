@@ -196,7 +196,6 @@ int *find_Word(SETS *set,const char **words,const int *array_found_words_index, 
 void remove_Word(SETS *set, int *arr_words);
 
 void realloc_row_delete(SETS *set, int row);
-
 void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);

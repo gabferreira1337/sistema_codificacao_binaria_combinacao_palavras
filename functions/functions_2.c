@@ -46,11 +46,16 @@ int main_functions_2(int argc, char **argv) {
    // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
    // insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
 
+    insert_word_char(&set1, set1.rowsize, 2);
+    insert_word_char(&set2, set2.rowsize, 1);
 
 
-    encode_matrix_words(&set1, sizes, dic);
+   // encode_matrix_words(&set1, sizes, dic);
 
     insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
+    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[4]);
+    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[3]);
+
 
    /* insert_element_to_AD_in_order(arr_din, set1, set2,testDates[3]);
 
@@ -58,6 +63,20 @@ int main_functions_2(int argc, char **argv) {
 
     //insert_element_to_index_AD(arr_din, val_ad_words_holder, testDates[0], 0);
 
+    print_AD(arr_din);
+
+    delete_element_index(arr_din, 1);
+
+
+  //  print_KMP_BinMatches(&set1, index_words_found);
+
+
+    char *words[] = {
+            "ola",
+            "olas",
+    };
+
+    find_word_ad(arr_din, words, 2, 0, 1);
 
     print_AD(arr_din);
 
@@ -88,7 +107,7 @@ AD_WORDS_HOLDER* dynamic_array_init(int size) {
     return arr;
 }
 
-  
+
 void free_dynamic_array(AD_WORDS_HOLDER *arr) {
     for (int i = 0; i < arr->count; ++i) {
         free(arr->array_val[i].last_update_date);
@@ -153,6 +172,7 @@ void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size) {
 
 void print_AD(const AD_WORDS_HOLDER *ad) {
     printf("size: %d\n", ad->size);
+    //printf("count: %d\n", ad->count);
     for (int i = 0; i < ad->count; ++i) {
         printf("last update date: %s\n", ad->array_val[i].last_update_date);
         puts("SET 1 ");
@@ -280,6 +300,7 @@ int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din, char *date) {
     ad_holder->count++;
 }
 */
+
 void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2) {
     WORDS_HOLDER words_holder;
     words_holder.s1 = *(set1);
@@ -320,5 +341,62 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
     ad_holder->count++;
 }
 
+void delete_element_index(AD_WORDS_HOLDER *ad, int index) {
+    //halve the size when array is one-quarterfull
+    if (ad->count == (1/4 * ad->size)){
+        realloc_AD(ad, ad->size / 2);
+    }
+
+    for (int i = index; i < ad->count; ++i) {
+       ad->array_val[i] = ad->array_val[i + 1];
+    }
+
+    free(ad->array_val[ad->count].last_update_date);
+    // ask 0 filled
+
+    ad->count--;
+}
 
 
+// recursive?
+void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi) {
+    if(lo < 0 || hi >= arr->count){
+        fperror("LO or HI out of bounds");
+        //exit(0);
+    }
+    int *index_set1 = NULL,*index_set2 = NULL;
+    for (int i = 0; i < W; ++i) {
+        int dfa[MAX_UFP6][BITS + 1];
+        KMP (words[i], dfa);
+            for (int j = lo; j <= hi; ++j) {
+            // perguntar! e search KMP também
+            index_set1 = search_KMP(&arr->array_val[j].words_holder.s1,dfa ,(int) strlen(words[i]));
+            index_set2 =  search_KMP(&arr->array_val[j].words_holder.s2,dfa ,(int) strlen(words[i]));
+            print_words_found(arr, index_set1, index_set2, j);
+
+            free(index_set1);
+            index_set1 = NULL;
+            free(index_set2);
+            index_set2 = NULL;
+        }
+
+    }
+}
+
+void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, int index_ad) {
+    if(index_set1 != NULL){
+        printf("Array Index -> %d ", index_ad);
+        for (int j = 1; j <= (*index_set1); j++) {
+            printf("Set1 Match, Index -> %d:\n",index_set1[j]);
+            printf("  Word = %s \n",arr->array_val[index_ad].words_holder.s1.matrix[index_set1[j]], index_ad);
+        }
+    }
+
+    if(index_set2 != NULL){
+        printf("Array Index -> %d ", index_ad);
+        for (int j = 1; j <= *index_set2; ++j) {
+            printf("Set2 Match, Index -> %d:\n",index_set2[j]);
+            printf("  Word = %s \n",arr->array_val[index_ad].words_holder.s2.matrix[index_set2[j]], index_ad);
+        }
+    }
+}

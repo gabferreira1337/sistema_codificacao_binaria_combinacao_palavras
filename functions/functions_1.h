@@ -161,7 +161,6 @@ void reverseArray(char **arr, int start, int end);
 * @params
 *
 */
-
 void binary_dictionary(int bin_dict[62][BITS],int *size_bin);
 void print_binary_dictionary(int bin_dict[62][BITS], int *size_bin);
 /** Pre process all ASCII conversions
@@ -191,7 +190,6 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
 void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 
 void print_KMP_BinMatches(SETS *set, int *array_index);
-
 
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W);
 

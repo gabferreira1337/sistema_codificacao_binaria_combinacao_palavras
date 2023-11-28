@@ -160,7 +160,6 @@ int main_functions_1(int argc , char **argv){
 
     TIMER_STOP();
     fprintf(stdout, "%f secs\n", time_delta);
-
     return 0;
 }
 
@@ -189,7 +188,6 @@ int **matrix_init_int(int row ,int col){
 char **matrix_init_char(int row ,int *size_cols){
     // Allocate memory for array of pointers
     char** mat = (char**) malloc(row * sizeof(char*));
-
     if (mat == NULL) {
         printf("Matrix int row malloc\n");
         exit(0);
@@ -285,6 +283,7 @@ char gen_rnd_char(){
     random_number = 'a' + rand() % 26;
     return (char) random_number;
 }
+
 
 void matrix_rnd_char_gen(SETS *set) {
     /* seed to generate random numbers */
@@ -394,7 +393,6 @@ void init_arr_word_size(SETS *set){
     }
 }
 
-
 void print_arr_word_size(const SETS *set){
     for (int i = 0; i < set->rowsize; ++i) {
         printf("pos: %d - size: %d\n", i, set->arr_word_size[i]);
@@ -421,6 +419,7 @@ void matrix_encode_realloc(SETS *set) {
             }
         }
 }
+  
 /*void char_to_bin(SETS *set) {
     for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {
         // when last digit is 0 break from the loop, so it won't store the left 0's

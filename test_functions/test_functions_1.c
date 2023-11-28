@@ -76,4 +76,3 @@ void test_function1_feature2(SETS *set1, SETS *set2, int sizes_bin_dict[], int b
     print_matrix_int(set2);
 }
 
-

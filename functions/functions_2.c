@@ -6,6 +6,7 @@
 #include "functions_2.h"
 #include "functions_1.h"
 
+
 #define R 5
 #define DATE_SIZE 9
 
@@ -112,7 +113,6 @@ void free_dynamic_array(AD_WORDS_HOLDER *arr) {
         free(arr->array_val[i].last_update_date);
         arr->array_val[i].last_update_date = NULL;
     }
-
     free(arr->array_val);
     arr->array_val = NULL;
     free(arr);
@@ -394,7 +394,5 @@ void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, i
     }
 
 }
-
-
 
 

@@ -3,7 +3,6 @@
 
 #include <time.h>
 #include "functions_1.h"
-
 /**
  * sets struct
  */
@@ -26,6 +25,7 @@ typedef struct{
     VAL_AD_WORDS_HOLDER *array_val;
 
 }AD_WORDS_HOLDER;
+
 
 
 /**

@@ -76,21 +76,21 @@ int main_functions_1(int argc , char **argv){
     int *index_words_found = calloc(set1.rowsize, sizeof(int));
     KMP(pattern,dfa);
     index_words_found =  search_KMP(&set1, dfa, strlen(pattern));
-    const char *arr_words[100] = {"ola", "olas"};
-    int *arr_words_found = malloc(sizeof(int) * index_words_found[0]);
+   // const char *arr_words[100] = {"ola", "olas"};
+    //int *arr_words_found = malloc(sizeof(int) * index_words_found[0]);
 
-    arr_words_found = find_Word(&set1, arr_words, index_words_found, 2);
+   // arr_words_found = find_Word(&set1, arr_words, index_words_found, 2);
 
     //start in 1 because pos 0 is storing size of array;
-    for (int i = 1; i < arr_words_found[0]; ++i) {
-        printf("%d\n", arr_words_found[i]);
+    for (int i = 1; i < index_words_found[0]; ++i) {
+        printf("%d\n", index_words_found[i]);
     }
     print_matrix_int(&set1);
-    remove_Word(&set1, arr_words_found);
+    remove_Word(&set1, index_words_found);
 
     encode_matrix_words(&set1,sizes,dic);
 
-    free(arr_words_found);
+    free(index_words_found);
 
     /* 5) */
    /* char pattern[BITS + 1] = "ola";
@@ -777,15 +777,15 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size){
             indexChar = calculate_index_char(*(*(set->matrix + k ) + i));
             j = dfa[indexChar][j];
         }
-
-        if (j == 3){
+        // Search for words with the exact size of the pattern ex: ola has size 3 and the words we found can be ola , olas etc
+        if (j == word_size && strlen(*(set->matrix + k )) == word_size){
             arr_index[l++] = k;
         }
     }
 
-    arr_index[0] = l; //store in pos 0 of array the count of words found with pattern
+    arr_index[0] = l - 1; //store in pos 0 of array the count of words found with pattern
 
-    if(arr_index[0] != -1)
+    if(arr_index[0] != 0)
         return arr_index;
     return NULL;
 }

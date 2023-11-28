@@ -369,30 +369,35 @@ void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi) {
         KMP (words[i], dfa);
             for (int j = lo; j <= hi; ++j) {
             // perguntar! e search KMP também
-            index_set1 = search_KMP(&arr->array_val[j].words_holder.s1,dfa , strlen(words[i]));
+            index_set1 = search_KMP(&arr->array_val[j].words_holder.s1,dfa ,(int) strlen(words[i]));
             index_set2 =  search_KMP(&arr->array_val[j].words_holder.s2,dfa ,(int) strlen(words[i]));
-            find_Word(&arr->array_val[j].words_holder.s1,);
             print_words_found(arr, index_set1, index_set2, j);
+
+            free(index_set1);
+            index_set1 = NULL;
+            free(index_set2);
+            index_set2 = NULL;
         }
-        free(index_set1);
-        index_set1 = NULL;
-        free(index_set2);
-        index_set2 = NULL;
+
     }
 }
 
 void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, int index_ad) {
-    printf("SET1 - word found in index %d \n", index_ad);
-    for (int j = 1; j < (*index_set1); j++) {
-
-        printf("%s\n",arr->array_val[index_ad].words_holder.s1.matrix[index_set1[j]]);
+    if(index_set1 != NULL){
+        printf("Array Index -> %d ", index_ad);
+        for (int j = 1; j <= (*index_set1); j++) {
+            printf("Set1 Match, Index -> %d:\n",index_set1[j]);
+            printf("  Word = %s \n",arr->array_val[index_ad].words_holder.s1.matrix[index_set1[j]], index_ad);
+        }
     }
 
-    printf("SET2 - word found\n");
-    for (int j = 1; j < *index_set2; ++j) {
-        printf("%s\n",arr->array_val[index_ad].words_holder.s2.matrix[index_set1[j]]);
+    if(index_set2 != NULL){
+        printf("Array Index -> %d ", index_ad);
+        for (int j = 1; j <= *index_set2; ++j) {
+            printf("Set2 Match, Index -> %d:\n",index_set2[j]);
+            printf("  Word = %s \n",arr->array_val[index_ad].words_holder.s2.matrix[index_set2[j]], index_ad);
+        }
     }
-
 }
 
 

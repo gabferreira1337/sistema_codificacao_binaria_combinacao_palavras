@@ -23,6 +23,7 @@ time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
 
 
 
+
 int main_functions_1(int argc , char **argv){
     struct timeval tv1, tv2, tv;
     float time_delta;
@@ -68,6 +69,7 @@ int main_functions_1(int argc , char **argv){
 
     /* Insert word */
       insert_word_char(&set1, set1.rowsize, 3);
+
       //encode_matrix_words(&set1, sizes, dic);
 
     /* Remove word */
@@ -91,7 +93,7 @@ int main_functions_1(int argc , char **argv){
     encode_matrix_words(&set1,sizes,dic);
 
     free(index_words_found);
-
+  
     /* 5) */
    /* char pattern[BITS + 1] = "ola";
     int dfa[MAX_UFP6][MAX_UFP6];
@@ -112,7 +114,7 @@ int main_functions_1(int argc , char **argv){
    /* puts("SET 2");
     print_matrix_char(set2);
     puts("SET 2 ENCODE");
-    print_matrix_int(set2);
+    print_matrix_int(set2);*/
 
     /* Sort Both arrays in descending order*/
    /* msdRadixSort(&set1, 0, set1.rowsize,0);
@@ -207,6 +209,7 @@ char **matrix_init_char(int row ,int *size_cols){
     return mat;
 }
 
+
 void print_matrix_int(const SETS *set) {
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < *(set->arr_bits_size + i); ++j) {
@@ -215,6 +218,7 @@ void print_matrix_int(const SETS *set) {
         putchar('\n');
     }
 }
+
 
 //Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
@@ -276,7 +280,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
         word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
     }
 }
-
 
 
 char gen_rnd_char(){
@@ -461,6 +464,7 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
+      
         if (currentChar == ' '){
             currentChar = '0';
         }
@@ -692,7 +696,7 @@ int write_matrix_char_txt(char **mat, int r, int *cols, char *filename) {
 
     // Close the file
     fclose(fp);
-
+  
     return 0;
 }
 
@@ -875,6 +879,7 @@ void realloc_row_add(SETS *set, int row) {
     }
 }
 
+
 void compute_words_size(const char **words, int *words_index ,int W) {
     for (int i = 0; i < W; ++i) {
         words_index[i] = (int) strlen(words[i]);
@@ -897,3 +902,4 @@ void seed_random() {
     unsigned  int seed = (unsigned int)time(NULL) + (unsigned  int) clock();
     srand(seed);
 }
+

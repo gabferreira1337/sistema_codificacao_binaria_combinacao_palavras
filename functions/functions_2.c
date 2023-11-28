@@ -77,6 +77,7 @@ int main_functions_2(int argc, char **argv) {
     };
 
     find_word_ad(arr_din, words, 2, 0, 1);
+
     print_AD(arr_din);
 
     free_dynamic_array(arr_din);
@@ -399,7 +400,3 @@ void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, i
         }
     }
 }
-
-
-
-

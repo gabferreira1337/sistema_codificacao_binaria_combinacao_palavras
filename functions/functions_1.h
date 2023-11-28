@@ -167,6 +167,7 @@ void print_binary_dictionary(int bin_dict[62][BITS], int *size_bin);
 * @params
 *
 */
+
 void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS]);
 
 void charToBinary(int c, int *result, int *size_bin);
@@ -200,7 +201,6 @@ void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
 
 void seed_random();
-
 
 int main_functions_1(int argc , char **argv);
 

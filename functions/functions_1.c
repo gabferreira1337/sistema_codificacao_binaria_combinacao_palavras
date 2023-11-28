@@ -67,7 +67,7 @@ int main_functions_1(int argc , char **argv){
     /* 3)*/
 
     /* Insert word */
-      //insert_word_char(&set1, set1.rowsize, 3);
+      insert_word_char(&set1, set1.rowsize, 3);
       //encode_matrix_words(&set1, sizes, dic);
 
     /* Remove word */
@@ -814,7 +814,7 @@ void print_KMP_BinMatches(SETS *set, int *array_index) {
 
 //tentar ver sem kmp pois conseguimos fazer com uma só passagem;
 //
-int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W) {
+/*int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W) {
     if (W == 0) {
         exit(0);
     }
@@ -835,7 +835,7 @@ int *find_Word(SETS *set,const char **words,const int *array_found_words_index, 
     *(array_index) = k;
 
     return array_index;
-}
+}*/
 
 void remove_Word(SETS *set, int *arr_words) {
     for (int i = 0; i < *(arr_words); ++i) {

@@ -67,8 +67,8 @@ int main_functions_1(int argc , char **argv){
     /* 3)*/
 
     /* Insert word */
-      insert_word_char(&set1, set1.rowsize, 3);
-      encode_matrix_words(&set1, sizes, dic);
+      //insert_word_char(&set1, set1.rowsize, 3);
+      //encode_matrix_words(&set1, sizes, dic);
 
     /* Remove word */
     char pattern[BITS + 1] = "ola";

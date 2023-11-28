@@ -690,10 +690,8 @@ int write_matrix_char_txt(char **mat, int r, int *cols, char *filename) {
         fputc('\n', fp);
     }
 
-
     // Close the file
     fclose(fp);
-
 
     return 0;
 }

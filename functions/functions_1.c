@@ -719,7 +719,7 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 }
 
 
-void KMP (char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]) {
+void KMP (char pattern[BITS], int dfa[MAX_UFP6][BITS]) {
     int indexChar = 0;
     int pattern_size =(int) strlen(pattern);
 
@@ -765,11 +765,10 @@ int calculate_index_char(char currentChar) {
 }
 
 
-int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size){
+int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size){
     int i , j;
     int indexChar = 0;
     int *arr_index = calloc(set->rowsize,sizeof(int));
-    arr_index[0] = -1;
 
     int l = 1;
     for (int k = 0; k < set->rowsize; ++k) {
@@ -782,8 +781,8 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size){
             arr_index[l++] = k;
         }
     }
-
-    arr_index[0] = l - 1; //store in pos 0 of array the count of words found with pattern
+    //store in pos 0 of array the count of words found with pattern
+    arr_index[0] = l-1;
 
     if(arr_index[0] != 0)
         return arr_index;
@@ -800,10 +799,13 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]) {
     }
 }
 
-void print_KMP_BinMatches(SETS *set, int *array_index) {
-    printf("Words Found and their UFP6!!!\n");
-    for (int k = 1; k < *array_index + 0; ++k) {
-        printf("%s -> ", *(set->matrix + (*(array_index + k))));
+void print_found_words_and_ufp6(SETS *set, int *array_index) {
+   // printf("Words Found and their UFP6!!!\n");
+    // start in 1 because storing in index 0 the count of words found
+    for (int k = 1; k <= *array_index; ++k) {
+        printf("Index -> %d\n", *(array_index + k));
+        printf("Word = %s -> ", *(set->matrix + (*(array_index + k))));
+        printf(" UFP6 = ");
         for (int i = 0; i < *(set->arr_bits_size + (*(array_index + k))); i++) {
            // printf("%d", *(*(set->matrix_encode + (*(array_index + k))))+ i);
             printf("%d", set->matrix_encode[array_index[k]][i]);
@@ -896,4 +898,18 @@ void sets_struct_init(SETS *set, int num_words) {
 void seed_random() {
     unsigned  int seed = (unsigned int)time(NULL) + (unsigned  int) clock();
     srand(seed);
+}
+
+int is_ufp6(char *word) {
+    char currentChar = '\0';
+    for (int i = 0; i < strlen(word); ++i) {
+        currentChar = *(word + i);
+        if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||(currentChar >= 'a' && currentChar <= 'z')) {
+            continue;
+        }else{
+            return -1;
+        }
+    }
+
+    return 1;
 }

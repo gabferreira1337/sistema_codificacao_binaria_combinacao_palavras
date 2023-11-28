@@ -182,13 +182,14 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
 
-void KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
+void KMP(char pattern[BITS], int dfa[MAX_UFP6][BITS]);
 
-int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
+int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size);
 
 void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 
-void print_KMP_BinMatches(SETS *set, int *array_index);
+void print_found_words_and_ufp6(SETS *set, int *array_index);
+
 
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W);
 
@@ -198,6 +199,8 @@ void realloc_row_delete(SETS *set, int row);
 void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
+
+int is_ufp6(char *word);
 
 void seed_random();
 

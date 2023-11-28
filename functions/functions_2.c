@@ -26,13 +26,11 @@ int main_functions_2(int argc, char **argv) {
 
     //VAL_AD_WORDS_HOLDER *val_ad_words_holder = NULL;
 
-   // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
+    // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
 
 
-    //encode_matrix_words(&set1, sizes, dic);
     matrix_rnd_char_gen(&set1);
     matrix_rnd_char_gen(&set2);
-
 
 
     char *testDates[] = {
@@ -51,11 +49,12 @@ int main_functions_2(int argc, char **argv) {
 
 
    // encode_matrix_words(&set1, sizes, dic);
+    encode_matrix_words(&set1, sizes, dic);
+    encode_matrix_words(&set2, sizes, dic);
 
     insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
     insert_element_to_AD_in_order(arr_din, set1, set2, testDates[4]);
     insert_element_to_AD_in_order(arr_din, set1, set2, testDates[3]);
-
 
    /* insert_element_to_AD_in_order(arr_din, set1, set2,testDates[3]);
 
@@ -63,16 +62,16 @@ int main_functions_2(int argc, char **argv) {
 
     //insert_element_to_index_AD(arr_din, val_ad_words_holder, testDates[0], 0);
 
-    print_AD(arr_din);
+    //print_AD(arr_din);
 
-    delete_element_index(arr_din, 1);
+    //delete_element_index(arr_din, 1);
 
 
-  //  print_KMP_BinMatches(&set1, index_words_found);
+   // print_KMP_BinMatches(&set1, index_words_found);
 
 
     char *words[] = {
-            "ola",
+            " ola",
             "olas",
     };
 
@@ -357,7 +356,6 @@ void delete_element_index(AD_WORDS_HOLDER *ad, int index) {
 }
 
 
-// recursive?
 void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi) {
     if(lo < 0 || hi >= arr->count){
         fperror("LO or HI out of bounds");
@@ -365,7 +363,9 @@ void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi) {
     }
     int *index_set1 = NULL,*index_set2 = NULL;
     for (int i = 0; i < W; ++i) {
-        int dfa[MAX_UFP6][BITS + 1];
+        //check if word is valid in ufp6
+        if(is_ufp6(words[i]) == -1) continue;
+        int dfa[MAX_UFP6][BITS];
         KMP (words[i], dfa);
             for (int j = lo; j <= hi; ++j) {
             // perguntar! e search KMP também
@@ -378,25 +378,18 @@ void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi) {
             free(index_set2);
             index_set2 = NULL;
         }
-
     }
 }
 
 void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, int index_ad) {
     if(index_set1 != NULL){
-        printf("Array Index -> %d ", index_ad);
-        for (int j = 1; j <= (*index_set1); j++) {
-            printf("Set1 Match, Index -> %d:\n",index_set1[j]);
-            printf("  Word = %s \n",arr->array_val[index_ad].words_holder.s1.matrix[index_set1[j]], index_ad);
-        }
+        printf("Dynamic Array Index -> %d Set1 Match ", index_ad);
+        print_found_words_and_ufp6(&arr->array_val[index_ad].words_holder.s1, index_set1);
     }
 
     if(index_set2 != NULL){
-        printf("Array Index -> %d ", index_ad);
-        for (int j = 1; j <= *index_set2; ++j) {
-            printf("Set2 Match, Index -> %d:\n",index_set2[j]);
-            printf("  Word = %s \n",arr->array_val[index_ad].words_holder.s2.matrix[index_set2[j]], index_ad);
-        }
+        printf("Dynamic Array Index -> %d Set2 Match, ", index_ad);
+        print_found_words_and_ufp6(&arr->array_val[index_ad].words_holder.s2, index_set2);
     }
 }
 

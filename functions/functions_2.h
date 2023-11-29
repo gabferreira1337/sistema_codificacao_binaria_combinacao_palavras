@@ -126,6 +126,8 @@ void print_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date);
 NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date);
 
+NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
+
 int main_functions_2(int argc , char **argv);
 
 #endif //PROJETO_AED1_LP1_FUNCTIONS_2_H

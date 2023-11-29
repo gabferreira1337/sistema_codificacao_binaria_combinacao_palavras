@@ -43,7 +43,7 @@ int main_functions_2(int argc, char **argv) {
 
 
     // LL 9)a)
-   LL_WORDS_HOLDER *ll = (LL_WORDS_HOLDER*) malloc(sizeof(LL_WORDS_HOLDER));
+    LL_WORDS_HOLDER *ll = (LL_WORDS_HOLDER*) malloc(sizeof(LL_WORDS_HOLDER));
    /* insert_node_ll_sorted(ll, &set1, &set2, testDates[0]);
     insert_node_ll_sorted(ll, &set1, &set2, testDates[3]);
     insert_node_ll_sorted(ll, &set1, &set2, testDates[2]);
@@ -53,8 +53,8 @@ int main_functions_2(int argc, char **argv) {
 
     print_ll_words_holder(ll);
 
-    free_ll_words_holder(ll);*/
-
+    free_ll_words_holder(ll);
+*/
    // b)
 
     encode_matrix_words(&set1, sizes, dic);
@@ -437,15 +437,16 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
 
     if(pos->pback == NULL){
         ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
-        ll->nnodes++;
     }else if(pos->pnext == NULL){
         ll->ptail = create_words_holder_node(ll, pos, set1, set2, last_date);
-        ll->nnodes++;
+    }else{
+        create_words_holder_node(ll, pos, set1, set2, last_date);
     }
 
+    ll->nnodes++;
 }
 
-NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
+/*NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     int l = 0;
     int h = ll->nnodes - 1;
     int mid;
@@ -478,7 +479,40 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     }
 
     return lo;
+}*/
+
+// even if runtime is O(n), we only do O(log n) total comparisons (one per step of bs).
+NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
+
+    NODE_LL_WORDS_HOLDER *lo = ll->phead;
+    NODE_LL_WORDS_HOLDER *hi = ll->ptail;
+   // NODE_LL_WORDS_HOLDER *mid = NULL;
+
+    do {
+        // Find middle
+        NODE_LL_WORDS_HOLDER *mid = find_mid_ll(lo, hi);
+
+        // If middle is empty
+        if (mid == NULL)
+            return NULL;
+
+        int cmp = strcmp(mid->last_update_date, date);
+
+        // If value is present at middle
+        if (cmp < 0){
+            lo = mid->pnext;
+        }else if (cmp > 0){
+            hi = mid;
+        }else{
+            return mid;
+        }
+
+    } while (hi == NULL && hi->pnext != lo);
+
+
+    return lo;
 }
+
 
 NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
     NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *) calloc(1,sizeof(NODE_LL_WORDS_HOLDER)); //New node
@@ -574,7 +608,6 @@ void print_ll_words_holder(LL_WORDS_HOLDER *ll) {
 }
 
 void free_ll_words_holder(LL_WORDS_HOLDER *ll) {
-
         NODE_LL_WORDS_HOLDER *current = ll->ptail;
         NODE_LL_WORDS_HOLDER *prev;
 
@@ -631,15 +664,13 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_L
 
     node->words_holder.s1 = *set1;
     node->words_holder.s2 = *set2;
-
     node->pnext = NULL; // initialize the pointers
     node->pback = NULL;
 
 // if is not empty
     if(pos != NULL) {
-        // if want to insert between 2 nodes
+        /* insert between 2 nodes */
         if (pos->pnext != NULL && pos->pback != NULL) {
-            printf("xona\n");
             // point the index of node in position  we want to insert to new node added behind
             pos->pnext->pback = node;
             // point the new node to the next to node
@@ -648,14 +679,12 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_L
             node->pback = pos;
             // point the pos node to new n
             pos->pnext = node;
-
-           /* if want to insert to tail  */
+           /* insert to tail  */
         } else if(pos->pnext == NULL){
             pos->pnext = node;
             node->pback = pos;
         }else{
-            /* if want to insert in pos 1 because pos will point to index 0 */
-            printf("zona\n");
+            /* insert in pos 1 because pos will point to index 0 */
             node->pnext = pos;
             pos->pback = node;
         }
@@ -669,4 +698,21 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_L
     }
 
     return node;
+}
+
+NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi) {
+    if (lo == NULL) {
+        // If the linked list is empty
+        return NULL;
+    }
+
+    NODE_LL_WORDS_HOLDER *slow_ptr = lo;
+    NODE_LL_WORDS_HOLDER *fast_ptr = lo->pnext;
+
+    while (fast_ptr != NULL && fast_ptr->pnext != NULL) {
+        fast_ptr = fast_ptr->pnext->pnext;
+        slow_ptr = slow_ptr->pnext;
+    }
+
+    return slow_ptr;
 }

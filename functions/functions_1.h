@@ -167,7 +167,6 @@ void print_binary_dictionary(int bin_dict[62][BITS], int *size_bin);
 * @params
 *
 */
-
 void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS]);
 
 void charToBinary(int c, int *result, int *size_bin);
@@ -183,13 +182,15 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
 
-void KMP(char pattern[M_KMP], int dfa[MAX_UFP6][M_KMP]);
 
-int *search_KMP(SETS *set, int dfa[MAX_UFP6][M_KMP], int word_size);
+void KMP(char pattern[BITS], int dfa[MAX_UFP6][BITS]);
+
+int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size);
 
 void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 
-void print_KMP_BinMatches(SETS *set, int *array_index);
+void print_found_words_and_ufp6(SETS *set, int *array_index);
+
 
 int *find_Word(SETS *set,const char **words,const int *array_found_words_index, int W);
 
@@ -200,7 +201,11 @@ void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
 
+
+int is_ufp6(char *word);
+
 void seed_random();
+
 
 int main_functions_1(int argc , char **argv);
 

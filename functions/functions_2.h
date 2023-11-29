@@ -117,6 +117,7 @@ void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size);
  * free
  */
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
+
 void free_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *s2, char *last_date);
 //perguntar
@@ -127,6 +128,7 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL
 NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date);
 
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
+
 
 int main_functions_2(int argc , char **argv);
 

@@ -182,6 +182,7 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
 
+
 void KMP(char pattern[BITS], int dfa[MAX_UFP6][BITS]);
 
 int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size);
@@ -199,6 +200,7 @@ void realloc_row_delete(SETS *set, int row);
 void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
+
 
 int is_ufp6(char *word);
 

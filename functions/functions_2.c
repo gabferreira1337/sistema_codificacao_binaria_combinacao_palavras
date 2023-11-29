@@ -28,7 +28,6 @@ int main_functions_2(int argc, char **argv) {
 
     // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
 
-
     matrix_rnd_char_gen(&set1);
     matrix_rnd_char_gen(&set2);
 
@@ -40,6 +39,7 @@ int main_functions_2(int argc, char **argv) {
             "2023-01-15",
             "2022-08-10",
     };
+
 
 
     // LL 9)a)
@@ -111,7 +111,6 @@ int main_functions_2(int argc, char **argv) {
     print_AD(arr_din);
 
     free_dynamic_array(arr_din);*/
-
     return 0;
 }
 

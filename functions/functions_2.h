@@ -28,6 +28,22 @@ typedef struct{
 }AD_WORDS_HOLDER;
 
 
+typedef struct node_ll_words_holder{
+    WORDS_HOLDER words_holder;
+    char *last_update_date;
+    struct node_ll_words_holder *pnext;
+    struct node_ll_words_holder *pback;
+}NODE_LL_WORDS_HOLDER;
+
+
+typedef struct ll_words_holder{
+   int nnodes;
+   NODE_LL_WORDS_HOLDER *phead;
+   NODE_LL_WORDS_HOLDER *ptail;
+}LL_WORDS_HOLDER;
+
+
+
 /**
  * sets struct
  */

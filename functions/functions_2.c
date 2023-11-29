@@ -7,7 +7,7 @@
 #include "functions_1.h"
 
 #define R 5
-#define DATE_SIZE 9
+#define DATE_SIZE 11
 
 #define N 1
 
@@ -41,20 +41,52 @@ int main_functions_2(int argc, char **argv) {
             "2022-08-10",
     };
 
+
+    // LL 9)a)
+   LL_WORDS_HOLDER *ll = (LL_WORDS_HOLDER*) malloc(sizeof(LL_WORDS_HOLDER));
+   /* insert_node_ll_sorted(ll, &set1, &set2, testDates[0]);
+    insert_node_ll_sorted(ll, &set1, &set2, testDates[3]);
+    insert_node_ll_sorted(ll, &set1, &set2, testDates[2]);
+
+    encode_matrix_words(&set1, sizes, dic);
+    encode_matrix_words(&set2, sizes, dic);
+
+    print_ll_words_holder(ll);
+
+    free_ll_words_holder(ll);*/
+
+   // b)
+
+    encode_matrix_words(&set1, sizes, dic);
+    encode_matrix_words(&set2, sizes, dic);
+
+    insert_node_ll_index(ll, &set1, &set2, testDates[3], 0);
+    insert_node_ll_index(ll, &set1, &set2, testDates[2], 1);
+    insert_node_ll_index(ll, &set1, &set2, testDates[1], 2);
+    insert_node_ll_index(ll, &set1, &set2, testDates[3], 1);
+    insert_node_ll_index(ll, &set1, &set2, testDates[2], 2);
+    insert_node_ll_index(ll, &set1, &set2, testDates[2], 0);
+   // insert_node_ll_index(ll, &set1, &set2, testDates[1], 1);
+    print_ll_words_holder(ll);
+
+    free_ll_words_holder(ll);
+
+
+    //
    // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
    // insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
 
-    insert_word_char(&set1, set1.rowsize, 2);
+   /* insert_word_char(&set1, set1.rowsize, 2);
     insert_word_char(&set2, set2.rowsize, 1);
-
+*/
 
    // encode_matrix_words(&set1, sizes, dic);
-    encode_matrix_words(&set1, sizes, dic);
+   /* encode_matrix_words(&set1, sizes, dic);
     encode_matrix_words(&set2, sizes, dic);
 
     insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
     insert_element_to_AD_in_order(arr_din, set1, set2, testDates[4]);
-    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[3]);
+    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[3]);*/
 
    /* insert_element_to_AD_in_order(arr_din, set1, set2,testDates[3]);
 
@@ -69,16 +101,16 @@ int main_functions_2(int argc, char **argv) {
 
    // print_KMP_BinMatches(&set1, index_words_found);
 
-
+/*
     char *words[] = {
-            " ola",
+            "ola",
             "olas",
     };
 
     find_word_ad(arr_din, words, 2, 0, 1);
     print_AD(arr_din);
 
-    free_dynamic_array(arr_din);
+    free_dynamic_array(arr_din);*/
 
     return 0;
 }
@@ -393,6 +425,248 @@ void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, i
     }
 }
 
+void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date) {
+    //if empty
+    NODE_LL_WORDS_HOLDER *pos = bin_search_insert_ll(ll, last_date);
+    if(ll->ptail == NULL && ll->phead == NULL){
+        ll->phead = create_words_holder_node(ll, pos,set1, set2, last_date);
+        ll->ptail = ll->phead;
+        ll->nnodes++;
+        return;
+    }
+
+    if(pos->pback == NULL){
+        ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
+        ll->nnodes++;
+    }else if(pos->pnext == NULL){
+        ll->ptail = create_words_holder_node(ll, pos, set1, set2, last_date);
+        ll->nnodes++;
+    }
+
+}
+
+NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
+    int l = 0;
+    int h = ll->nnodes - 1;
+    int mid;
+
+    NODE_LL_WORDS_HOLDER *current = ll->phead;
+    NODE_LL_WORDS_HOLDER *lo = ll->phead;
+    NODE_LL_WORDS_HOLDER *hi = NULL;
+
+    while (l <= h) {
+        mid = l + (h - l) / 2;
+
+        for (int i = 0; i < mid; ++i) {
+            current = current->pnext;
+        }
+
+        int cmp = strcmp(current->last_update_date, date);
+
+        if (cmp < 0) {
+            // mid pointer to next
+            lo = current->pnext;
+            l = mid + 1;
+        } else if (cmp > 0) {
+            hi = current;
+            h = mid - 1;
+        } else {
+            // If elements are equal, modify based on your requirements
+            // For example, return lo or hi for insertion after or before the current node
+            return lo;
+        }
+    }
+
+    return lo;
+}
+
+NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
+    NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *) calloc(1,sizeof(NODE_LL_WORDS_HOLDER)); //New node
+    if(node == NULL){
+        fperror("Calloc NODE_LL_WORDS_HOLDER");
+        // exit(0);
+    }
+
+    node->words_holder.s1 = *set1;
+    node->words_holder.s2 = *set2;
+
+    node->pnext = NULL;
+    node->pback = NULL;
+// if is not empty
+    if (pos != NULL) {
+        // If pos is not the head, set the new node's pback to pos->pback
+            node->pnext = pos->pnext;
+            pos->pnext = node;
+
+        if (pos->pback != NULL) {
+            node->pback = pos->pback;
+        }
+
+        pos->pback = node;
+        node->pnext = pos;
+
+    }
+
+    node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
+    strcpy(node->last_update_date, last_date);
+
+    if(node->last_update_date == NULL){
+        fperror("last_update_date malloc");
+    }
+
+    return node;
+}
+/*NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
+    NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *)calloc(1, sizeof(NODE_LL_WORDS_HOLDER));
+    if (node == NULL) {
+        fperror("Calloc NODE_LL_WORDS_HOLDER");
+    }
+
+    node->words_holder.s1 = *set1;
+    node->words_holder.s2 = *set2;
+
+    node->pnext = NULL;
+
+    if (pos != NULL) {
+        // Insert in the middle or at the beginning
+        NODE_LL_WORDS_HOLDER *temp = pos->pnext;
+        pos->pnext = node;
+        node->pnext = temp;1
+    } else {
+        // Insert at the beginning for an empty list
+        node->pnext = ll->phead;
+        ll->phead = node;
+
+        // Update ptail if the list was empty
+        if (ll->ptail == NULL) {
+            ll->ptail = node;
+        }
+    }
+
+    node->last_update_date = (char *)malloc(sizeof(char) * DATE_SIZE);
+    if (node->last_update_date == NULL) {
+        fperror("last_update_date malloc");
+        // Handle the error appropriately
+        free(node);
+        return NULL;
+    }
+
+    strcpy(node->last_update_date, last_date);
+
+    return node;
+}*/
 
 
+void print_ll_words_holder(LL_WORDS_HOLDER *ll) {
+    NODE_LL_WORDS_HOLDER *current = ll->phead;
 
+    for (int i = 0; i < ll->nnodes; ++i) {
+        puts("SET1");
+        printf("last update: %s\n", current->last_update_date);
+        print_matrix_char(&current->words_holder.s1);
+        print_matrix_int(&current->words_holder.s1);
+        puts("SET2");
+        print_matrix_char(&current->words_holder.s2);
+        print_matrix_int(&current->words_holder.s2);
+
+        current = current->pnext;
+    }
+}
+
+void free_ll_words_holder(LL_WORDS_HOLDER *ll) {
+
+        NODE_LL_WORDS_HOLDER *current = ll->ptail;
+        NODE_LL_WORDS_HOLDER *prev;
+
+        for (int i = 0; i < ll->nnodes; ++i) {
+            free(current->last_update_date);
+
+            prev = current->pback;  // Save the pointer to the previous node
+            free(current);
+            current = prev;  // Move to the previous node for the next iteration
+        }
+        free(ll);
+}
+
+// Tentar fazer insert a) a utilizar o ponto b)
+void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date, int index){
+    NODE_LL_WORDS_HOLDER *pos = NULL;
+
+    if(ll->ptail == NULL && ll->phead == NULL){
+        ll->phead = create_words_holder_node_index(ll, pos, set1, set2, last_date);
+        ll->ptail = ll->phead;
+        ll->nnodes++;
+        return;
+    }
+
+    pos = ll->phead;
+    for (int i = 0; i < index - 1 && pos->pnext != NULL; ++i) {
+        pos = pos->pnext;
+    }
+
+    //if index -> right is empty
+    if(pos->pnext == NULL) {
+        printf("Insert right\n");
+        ll->ptail = create_words_holder_node_index(ll, pos, set1, set2, last_date);
+    }
+        // If index is at the beginning
+    else if(pos->pback == NULL) {
+        printf("Insert beginnig\n");
+        ll->phead = create_words_holder_node_index(ll, pos, set1, set2, last_date);
+    }else{
+        printf("Insert between two nodes\n");
+
+        create_words_holder_node_index(ll, pos, set1, set2, last_date);
+    }
+
+    ll->nnodes++;
+}
+
+NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
+    NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *) calloc(1,sizeof(NODE_LL_WORDS_HOLDER)); //New node
+    if(node == NULL){
+        fperror("Calloc NODE_LL_WORDS_HOLDER");
+        // exit(0);
+    }
+
+    node->words_holder.s1 = *set1;
+    node->words_holder.s2 = *set2;
+
+    node->pnext = NULL; // initialize the pointers
+    node->pback = NULL;
+
+// if is not empty
+    if(pos != NULL) {
+        // if want to insert between 2 nodes
+        if (pos->pnext != NULL && pos->pback != NULL) {
+            printf("xona\n");
+            // point the index of node in position  we want to insert to new node added behind
+            pos->pnext->pback = node;
+            // point the new node to the next to node
+            node->pnext = pos->pnext;
+            // point the new node to the back node
+            node->pback = pos;
+            // point the pos node to new n
+            pos->pnext = node;
+
+           /* if want to insert to tail  */
+        } else if(pos->pnext == NULL){
+            pos->pnext = node;
+            node->pback = pos;
+        }else{
+            /* if want to insert in pos 1 because pos will point to index 0 */
+            printf("zona\n");
+            node->pnext = pos;
+            pos->pback = node;
+        }
+    }
+
+    node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
+    strcpy(node->last_update_date, last_date);
+
+    if(node->last_update_date == NULL){
+        fperror("last_update_date malloc");
+    }
+
+    return node;
+}

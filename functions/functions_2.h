@@ -92,7 +92,8 @@ void sort(VAL_AD_WORDS_HOLDER *arr,char **result, int lo, int hi);
 void merge(VAL_AD_WORDS_HOLDER *arr,char **result, int lo, int mid, int hi);
 /**
  * sets struct
- */void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi);
+ */
+ void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi);
 /**
  * sets struct
  */

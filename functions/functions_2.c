@@ -99,7 +99,6 @@ int main_functions_2(int argc, char **argv) {
 
     free_ll_words_holder(ll);*/
 
-
     //
    // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
    // insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
@@ -457,6 +456,7 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
     //if empty
     NODE_LL_WORDS_HOLDER *pos = bin_search_insert_ll(ll, last_date);
     NODE_LL_WORDS_HOLDER *temp;
+  
     if(ll->ptail == NULL && ll->phead == NULL){
         ll->phead = create_words_holder_node(ll, pos,set1, set2, last_date);
         ll->ptail = ll->phead;
@@ -482,8 +482,7 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
         temp->pback = pos;
         // point the pos node to new n
         pos->pnext = temp;
-    }
-
+      
     ll->nnodes++;
 }
 
@@ -532,7 +531,6 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     do {
         // Find middle
          mid = find_mid_ll(lo, hi);
-
         // If middle is empty
         if (mid == NULL)
             return NULL;
@@ -551,7 +549,7 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     } while (hi == NULL && hi->pnext != lo);
 
 
-    return mid;
+  return mid;
 }
 
 
@@ -678,7 +676,6 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         pos = pos->pnext;
     }
 
-
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
         NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
@@ -697,7 +694,6 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
         pos->pback = ll->phead;
         ll->phead->pnext = pos;
-    }
 
     ll->nnodes++;
 }
@@ -738,6 +734,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     }*/
 
    /* node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
+   
     strcpy(node->last_update_date, last_date);
 
     if(node->last_update_date == NULL){
@@ -746,6 +743,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
 
     return node;
 }*/
+
 
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi) {
     if (lo == NULL) {

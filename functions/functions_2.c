@@ -28,6 +28,7 @@ int main_functions_2(int argc, char **argv) {
 
     // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
 
+
     matrix_rnd_char_gen(&set1);
     matrix_rnd_char_gen(&set2);
 
@@ -41,36 +42,62 @@ int main_functions_2(int argc, char **argv) {
     };
 
 
-
     // LL 9)a)
     LL_WORDS_HOLDER *ll = (LL_WORDS_HOLDER*) malloc(sizeof(LL_WORDS_HOLDER));
-   /* insert_node_ll_sorted(ll, &set1, &set2, testDates[0]);
+
+    insert_word_char(&set1, set1.rowsize, 2);
+    insert_word_char(&set2, set2.rowsize, 1);
+
+    insert_node_ll_sorted(ll, &set1, &set2, testDates[0]);
     insert_node_ll_sorted(ll, &set1, &set2, testDates[3]);
     insert_node_ll_sorted(ll, &set1, &set2, testDates[2]);
 
+
+
     encode_matrix_words(&set1, sizes, dic);
     encode_matrix_words(&set2, sizes, dic);
+
+    char *words[] = {
+            "ola",
+            "olas",
+    };
+
+    find_word_ll(ll, words, 2, 0, 2);
 
     print_ll_words_holder(ll);
 
     free_ll_words_holder(ll);
-*/
+
    // b)
+
+    /*insert_word_char(&set1, set1.rowsize, 2);
+    insert_word_char(&set2, set2.rowsize, 1);
 
     encode_matrix_words(&set1, sizes, dic);
     encode_matrix_words(&set2, sizes, dic);
+
 
     insert_node_ll_index(ll, &set1, &set2, testDates[3], 0);
     insert_node_ll_index(ll, &set1, &set2, testDates[2], 1);
     insert_node_ll_index(ll, &set1, &set2, testDates[1], 2);
     insert_node_ll_index(ll, &set1, &set2, testDates[3], 1);
     insert_node_ll_index(ll, &set1, &set2, testDates[2], 2);
-    insert_node_ll_index(ll, &set1, &set2, testDates[2], 0);
+
+   // insert_node_ll_index(ll, &set1, &set2, testDates[2], 0);
+
+    char *words[] = {
+            "ola",
+            "olas",
+    };
+
+    find_word_ll(ll, words, 2, 0, 4);
+
+   // delete_ll_node_index(ll, 5);
+   // delete_ll_node_index(ll, 4);
    // insert_node_ll_index(ll, &set1, &set2, testDates[1], 1);
     print_ll_words_holder(ll);
 
-    free_ll_words_holder(ll);
-
+    free_ll_words_holder(ll);*/
 
     //
    // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
@@ -111,6 +138,7 @@ int main_functions_2(int argc, char **argv) {
     print_AD(arr_din);
 
     free_dynamic_array(arr_din);*/
+
     return 0;
 }
 
@@ -427,6 +455,8 @@ void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, i
 void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date) {
     //if empty
     NODE_LL_WORDS_HOLDER *pos = bin_search_insert_ll(ll, last_date);
+    NODE_LL_WORDS_HOLDER *temp;
+  
     if(ll->ptail == NULL && ll->phead == NULL){
         ll->phead = create_words_holder_node(ll, pos,set1, set2, last_date);
         ll->ptail = ll->phead;
@@ -436,12 +466,23 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
 
     if(pos->pback == NULL){
         ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
+        pos->pback = ll->phead;
+        ll->phead->pnext = pos;
     }else if(pos->pnext == NULL){
         ll->ptail = create_words_holder_node(ll, pos, set1, set2, last_date);
+        pos->pnext = ll->phead;
+        ll->ptail->pback = pos;
+        ll->ptail->pnext = NULL;
     }else{
-        create_words_holder_node(ll, pos, set1, set2, last_date);
-    }
-
+       temp = create_words_holder_node(ll, pos, set1, set2, last_date);
+        pos->pnext->pback = temp;
+        // point the new node to the next to node
+        temp->pnext = pos->pnext;
+        // point the new node to the back node
+        temp->pback = pos;
+        // point the pos node to new n
+        pos->pnext = temp;
+      
     ll->nnodes++;
 }
 
@@ -485,12 +526,11 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
 
     NODE_LL_WORDS_HOLDER *lo = ll->phead;
     NODE_LL_WORDS_HOLDER *hi = ll->ptail;
-   // NODE_LL_WORDS_HOLDER *mid = NULL;
+    NODE_LL_WORDS_HOLDER *mid = NULL;
 
     do {
         // Find middle
-        NODE_LL_WORDS_HOLDER *mid = find_mid_ll(lo, hi);
-
+         mid = find_mid_ll(lo, hi);
         // If middle is empty
         if (mid == NULL)
             return NULL;
@@ -509,7 +549,7 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     } while (hi == NULL && hi->pnext != lo);
 
 
-    return lo;
+  return mid;
 }
 
 
@@ -526,7 +566,7 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORD
     node->pnext = NULL;
     node->pback = NULL;
 // if is not empty
-    if (pos != NULL) {
+   /* if (pos != NULL) {
         // If pos is not the head, set the new node's pback to pos->pback
             node->pnext = pos->pnext;
             pos->pnext = node;
@@ -539,7 +579,7 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORD
         node->pnext = pos;
 
     }
-
+*/
     node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
     strcpy(node->last_update_date, last_date);
 
@@ -620,12 +660,12 @@ void free_ll_words_holder(LL_WORDS_HOLDER *ll) {
         free(ll);
 }
 
-// Tentar fazer insert a) a utilizar o ponto b)
+
 void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date, int index){
     NODE_LL_WORDS_HOLDER *pos = NULL;
 
     if(ll->ptail == NULL && ll->phead == NULL){
-        ll->phead = create_words_holder_node_index(ll, pos, set1, set2, last_date);
+        ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
         ll->ptail = ll->phead;
         ll->nnodes++;
         return;
@@ -636,25 +676,29 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         pos = pos->pnext;
     }
 
-    //if index -> right is empty
-    if(pos->pnext == NULL) {
-        printf("Insert right\n");
-        ll->ptail = create_words_holder_node_index(ll, pos, set1, set2, last_date);
-    }
-        // If index is at the beginning
-    else if(pos->pback == NULL) {
-        printf("Insert beginnig\n");
-        ll->phead = create_words_holder_node_index(ll, pos, set1, set2, last_date);
-    }else{
-        printf("Insert between two nodes\n");
-
-        create_words_holder_node_index(ll, pos, set1, set2, last_date);
-    }
+    if (pos->pback != NULL && pos->pnext != NULL) {
+        //insert between two nodes
+        NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
+        pos->pnext->pback = temp;
+        temp->pnext = pos->pnext;
+        temp->pback = pos;
+        pos->pnext = temp;
+    } else if (pos->pnext == NULL) {
+        // Insert to tail
+        ll->ptail = create_words_holder_node(ll, pos, set1, set2, last_date);
+        pos->pnext = ll->ptail;
+        ll->ptail->pback = pos;
+        ll->ptail->pnext = NULL;
+    } else {
+        // Insert at the beginning
+        ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
+        pos->pback = ll->phead;
+        ll->phead->pnext = pos;
 
     ll->nnodes++;
 }
 
-NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
+/*NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
     NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *) calloc(1,sizeof(NODE_LL_WORDS_HOLDER)); //New node
     if(node == NULL){
         fperror("Calloc NODE_LL_WORDS_HOLDER");
@@ -666,9 +710,9 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_L
     node->pnext = NULL; // initialize the pointers
     node->pback = NULL;
 
-// if is not empty
+ //if is not empty
     if(pos != NULL) {
-        /* insert between 2 nodes */
+        // insert between 2 nodes //
         if (pos->pnext != NULL && pos->pback != NULL) {
             // point the index of node in position  we want to insert to new node added behind
             pos->pnext->pback = node;
@@ -678,18 +722,19 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_L
             node->pback = pos;
             // point the pos node to new n
             pos->pnext = node;
-           /* insert to tail  */
+           // insert to tail  //
         } else if(pos->pnext == NULL){
             pos->pnext = node;
             node->pback = pos;
         }else{
-            /* insert in pos 1 because pos will point to index 0 */
+            // insert in pos 1 because pos will point to index 0 //
             node->pnext = pos;
             pos->pback = node;
         }
-    }
+    }*/
 
-    node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
+   /* node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
+   
     strcpy(node->last_update_date, last_date);
 
     if(node->last_update_date == NULL){
@@ -697,7 +742,8 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_L
     }
 
     return node;
-}
+}*/
+
 
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi) {
     if (lo == NULL) {
@@ -714,4 +760,123 @@ NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER
     }
 
     return slow_ptr;
+}
+
+void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
+    if(ll->phead == NULL && ll->ptail == NULL){
+       // printf("EMPTY LL\n");
+        return;
+    }
+
+    if(index >= ll->nnodes){
+        printf("INDEX ALREADY REMOVED !!!\n");
+        return;
+    }
+    NODE_LL_WORDS_HOLDER *pos = NULL;
+
+    pos = ll->phead;
+
+    for (int i = 0; i < index && pos != NULL; ++i) {
+        pos = pos->pnext;
+    }
+
+    if (pos->pback != NULL && pos->pnext != NULL) {
+        // Remove between two nodes
+        pos->pback->pnext = pos->pnext;
+        pos->pnext->pback = pos->pback;
+        // Remove node in tail (last node)
+    } else if (pos->pnext == NULL) {
+        ll->ptail = pos->pback;
+        pos->pback->pnext = NULL;
+    } else {
+        // Remove in head (first one)
+        ll->phead = pos->pnext;
+        pos->pnext->pback = NULL;
+    }
+
+    free(pos->last_update_date);
+    free(pos);
+
+    ll->nnodes--;
+
+    return;
+}
+
+void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
+    if(lo < 0 || hi >= ll->nnodes){
+        fperror("LO or HI out of bounds");
+        //exit(0);
+    }
+
+    int *index_set1 = NULL,*index_set2 = NULL;
+
+    NODE_LL_WORDS_HOLDER *lo_node;
+    lo_node = ll->phead;
+
+    for (int i = 0; i < lo; ++i) {
+        lo_node= lo_node->pnext;
+    }
+
+
+    for (int i = 0; i < W; ++i) {
+        //check if word is valid in ufp6
+        if(is_ufp6(words[i]) == -1) continue;
+        int dfa[MAX_UFP6][BITS];
+        KMP (words[i], dfa);
+        NODE_LL_WORDS_HOLDER *current = lo_node;
+        for (int j = lo; j <= hi && current->pnext !=NULL; ++j) {
+            index_set1 = search_KMP(&current->words_holder.s1,dfa ,(int) strlen(words[i]));
+            index_set2 =  search_KMP(&current->words_holder.s2,dfa ,(int) strlen(words[i]));
+            print_words_found_ll(current, index_set1, index_set2, j);
+            //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
+            write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find.txt");
+
+            free(index_set1);
+            index_set1 = NULL;
+            free(index_set2);
+            index_set2 = NULL;
+
+            current = current->pnext;
+        }
+    }
+}
+
+void print_words_found_ll(NODE_LL_WORDS_HOLDER *current, int *index_set1, int *index_set2, int j) {
+    if(index_set1 != NULL){
+        printf("LL NODE -> %d Set1 Match ", j);
+        print_found_words_and_ufp6(&current->words_holder.s1, index_set1);
+    }
+
+    if(index_set2 != NULL){
+        printf("LL NODE -> %d Set2 Match, ", j);
+        print_found_words_and_ufp6(&current->words_holder.s2, index_set2);
+    }
+}
+
+int write_set_to_txt(const SETS *set, char *filename) {
+    FILE *fp = fopen(filename, "a+");
+
+    if (fp == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(fp, "Words set\n");  // Corrected format specifier
+    for (int i = 0; i < set->rowsize; i++) {
+        //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
+        fprintf(fp, " %s",  set->matrix[i]);
+        fputc('\n', fp);
+    }
+
+    // Close the file
+    fclose(fp);
+
+    return 0;
+}
+
+
+int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
+    write_set_to_txt(s1, filename);
+    write_set_to_txt(s2, filename);
+    return 0;
 }

@@ -92,6 +92,7 @@ int main_functions_1(int argc , char **argv){
     encode_matrix_words(&set1,sizes,dic);
 
     free(index_words_found);
+
     /* 5) */
    /* char pattern[BITS + 1] = "ola";
     int dfa[MAX_UFP6][MAX_UFP6];
@@ -207,7 +208,6 @@ char **matrix_init_char(int row ,int *size_cols){
     return mat;
 }
 
-
 void print_matrix_int(const SETS *set) {
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < *(set->arr_bits_size + i); ++j) {
@@ -278,8 +278,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
         word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
     }
 }
-
-
 
 char gen_rnd_char(){
     int random_number;
@@ -463,7 +461,6 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
-      
         if (currentChar == ' '){
             currentChar = '0';
         }
@@ -722,7 +719,6 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 }
 
 
-
 void KMP (char pattern[BITS], int dfa[MAX_UFP6][BITS]) {
     int indexChar = 0;
     int pattern_size =(int) strlen(pattern);
@@ -769,7 +765,6 @@ int calculate_index_char(char currentChar) {
 }
 
 
-
 int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size){
     int i , j;
     int indexChar = 0;
@@ -788,7 +783,7 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size){
     }
     //store in pos 0 of array the count of words found with pattern
     arr_index[0] = l-1;
-  
+
     if(arr_index[0] != 0)
         return arr_index;
     return NULL;
@@ -921,4 +916,3 @@ int is_ufp6(char *word) {
 
     return 1;
 }
-

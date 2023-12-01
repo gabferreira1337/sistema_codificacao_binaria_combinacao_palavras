@@ -182,7 +182,6 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
 int write_matrix_char_txt(char **mat,int r , int *cols, char *filename);
 
 
-
 void KMP(char pattern[BITS], int dfa[MAX_UFP6][BITS]);
 
 int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size);

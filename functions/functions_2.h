@@ -92,7 +92,8 @@ void sort(VAL_AD_WORDS_HOLDER *arr,char **result, int lo, int hi);
 void merge(VAL_AD_WORDS_HOLDER *arr,char **result, int lo, int mid, int hi);
 /**
  * sets struct
- */void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi);
+ */
+ void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi);
 /**
  * sets struct
  */
@@ -117,7 +118,6 @@ void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size);
  * free
  */
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
-
 void free_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *s2, char *last_date);
 //perguntar
@@ -126,9 +126,12 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
 void print_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date);
 NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date);
-
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
-
+void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
+void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi);
+void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
+int write_set_to_txt(const SETS *set,char *filename);
+int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
 
 int main_functions_2(int argc , char **argv);
 

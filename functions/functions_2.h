@@ -132,6 +132,8 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi);
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
 int write_set_to_txt(const SETS *set,char *filename);
 int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
+int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename);
+
 
 int main_functions_2(int argc , char **argv);
 

@@ -23,6 +23,7 @@ time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
 
 
 
+
 int main_functions_1(int argc , char **argv){
     struct timeval tv1, tv2, tv;
     float time_delta;
@@ -112,7 +113,7 @@ int main_functions_1(int argc , char **argv){
    /* puts("SET 2");
     print_matrix_char(set2);
     puts("SET 2 ENCODE");
-    print_matrix_int(set2);
+    print_matrix_int(set2);*/
 
     /* Sort Both arrays in descending order*/
    /* msdRadixSort(&set1, 0, set1.rowsize,0);
@@ -216,6 +217,7 @@ void print_matrix_int(const SETS *set) {
     }
 }
 
+
 //Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
 
@@ -276,7 +278,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
         word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
     }
 }
-
 
 
 char gen_rnd_char(){
@@ -799,6 +800,7 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]) {
     }
 }
 
+
 void print_found_words_and_ufp6(SETS *set, int *array_index) {
    // printf("Words Found and their UFP6!!!\n");
     // start in 1 because storing in index 0 the count of words found
@@ -877,6 +879,7 @@ void realloc_row_add(SETS *set, int row) {
     }
 }
 
+
 void compute_words_size(const char **words, int *words_index ,int W) {
     for (int i = 0; i < W; ++i) {
         words_index[i] = (int) strlen(words[i]);
@@ -899,6 +902,7 @@ void seed_random() {
     unsigned  int seed = (unsigned int)time(NULL) + (unsigned  int) clock();
     srand(seed);
 }
+
 
 int is_ufp6(char *word) {
     char currentChar = '\0';

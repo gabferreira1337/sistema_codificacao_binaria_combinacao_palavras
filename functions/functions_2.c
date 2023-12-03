@@ -10,6 +10,7 @@
 #define DATE_SIZE 11
 #define BUFFER_SIZE 8096
 
+
 #define N 1
 
 int main_functions_2(int argc, char **argv) {
@@ -533,7 +534,6 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     do {
         // Find middle
          mid = find_mid_ll(lo, hi);
-
         // If middle is empty
         if (mid == NULL)
             return NULL;
@@ -679,7 +679,6 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         pos = pos->pnext;
     }
 
-
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
         NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
@@ -699,6 +698,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         pos->pback = ll->phead;
         ll->phead->pnext = pos;
     }
+
 
     ll->nnodes++;
 }
@@ -739,6 +739,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     }*/
 
    /* node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
+
     strcpy(node->last_update_date, last_date);
 
     if(node->last_update_date == NULL){
@@ -811,6 +812,7 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
     }
 
     int *index_set1 = NULL,*index_set2 = NULL;
+
     NODE_LL_WORDS_HOLDER *lo_node;
     lo_node = ll->phead;
 
@@ -878,6 +880,7 @@ int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
     write_set_to_txt(s2, filename);
     return 0;
 }
+
 
 int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename) {
     FILE *fp = fopen(filename, "a+");

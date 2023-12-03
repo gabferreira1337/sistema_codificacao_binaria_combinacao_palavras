@@ -200,7 +200,6 @@ void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
 
-
 int is_ufp6(char *word);
 
 void seed_random();

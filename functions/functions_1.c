@@ -279,6 +279,7 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
     }
 }
 
+
 char gen_rnd_char(){
     int random_number;
     /* Generate random number between 'a' and 'z' */

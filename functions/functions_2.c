@@ -8,6 +8,8 @@
 
 #define R 5
 #define DATE_SIZE 11
+#define BUFFER_SIZE 8096
+
 
 #define N 1
 
@@ -98,6 +100,7 @@ int main_functions_2(int argc, char **argv) {
     print_ll_words_holder(ll);
 
     free_ll_words_holder(ll);*/
+
 
     //
    // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
@@ -456,7 +459,6 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
     //if empty
     NODE_LL_WORDS_HOLDER *pos = bin_search_insert_ll(ll, last_date);
     NODE_LL_WORDS_HOLDER *temp;
-  
     if(ll->ptail == NULL && ll->phead == NULL){
         ll->phead = create_words_holder_node(ll, pos,set1, set2, last_date);
         ll->ptail = ll->phead;
@@ -482,7 +484,8 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
         temp->pback = pos;
         // point the pos node to new n
         pos->pnext = temp;
-      
+    }
+
     ll->nnodes++;
 }
 
@@ -549,7 +552,7 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     } while (hi == NULL && hi->pnext != lo);
 
 
-  return mid;
+    return mid;
 }
 
 
@@ -694,6 +697,8 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
         pos->pback = ll->phead;
         ll->phead->pnext = pos;
+    }
+
 
     ll->nnodes++;
 }
@@ -734,7 +739,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     }*/
 
    /* node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
-   
+
     strcpy(node->last_update_date, last_date);
 
     if(node->last_update_date == NULL){
@@ -743,7 +748,6 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
 
     return node;
 }*/
-
 
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi) {
     if (lo == NULL) {
@@ -772,8 +776,8 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
         printf("INDEX ALREADY REMOVED !!!\n");
         return;
     }
-    NODE_LL_WORDS_HOLDER *pos = NULL;
 
+    NODE_LL_WORDS_HOLDER *pos = NULL;
     pos = ll->phead;
 
     for (int i = 0; i < index && pos != NULL; ++i) {
@@ -793,7 +797,6 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
         ll->phead = pos->pnext;
         pos->pnext->pback = NULL;
     }
-
     free(pos->last_update_date);
     free(pos);
 
@@ -817,7 +820,6 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
         lo_node= lo_node->pnext;
     }
 
-
     for (int i = 0; i < W; ++i) {
         //check if word is valid in ufp6
         if(is_ufp6(words[i]) == -1) continue;
@@ -829,13 +831,13 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
             index_set2 =  search_KMP(&current->words_holder.s2,dfa ,(int) strlen(words[i]));
             print_words_found_ll(current, index_set1, index_set2, j);
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
-            write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find.txt");
+            //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find.txt");
+            write_words_found_to_txt(current, index_set1, index_set2,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find_1.txt");
 
             free(index_set1);
             index_set1 = NULL;
             free(index_set2);
             index_set2 = NULL;
-
             current = current->pnext;
         }
     }
@@ -868,15 +870,67 @@ int write_set_to_txt(const SETS *set, char *filename) {
         fputc('\n', fp);
     }
 
-    // Close the file
     fclose(fp);
 
     return 0;
 }
-
 
 int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
     write_set_to_txt(s1, filename);
     write_set_to_txt(s2, filename);
     return 0;
 }
+
+
+int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename) {
+    FILE *fp = fopen(filename, "a+");
+
+    if (fp == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(fp, "Words set 1\n");  // Corrected format specifier
+
+    if(index_set1 != NULL){
+        for (int i = 1; i <= *index_set1; i++) {
+            //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
+            fprintf(fp, " %s",  current->words_holder.s1.matrix[i]);
+            fputc('\n', fp);
+        }
+    }
+
+
+    fprintf(fp, "Words set 2\n");  // Corrected format specifier
+    if(index_set2 != NULL){
+        for (int i = 1; i <= *index_set2; i++) {
+            //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
+            fprintf(fp, " %s",  current->words_holder.s2.matrix[i]);
+            fputc('\n', fp);
+        }
+    }
+
+
+    fclose(fp);
+    return 0;
+}
+
+/*
+int write_set_to_txt(const SETS *set, char *filename) {
+    int fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+
+    if (fd == -1) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    write(fd, "Words set\n", sizeof("Words set\n") - 1);
+
+    for (int i = 0; i < set->rowsize; i++) {
+        dprintf(fd, " %s\n", set->matrix[i]);
+    }
+
+    close(fd);
+
+    return 0;
+}*/

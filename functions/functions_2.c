@@ -10,6 +10,7 @@
 #define DATE_SIZE 11
 #define BUFFER_SIZE 8096
 
+
 #define N 1
 
 int main_functions_2(int argc, char **argv) {
@@ -533,7 +534,6 @@ NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
     do {
         // Find middle
          mid = find_mid_ll(lo, hi);
-
         // If middle is empty
         if (mid == NULL)
             return NULL;
@@ -678,7 +678,6 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     for (int i = 0; i < index - 1 && pos->pnext != NULL; ++i) {
         pos = pos->pnext;
     }
-
 
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
@@ -922,7 +921,6 @@ void write_index_array_ufp6_to_file(SETS *set, FILE *fp, const int *array_index,
         fprintf(fp, "%d",  set->matrix_encode[array_index[r]][i]);
        // printf("%d", set->matrix_encode[array_index[r]][i]);
     }
-
 }
 
 /*

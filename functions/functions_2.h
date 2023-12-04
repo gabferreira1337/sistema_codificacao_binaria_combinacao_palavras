@@ -149,8 +149,6 @@ int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1
 void write_index_array_words_to_file(SETS *set,FILE *fp,const int *index_array);
 void write_index_array_ufp6_to_file(SETS *set,FILE *fp,const int *index_array, int r);
 
-
-
 int main_functions_2(int argc , char **argv);
 
 #endif //PROJETO_AED1_LP1_FUNCTIONS_2_H

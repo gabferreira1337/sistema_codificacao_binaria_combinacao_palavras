@@ -10,4 +10,6 @@ add_executable(projeto_aed1_lp1 main.c
         test_functions/test_functions_1.h
         functions/functions_2.c
         functions/functions_2.h
+        test_functions/test_functions_2.c
+        test_functions/test_functions_2.h
 )

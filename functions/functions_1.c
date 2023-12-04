@@ -910,6 +910,5 @@ int is_ufp6(char *word) {
             return -1;
         }
     }
-
     return 1;
 }

@@ -805,6 +805,7 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
 }
 
 void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
+    //Check if out of bounds
     if(lo < 0 || hi >= ll->nnodes){
         fperror("LO or HI out of bounds");
         //exit(0);
@@ -830,7 +831,7 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
             print_words_found_ll(current, index_set1, index_set2, j);
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
             //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find.txt");
-            write_words_found_to_txt(current, index_set1, index_set2,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find_1.txt");
+            write_words_found_to_txt(current, index_set1, index_set2,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find_1.txt", j);
 
             free(index_set1);
             index_set1 = NULL;
@@ -879,7 +880,7 @@ int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
     return 0;
 }
 
-int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename) {
+int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename, int index_ll) {
     FILE *fp = fopen(filename, "a+");
 
     if (fp == NULL) {
@@ -887,29 +888,41 @@ int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1
         exit(EXIT_FAILURE);
     }
 
-    fprintf(fp, "Words set 1\n");  // Corrected format specifier
+    if(index_set1 != NULL || index_set2 != NULL){
+        fprintf(fp, "NODE %d\n", index_ll);
+    }
 
     if(index_set1 != NULL){
-        for (int i = 1; i <= *index_set1; i++) {
-            //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
-            fprintf(fp, " %s",  current->words_holder.s1.matrix[i]);
-            fputc('\n', fp);
-        }
+        fprintf(fp, "->Words set 1\n");
+        write_index_array_words_to_file(&current->words_holder.s1, fp, index_set1);
     }
 
-
-    fprintf(fp, "Words set 2\n");  // Corrected format specifier
     if(index_set2 != NULL){
-        for (int i = 1; i <= *index_set2; i++) {
-            //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
-            fprintf(fp, " %s",  current->words_holder.s2.matrix[i]);
-            fputc('\n', fp);
-        }
+        fprintf(fp, "->Words set 2\n");
+        write_index_array_words_to_file(&current->words_holder.s2, fp, index_set2);
     }
-
-
     fclose(fp);
     return 0;
+}
+
+void write_index_array_words_to_file(SETS *set,FILE *fp,const int *array_index) {
+    for (int i = 1; i <= *array_index; i++) {
+        //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
+        fprintf(fp, " %s",  set->matrix[array_index[i]]);
+        write_index_array_ufp6_to_file(set, fp, array_index, i);
+       // current->words_holder.s2.matrix[index_array[i]]
+        fputc('\n', fp);
+    }
+}
+
+void write_index_array_ufp6_to_file(SETS *set, FILE *fp, const int *array_index, int r) {
+    fprintf(fp," UFP6 = ");
+    for (int i = 0; i < *(set->arr_bits_size + (*(array_index + r))); i++) {
+        // fprintf(fp,"%d", *(*(set->matrix_encode + (*(array_index + k))))+ i);
+        fprintf(fp, "%d",  set->matrix_encode[array_index[r]][i]);
+       // printf("%d", set->matrix_encode[array_index[r]][i]);
+    }
+
 }
 
 /*

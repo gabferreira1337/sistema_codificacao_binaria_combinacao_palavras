@@ -127,12 +127,28 @@ void print_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date);
 NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date);
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
+/**
+ * @paragraph search words and their respective ufp6 in given node
+ * @param ll - pointer to Linked List Words Holder
+ * @param words - array of words to search in LL
+ * @param W - size of words array
+ * @param lo - start index node
+ * @param hi - end index node
+ */
 void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi);
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
 int write_set_to_txt(const SETS *set,char *filename);
 int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
-int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename);
+int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename, int index_ll);
+void write_index_array_words_to_file(SETS *set,FILE *fp,const int *index_array);
+void write_index_array_ufp6_to_file(SETS *set,FILE *fp,const int *index_array, int r);
+
 
 
 int main_functions_2(int argc , char **argv);

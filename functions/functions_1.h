@@ -38,29 +38,21 @@ void int_to_bin(SETS *set);
  *
  */
 void char_to_bin(SETS *set);
-
-
 /** generate random char
  * @params length - word length
  * @return  word generated
  */
 char gen_rnd_char();
-
 /** Initialize matrix with random words generated
  * @params length - word length
  * @return  word generated
  */
 void matrix_rnd_char_gen(SETS *set);
-
 /**  initialize matrix of ints to 0
  * @params
  *
  */
-
-
 int **matrix_init_int(int row ,int col);
-
-
 /**  initialize matrix of char to 0
  * @params
  *

@@ -279,7 +279,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
     }
 }
 
-
 char gen_rnd_char(){
     int random_number;
     /* Generate random number between 'a' and 'z' */
@@ -800,7 +799,6 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]) {
     }
 }
 
-
 void print_found_words_and_ufp6(SETS *set, int *array_index) {
    // printf("Words Found and their UFP6!!!\n");
     // start in 1 because storing in index 0 the count of words found
@@ -879,7 +877,6 @@ void realloc_row_add(SETS *set, int row) {
     }
 }
 
-
 void compute_words_size(const char **words, int *words_index ,int W) {
     for (int i = 0; i < W; ++i) {
         words_index[i] = (int) strlen(words[i]);
@@ -903,7 +900,6 @@ void seed_random() {
     srand(seed);
 }
 
-
 int is_ufp6(char *word) {
     char currentChar = '\0';
     for (int i = 0; i < strlen(word); ++i) {
@@ -914,6 +910,5 @@ int is_ufp6(char *word) {
             return -1;
         }
     }
-
     return 1;
 }

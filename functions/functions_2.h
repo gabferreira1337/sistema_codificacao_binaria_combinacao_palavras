@@ -45,7 +45,9 @@ typedef struct ll_words_holder{
 
 
 /**
- * sets struct
+ * @paragraph Initialize dynamic array with given size
+ * @param size - size of dynamic array
+ * @return pointer to AD_WORDS_HOLDER struct created
  */
 AD_WORDS_HOLDER* dynamic_array_init(int size);
 /**
@@ -125,7 +127,21 @@ void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *la
 void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date, int index);
 void print_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date);
-NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date);
+/**
+ * @paragraph Search position in Linked List to add new node in chronological order DESC using binary search
+ * @param ll - pointer to Linked List Words Holder
+ * @param date - node of Linked List to be deleted
+ * @return when new date > all nodes this function returns NULL ,
+ * when new date < all nodes this function returns a pointer to the first node
+ * and when new date between two nodes returns pointer to the left node
+ */
+NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date);
+/**
+ * @paragraph Find midpoint of Linked List using fast_ptr and slow_ptr
+ * @param lo - pointer to lower node
+ * @param hi - pointer to higher node
+ * @return pointer to middle node of Linked List
+ */
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
 /**
  * @paragraph Delete node in a given position/index

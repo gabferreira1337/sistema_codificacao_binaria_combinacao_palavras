@@ -217,7 +217,6 @@ void print_matrix_int(const SETS *set) {
     }
 }
 
-
 //Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
 
@@ -433,7 +432,7 @@ void matrix_encode_realloc(SETS *set) {
 }*/
 
 int fperror(char *message) {
-    fprintf(stderr, "ERROR: %s", message);
+    fprintf(stderr, "ERROR: %s\n", message);
     exit(0);
 }
 

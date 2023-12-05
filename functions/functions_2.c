@@ -58,6 +58,7 @@ int main_functions_2(int argc, char **argv) {
     encode_matrix_words(&set1, sizes, dic);
     encode_matrix_words(&set2, sizes, dic);
 
+
     /*char *words[] = {
             "ola",
             "olas",
@@ -70,7 +71,6 @@ int main_functions_2(int argc, char **argv) {
     free_ll_words_holder(ll);
 
   /* // b)
-
     /*insert_word_char(&set1, set1.rowsize, 2);
     insert_word_char(&set2, set2.rowsize, 1);
 
@@ -254,6 +254,69 @@ void print_AD(const AD_WORDS_HOLDER *ad) {
         print_matrix_char(&((*(ad->array_val + i)).words_holder.s2));
         puts("Encode ");
         print_matrix_int(&((*(ad->array_val + i)).words_holder.s2));
+    }
+}
+
+
+
+void sort(VAL_AD_WORDS_HOLDER *arr, char **result, int lo, int hi) {
+    if(hi <= lo) return;
+
+    /*if(hi < lo + CUTOFF - 1){
+        insertion_sort(a, hi);
+        return;
+    }*
+
+    if(check_if_sorted(a, 16)){
+        return;
+    }*/
+
+    int mid = lo + (hi - lo) / 2;
+
+    sort(arr, result, lo, mid);
+    sort(arr, result, mid + 1, hi);
+
+    merge(arr, result, lo, mid, hi);
+}
+
+void merge(VAL_AD_WORDS_HOLDER *arr, char **result, int lo, int mid, int hi) {
+    int i, j;
+
+    for (int l = lo; l <= hi ; ++l) {
+        memcpy(result[l], arr[l].last_update_date,DATE_SIZE);
+    }
+
+    i = lo;
+    j = mid + 1;
+    //printf("asalcnççpç%s\n", arr[0].last_update_date);
+    //printf("asalcnççpç1%s\n", arr[1].last_update_date);
+
+    for (int k = lo; k <= hi; k++) {
+      //  printf("lo %d hi = %d k = %d\n", lo, hi, k);
+
+        if (i > mid && j < hi  ) {
+           // memcpy(arr[k]->last_update_date, result[j++], DATE_SIZE);
+            strcpy(arr[k].last_update_date, result[j++]);
+
+            //printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+        } else if (j > hi && i < mid ) {
+           // memcpy(arr[k]->last_update_date, result[i++], DATE_SIZE);
+            strcpy(arr[k].last_update_date, result[i++]);
+
+           // printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+        } else if (i <= mid && j <= hi) {
+            if (strcmp(result[j], result[i]) < 0) {
+                // memcpy(arr[k]->last_update_date, result[j++], DATE_SIZE);
+                strcpy(arr[k].last_update_date, result[j++]);
+
+                //printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+            } else {
+                //memcpy(arr[k]->last_update_date, result[i++], DATE_SIZE);
+                strcpy(arr[k].last_update_date, result[i++]);
+                //printf("Updated last_update_date: %s\n", arr[k].last_update_date);
+            }
+        }
+       // printf("Updated last_update_date: %s\n", arr[k].last_update_date);
     }
 }
 
@@ -506,7 +569,6 @@ NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date) {
         }else{
             return mid;
         }
-
     }
     return lo;
 }
@@ -522,8 +584,6 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORD
 
     node->words_holder.s1 = *set1;
     node->words_holder.s2 = *set2;
-
-
     node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
     strcpy(node->last_update_date, last_date);
 
@@ -620,7 +680,6 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
         pos = pos->pnext;
     }
 
-
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
         NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
@@ -702,7 +761,7 @@ NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER
 
     NODE_LL_WORDS_HOLDER *slow_ptr = lo;
     NODE_LL_WORDS_HOLDER *fast_ptr = lo->pnext;
-    //fast_ptr == NULL , end fast_ptr->pnext == NULL indicate that fast_ptr is the last node
+    //fast_ptr == NULL , end fast_ptr->pnext == NULL indicate that fast_ptr is the last noder
     while (fast_ptr != NULL && fast_ptr->pnext != NULL) {
         fast_ptr = fast_ptr->pnext->pnext;
         slow_ptr = slow_ptr->pnext;

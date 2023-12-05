@@ -433,7 +433,7 @@ void matrix_encode_realloc(SETS *set) {
 }*/
 
 int fperror(char *message) {
-    fprintf(stderr, "ERROR: %s", message);
+    fprintf(stderr, "ERROR: %s\n", message);
     exit(0);
 }
 

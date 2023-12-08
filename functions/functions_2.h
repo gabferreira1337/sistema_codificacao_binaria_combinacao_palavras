@@ -170,14 +170,18 @@ void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index
  * @paragraph Delete node in a given position/index
  * @param ll - pointer to Linked List Words Holder
  * @param index - node of Linked List to be deleted
+ * @param flag - if set to
  */
-int write_set_to_txt(const SETS *set,char *filename);
+int write_set_to_txt(const SETS *set,FILE *fp);
+void write_set_ufp6_to_txt(const SETS *set, FILE *fp);
+int save_set_txt(const SETS *set, char *filename);
+
 /**
  * @paragraph Delete node in a given position/index
  * @param ll - pointer to Linked List Words Holder
  * @param index - node of Linked List to be deleted
  */
-int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
+void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
 /**
  * @paragraph Delete node in a given position/index
  * @param ll - pointer to Linked List Words Holder
@@ -196,6 +200,13 @@ void write_index_array_words_to_file(SETS *set,FILE *fp,const int *index_array);
  * @param index - node of Linked List to be deleted
  */
 void write_index_array_ufp6_to_file(SETS *set,FILE *fp,const int *index_array, int r);
+void read_txt_to_set(SETS *set, char *filename);
+void read_txt_words(SETS *set, FILE *fp);
+void read_txt_ufp6(SETS *set, FILE *fp);
+void sets_struct_init_v2(SETS *set, int num_words);
+void calloc_col_word(char **mat_row, int col_words_size);
+void calloc_col_ufp6(int **mat_row, int col_words_size);
+void read_ufp6_file_to_set(SETS *set, FILE *fp);
 
 int main_functions_2(int argc , char **argv);
 

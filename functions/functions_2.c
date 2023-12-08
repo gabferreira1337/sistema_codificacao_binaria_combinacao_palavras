@@ -10,12 +10,12 @@
 #define DATE_SIZE 11
 #define BUFFER_SIZE 8096
 
-#define N 1
+#define DYNAMIC_ARRAY_SIZE 1
 
 int main_functions_2(int argc, char **argv) {
 
     AD_WORDS_HOLDER *arr_din;
-    arr_din = dynamic_array_init(N);
+    arr_din = dynamic_array_init(DYNAMIC_ARRAY_SIZE);
     int dic[MAX_UFP6][BITS];
     int sizes[MAX_UFP6];
 
@@ -30,11 +30,9 @@ int main_functions_2(int argc, char **argv) {
     // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
 
 
-    matrix_rnd_char_gen(&set1);
-    matrix_rnd_char_gen(&set2);
 
 
-    char *testDates[] = {
+   /* char *testDates[] = {
             "25-11-2023",
             "24-11-2023",
             "01-12-2022",
@@ -65,7 +63,7 @@ int main_functions_2(int argc, char **argv) {
 
     find_word_ll(ll, words, 2, 0, 2);
 */
-      print_ll_words_holder(ll);
+    /* print_ll_words_holder(ll);
 
     free_ll_words_holder(ll);
 
@@ -150,7 +148,18 @@ int main_functions_2(int argc, char **argv) {
 
     //free_dynamic_array(arr_din);
 
-    return 0;
+    encode_matrix_words(&set1, sizes,dic);
+
+    print_matrix_char(&set1);
+    print_matrix_char(&set2);
+
+    freemem(&set1);
+    freemem(&set2);
+
+    exit(0);
+
+
+   // return 0;
 }
 
 AD_WORDS_HOLDER* dynamic_array_init(int size) {
@@ -773,8 +782,8 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
             index_set2 =  search_KMP(&current->words_holder.s2,dfa ,(int) strlen(words[i]));
             print_words_found_ll(current, index_set1, index_set2, j);
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
-            //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find.txt");
-            write_words_found_to_txt(current, index_set1, index_set2,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/teste_find_1.txt", j);
+            //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "teste_find.txt");
+            write_words_found_to_txt(current, index_set1, index_set2,"teste_find_1.txt", j);
             free(index_set1);
             index_set1 = NULL;
             free(index_set2);
@@ -785,40 +794,45 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
 }
 
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *current, int *index_set1, int *index_set2, int j) {
-    if(index_set1 != NULL){
+    if (index_set1 != NULL){
         printf("LL NODE -> %d Set1 Match ", j);
         print_found_words_and_ufp6(&current->words_holder.s1, index_set1);
     }
 
-    if(index_set2 != NULL){
+    if (index_set2 != NULL){
         printf("LL NODE -> %d Set2 Match, ", j);
         print_found_words_and_ufp6(&current->words_holder.s2, index_set2);
     }
 }
 
-int write_set_to_txt(const SETS *set, char *filename) {
-    FILE *fp = fopen(filename, "a+");
-
-    if (fp == NULL) {
-        perror("Error opening file");
-        exit(EXIT_FAILURE);
-    }
-
-    fprintf(fp, "Words set\n");  // Corrected format specifier
+int write_set_to_txt(const SETS *set, FILE *fp) {
+    //write rowsize (number of words in set) to file
+    fprintf(fp, "Words set: number_words = %d\n", set->rowsize);
     for (int i = 0; i < set->rowsize; i++) {
         //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
-        fprintf(fp, " %s",  set->matrix[i]);
-        fputc('\n', fp);
+        fprintf(fp, "%d ",  set->arr_word_size[i]);
+        for (int j = 0; j < set->arr_word_size[i]; ++j) {
+            fprintf(fp, "%c ",  set->matrix[i][j]);
+        }
+        fprintf(fp, "\n");
     }
-
-    fclose(fp);
+    write_set_ufp6_to_txt(set, fp);
     return 0;
 }
 
-int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
-    write_set_to_txt(s1, filename);
-    write_set_to_txt(s2, filename);
-    return 0;
+void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
+    FILE *fp = NULL;
+
+    fp = fopen(filename, "a+");
+
+    if (fp == NULL){
+        fperror("fp in save_both_sets_to_txt");
+    }
+
+    write_set_to_txt(s1, fp);
+    write_set_to_txt(s2, fp);
+
+    fclose(fp);
 }
 
 int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename, int index_ll) {
@@ -829,16 +843,16 @@ int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1
         exit(EXIT_FAILURE);
     }
 
-    if(index_set1 != NULL || index_set2 != NULL){
+    if (index_set1 != NULL || index_set2 != NULL){
         fprintf(fp, "NODE %d\n", index_ll);
     }
 
-    if(index_set1 != NULL){
+    if (index_set1 != NULL){
         fprintf(fp, "->Words set 1\n");
         write_index_array_words_to_file(&current->words_holder.s1, fp, index_set1);
     }
 
-    if(index_set2 != NULL){
+    if (index_set2 != NULL){
         fprintf(fp, "->Words set 2\n");
         write_index_array_words_to_file(&current->words_holder.s2, fp, index_set2);
     }
@@ -866,22 +880,97 @@ void write_index_array_ufp6_to_file(SETS *set, FILE *fp, const int *array_index,
     }
 }
 
-/*
-int write_set_to_txt(const SETS *set, char *filename) {
-    int fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+int save_set_txt(const SETS *set, char *filename) {
+    FILE *fp = fopen(filename, "a+");
 
-    if (fd == -1) {
-        perror("Error opening file");
-        exit(EXIT_FAILURE);
+    if (fp == NULL) {
+        fperror("Error opening file in save_set_txt");
     }
 
-    write(fd, "Words set\n", sizeof("Words set\n") - 1);
+    write_set_to_txt(set, fp);
 
-    for (int i = 0; i < set->rowsize; i++) {
-        dprintf(fd, " %s\n", set->matrix[i]);
-    }
-
-    close(fd);
+    fclose(fp);
 
     return 0;
-}*/
+}
+
+void write_set_ufp6_to_txt(const SETS *set, FILE *fp) {
+    //fprintf(fp, "UFP6 encode:\n");
+    for (int i = 0; i < set->rowsize ; ++i) {
+        fprintf(fp,"%d", *((*set).arr_bits_size + i));
+        for (int j = 0; j < set->arr_bits_size[i]; j++) {
+            fprintf(fp," %d", (*(*(set->matrix_encode + i) + j)));
+            //fprintf(fp, " %d", set->matrix_encode[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+}
+
+void read_txt_to_set(SETS *set, char *filename) {
+    FILE *fp = NULL;
+
+    fp = fopen(filename, "r");
+
+    if(fp == NULL){
+        fperror("Error opening file in read_txt_to_set");
+    }
+
+    fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
+
+    sets_struct_init_v2(set, set->rowsize);
+    // Read set of words
+    read_txt_words(set, fp);
+    //Read ufp6 from set
+    read_ufp6_file_to_set(set, fp);
+
+    fclose(fp);
+}
+
+void read_txt_words(SETS *set, FILE *fp) {
+    for (int i = 0; i < set->rowsize; ++i) {
+        fscanf(fp, "%d", &set->arr_word_size[i]);
+        calloc_col_word(&set->matrix[i],set->arr_word_size[i]);
+        for (int j = 0; j < set->arr_word_size[i]; ++j) {
+            fscanf(fp, " %c ",&set->matrix[i][j]);
+        }
+    }
+}
+/**
+ * Function to initialize set while reading from file
+ */
+void sets_struct_init_v2(SETS *set, int num_words) {
+    set->rowsize = num_words;
+    init_arr_word_size(set);
+    set->arr_bits_size = (int*) calloc(set->rowsize, sizeof(int));
+    set->matrix_encode =(int**) calloc(set->rowsize, sizeof(int*));
+    set->matrix = (char**) calloc(set->rowsize, sizeof(char*));
+}
+
+void calloc_col_word(char **mat_row, int col_words_size) {
+    *mat_row = (char*) calloc(col_words_size ,sizeof(char));
+    if(*mat_row == NULL){
+        fperror("Matrix col calloc in calloc_col_words");
+    }
+}
+
+void read_ufp6_file_to_set(SETS *set, FILE *fp) {
+    for (int i = 0; i < set->rowsize; ++i) {
+        //fscanf(fp, "%*[^:] ");
+        fscanf(fp, "%d", &set->arr_bits_size[i]);
+        printf("%d\n", set->arr_bits_size[i]);
+        //allocate for each row number of columns
+        calloc_col_ufp6(&set->matrix_encode[i],set->arr_bits_size[i]);
+        for (int j = 0; j < set->arr_bits_size[i]; ++j) {
+            int l = 0;
+            fscanf(fp, "%d ",&set->matrix_encode[i][j]);
+        }
+    }
+}
+
+void calloc_col_ufp6(int **mat_encode_row, int col_words_size) {
+    *mat_encode_row = (int*) calloc(col_words_size ,sizeof(int));
+    if(*mat_encode_row == NULL){
+        fperror("Matrix col calloc in calloc_col_words");
+    }
+}
+

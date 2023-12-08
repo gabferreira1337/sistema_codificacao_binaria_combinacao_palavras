@@ -53,8 +53,6 @@ void matrix_rnd_char_gen(SETS *set);
  *
  */
 int **matrix_init_int(int row ,int col);
-
-
 /**  initialize matrix of char to 0
  * @params
  *

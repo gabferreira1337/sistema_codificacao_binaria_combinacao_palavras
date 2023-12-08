@@ -211,7 +211,7 @@ char **matrix_init_char(int row ,int *size_cols){
 void print_matrix_int(const SETS *set) {
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < *(set->arr_bits_size + i); ++j) {
-            printf(" %d",*(*(set->matrix_encode + i) +j));
+            printf("%d ",*(*(set->matrix_encode + i) +j));
         }
         putchar('\n');
     }

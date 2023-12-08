@@ -191,7 +191,11 @@ void realloc_row_delete(SETS *set, int row);
 void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 int calculate_index_char(char currentChar);
-
+/**
+ * @paragraph Check if word is supported in UFP6
+ * @param word - word to be checked
+ * @return return 1 if word is supported or return 0 if word is not supported
+ */
 int is_ufp6(char *word);
 
 void seed_random();

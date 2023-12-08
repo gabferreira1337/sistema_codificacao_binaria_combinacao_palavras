@@ -5,15 +5,18 @@
 #include "functions_1.h"
 
 /**
- * sets struct
+ * WORDS_HOLDER struct
+ *
  */
 typedef struct{
-    SETS s1;
+    SETS s1;        ///one set with matrix of words and their UFP6 representation
     SETS s2;
 
 }WORDS_HOLDER;
 
-
+/**
+ * VAL_AD_WORDS_HOLDER struct
+ */
 typedef struct{
     WORDS_HOLDER words_holder;
     char *last_update_date;
@@ -42,8 +45,6 @@ typedef struct ll_words_holder{
    NODE_LL_WORDS_HOLDER *ptail;
 }LL_WORDS_HOLDER;
 
-
-
 /**
  * @paragraph Initialize dynamic array with given size
  * @param size - size of dynamic array
@@ -51,7 +52,8 @@ typedef struct ll_words_holder{
  */
 AD_WORDS_HOLDER* dynamic_array_init(int size);
 /**
- * sets struct
+ * @paragraph Realloc dynamic array
+ * @param arr - pointer to struct dynamic array of words holder
  */
 void dynamic_array_realloc(AD_WORDS_HOLDER *arr);
 /**
@@ -77,21 +79,9 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS s1 , SETS s2,
 /**
  * sets struct
  */
-void print_words_found(AD_WORDS_HOLDER *arr     ,int *index_set1, int *index_set2, int index_ad);
+void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, int index_ad);
 //int *find_Word_index(&arr->array_val[j].words_holder.s1,words[i], index_set1, 1);
 void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index);
-/**
- * sets struct
- */
-void merge_sort(AD_WORDS_HOLDER ad);
-/**
- * sets struct
- */
-void sort(VAL_AD_WORDS_HOLDER *arr,char **result, int lo, int hi);
-/**
- * sets struct
- */
-void merge(VAL_AD_WORDS_HOLDER *arr,char **result, int lo, int mid, int hi);
 /**
  * sets struct
  */
@@ -122,10 +112,20 @@ void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size);
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
 void free_ll_words_holder(LL_WORDS_HOLDER *ll);
 NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *s2, char *last_date);
-//perguntar
+
 void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date);
 void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date, int index);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 void print_ll_words_holder(LL_WORDS_HOLDER *ll);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date);
 /**
  * @paragraph Search position in Linked List to add new node in chronological order DESC using binary search
@@ -158,12 +158,53 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
  * @param hi - end index node
  */
 void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
-int write_set_to_txt(const SETS *set,char *filename);
-int write_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ * @param flag - if set to
+ */
+int write_set_to_txt(const SETS *set,FILE *fp);
+void write_set_ufp6_to_txt(const SETS *set, FILE *fp);
+int save_set_txt(const SETS *set, char *filename);
+
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
+void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename, int index_ll);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 void write_index_array_words_to_file(SETS *set,FILE *fp,const int *index_array);
+/**
+ * @paragraph Delete node in a given position/index
+ * @param ll - pointer to Linked List Words Holder
+ * @param index - node of Linked List to be deleted
+ */
 void write_index_array_ufp6_to_file(SETS *set,FILE *fp,const int *index_array, int r);
+void read_txt_to_set(SETS *set, char *filename);
+void read_txt_words(SETS *set, FILE *fp);
+void read_txt_ufp6(SETS *set, FILE *fp);
+void sets_struct_init_v2(SETS *set, int num_words);
+void calloc_col_word(char **mat_row, int col_words_size);
+void calloc_col_ufp6(int **mat_row, int col_words_size);
+void read_ufp6_file_to_set(SETS *set, FILE *fp);
 
 int main_functions_2(int argc , char **argv);
 

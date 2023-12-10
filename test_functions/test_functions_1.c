@@ -23,7 +23,10 @@ int main_test_functions_1(int argc, char **argv) {
     // sizes of each binary representation
     int sizes_bin_dic[MAX_UFP6];
     test_function1_feature2(&set1,&set2, sizes_bin_dic, dic);
+    test_function1_feature3(&set1, &set2, sizes_bin_dic, dic);
 
+    freemem(&set1);
+    freemem(&set2);
 
     return 0;
 }
@@ -50,8 +53,8 @@ void test_function1_feature2(SETS *set1, SETS *set2, int sizes_bin_dict[], int b
     // Pre-compute dictionary of binary representations and their respective size
     binary_dictionary(bin_dict, sizes_bin_dict);
 
-    char word[] = "ola";
-    int W = 1;
+   // char word[] = "ola";
+   /* int W = 1;
     //result of bin representation
     int result[100];
     //array with bin sizes of each word for only test purpose
@@ -60,20 +63,42 @@ void test_function1_feature2(SETS *set1, SETS *set2, int sizes_bin_dict[], int b
 
     for (int i = 0; i < size[0]; ++i) {
         printf("%d", result[i]);
-    }
+    }*/
 
     /* Encode SET1      */
-   // encode_matrix_words(set1, sizes_bin_dict, bin_dict);
+    //encode_matrix_words(set1, sizes_bin_dict, bin_dict);
+
     /* Encode SET2      */
    // encode_matrix_words(set1, sizes_bin_dict, bin_dict);
-
-    printf("\nFeature 2 !!!!\n");
+   /* printf("\nFeature 2 !!!!\n");
     printf("SET 1 !!!!\n");
     print_matrix_char(set1);
     print_matrix_int(set1);
+   /* printf("SET 2 !!!!\n");
+    print_matrix_char(set2);
+    print_matrix_int(set2);*/
+}
+
+void test_function1_feature3(SETS *set1, SETS *set2, int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
+    matrix_rnd_char_gen(set1);
+    matrix_rnd_char_gen(set2);
+
+    const char *insert_words1[] = {"ola", "olas","L","123"};
+    int N1 = 4;
+    //print_matrix_char(set1);
+    encode_matrix_words(set1,sizes_bin_dict,bin_dict);
+    insert_words(set1,insert_words1,sizes_bin_dict,bin_dict, N1);
+
+    printf("SET 1 !!!!\n");
+    print_matrix_char(set1);
+    print_matrix_int(set1);
+   /*const char *insert_words2[] = {"ola", "olas"};
+    int N2 = 2;
+
+    insert_words(set2,insert_words2,sizes_bin_dict,bin_dict, N2);
     printf("SET 2 !!!!\n");
     print_matrix_char(set2);
-    print_matrix_int(set2);
+    print_matrix_int(set2);*/
 }
 
 

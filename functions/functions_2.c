@@ -626,7 +626,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     for (int i = 0; i < index - 1 && pos->pnext != NULL; ++i) {
         pos = pos->pnext;
     }
-
+  
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
         NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
@@ -708,7 +708,6 @@ NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER
 
     NODE_LL_WORDS_HOLDER *slow_ptr = lo;
     NODE_LL_WORDS_HOLDER *fast_ptr = lo->pnext;
-
     //fast_ptr == NULL , end fast_ptr->pnext == NULL indicate that fast_ptr is the last node
     while (fast_ptr != NULL && fast_ptr->pnext != NULL) {
         fast_ptr = fast_ptr->pnext->pnext;

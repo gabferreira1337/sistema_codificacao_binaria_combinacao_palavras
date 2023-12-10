@@ -45,6 +45,7 @@ typedef struct ll_words_holder{
    NODE_LL_WORDS_HOLDER *ptail;
 }LL_WORDS_HOLDER;
 
+
 /**
  * @paragraph Initialize dynamic array with given size
  * @param size - size of dynamic array

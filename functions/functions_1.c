@@ -293,35 +293,14 @@ void matrix_rnd_char_gen(SETS *set) {
 
 
 
-void insert_word_char(SETS *set,char **words,int start_row, int number_words) {
-    /* Start_row always the max num of lines */
-    set->rowsize += number_words;
-    /* Realloc memory for arr_word_size */
-    realloc_arr_words_size(set);
-    realloc_arr_ufp6_size(set);
-
-    //fill array with new words size
-    for (int i = start_row, k=0; i < set->rowsize && k < number_words; ++i, k++) {
-        set->arr_word_size[i] = (int)  strlen(words[k]);
-        set->arr_bits_size[i] = BITS;
-    }
-
-    /* Realloc mem for both matrix */
-    matrix_realloc(set);
-    matrix_encode_realloc(set);
-
-    print_matrix_char(set);
-
-    for (int i = start_row, k=0; i < set->rowsize && k < number_words; ++i,k++) {
-        for (int j = 0; j < set->arr_word_size[i]; ++j) {
+void insert_word_char(SETS *set,char *word,int index) {
+        for (int j = 0; j < set->arr_word_size[index]; ++j) {
             //printf("%c", word[j]);
-            *(*(set->matrix + i) + j) = words[k][j];
-            printf("%c\n", *(*(set->matrix + i)+j));
+            *(*(set->matrix + index) + j) = word[j];
             /* if the word is smaller than colsize_char fill the rest with ' ' */
             /*if (j >= strlen(words[k]))
                 *(*(set->matrix + i) + j) = ' ';*/
         }
-    }
 }
 
 
@@ -345,7 +324,6 @@ void freemem(SETS *set){
 }
 
 void matrix_realloc(SETS *set){
-        printf("row_size %d\n", set->rowsize);
     print_arr_word_size(set);
         set->matrix = (char **) realloc(set->matrix,set->rowsize * sizeof(char *));
 
@@ -356,12 +334,7 @@ void matrix_realloc(SETS *set){
         }
 
         for (int i = 0; i < set->rowsize; ++i) {
-            *(set->matrix +i) = (char*) realloc(*(set->matrix + i),set->arr_word_size[i] *sizeof(char));
-            if(*(set->matrix + i) == NULL){
-                printf("Matrix char realloc\n");
-                freemem(set);
-                exit(0);
-            }
+            realloc_col_word(&*(set->matrix +i),*(set->arr_word_size + i));
         }
 }
 
@@ -590,10 +563,10 @@ void print_binary_dictionary(int (*bin_d)[BITS], int *size_bin) {
 }
 
 
-void encode_word(char* word, int *encoded,int *word_bits_size,int k, int sizes_bin[],int bin_dict[RADIX][BITS]) {
+void encode_word(const char* word, int *encoded,int *word_bits_size,int k,const int sizes_bin[],const int bin_dict[MAX_UFP6][BITS]) {
     int index = 0;
     int len =(int) strlen(word);
-
+    word_bits_size[k] = 0; //initialize to 0 the array with ufp6 size
     for (int i = 0; i < len; i++) {
         char currentChar = word[i];
 
@@ -617,14 +590,11 @@ void encode_word(char* word, int *encoded,int *word_bits_size,int k, int sizes_b
             }
         }
     }
-    puts("");
 }
 
 
-void encode_matrix_words(SETS *set, int *sizes_bin_dict, int (*bin_dict)[BITS]) {
-
+void encode_matrix_words(SETS *set, int *sizes_bin_dict, int bin_dict[MAX_UFP6][BITS]) {
     for (int i = 0; i < set->rowsize; ++i) {
-        set->arr_bits_size[i] = 0; //clear previous val
         encode_word(set->matrix[i], set->matrix_encode[i],set->arr_bits_size,i, sizes_bin_dict, bin_dict);
     }
 }
@@ -640,7 +610,7 @@ void reverseArray(char **arr, int start, int end) {
     }
 }
 
-int *arr_bits_size(int *arr, int N) {
+int *arr_bits_size_calloc(int *arr, int N) {
     arr = (int*) calloc(sizeof(int) , N);
 
     if(arr == NULL){
@@ -870,7 +840,7 @@ void sets_struct_init(SETS *set, int num_words) {
     rnd_word_size_gen(set->arr_word_size, set->rowsize);
     set->matrix_encode = matrix_init_int(set->rowsize,C);
     set->matrix = matrix_init_char(set->rowsize,set->arr_word_size);
-    // set1.arr_bits_size = arr_bits_size(set1.arr_bits_size, set1.rowsize);
+    // set1.arr_bits_size = arr_bits_size_calloc(set1.arr_bits_size, set1.rowsize);
     set->arr_bits_size = (int*) calloc(set->rowsize, sizeof(int));
 }
 
@@ -911,11 +881,91 @@ void realloc_arr_ufp6_size(SETS *set) {
     }
 }
 
-void insert_ufp6(SETS *set,int sizes_bin_dict[],int bin_dict[RADIX][BITS],char *word,int index) {
-        encode_word(word,set->matrix_encode[index],set->arr_bits_size,index,sizes_bin_dict,bin_dict);
+void insert_ufp6(SETS *set,const int sizes_bin_dict[],const int bin_dict[RADIX][BITS],const char *word,int index) {
+    encode_word(word,set->matrix_encode[index],set->arr_bits_size,index,sizes_bin_dict,bin_dict);
 }
 
-void calc_bin_size(int index, char *word){
+void calc_bin_size(SETS *set,int index, char *word,const int *sizes_bin){
+    set->arr_bits_size[index] =0;
+    for (int i = 0; i < strlen(word); ++i) {
+        char currentChar = word[i];
 
-    printf();
+        // Check if the character is a valid key in dictionary
+        if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||
+            (currentChar >= 'a' && currentChar <= 'z')) {
+            int charIndex = 0;
+            if (currentChar >= 'A' && currentChar <= 'Z') {
+                charIndex = (currentChar - 'A' + 36);
+            } else if (currentChar >= '0' && currentChar <= '9') {
+                charIndex = (currentChar - '0');
+            } else {
+                charIndex = (currentChar - 'a' + 10);
+            }
+
+            // Store the size of ufp6 representation of each word
+            set->arr_bits_size[index] += sizes_bin[charIndex];
+        }
+    }
+
 }
+
+
+void insert_words(SETS *set,const char **words,const int *sizes_bin_dict,const int bin_dict[RADIX][BITS], int num_words) {
+    set->rowsize += num_words;
+    /* Realloc memory for arr_word_size and arr_bits_size */
+    realloc_arr_words_size(set);
+    realloc_arr_ufp6_size(set);
+
+    //fill array with new words size
+   /* for (int i = set->rowsize - num_words, k=0; i < set->rowsize && k < num_words; ++i, k++) {
+        set->arr_word_size[i] = (int)  strlen(words[k]);
+        calc_bin_size(set,i,words[k],sizes_bin_dict);
+    }*/
+
+    /* Realloc mem for both matrix */
+    realloc_rows_matrix(set,set->rowsize);
+    realloc_rows_ufp6(set, set->rowsize);
+
+    for (int i = set->rowsize - num_words, k = 0; i < set->rowsize && k < num_words; ++i,k++) {
+        //calculate word size and ufp6 size and store in set
+        set->arr_word_size[i] = (int) strlen(words[k]);
+        calc_bin_size(set,i,words[k],sizes_bin_dict);
+        //reallocate memory for both matrix
+        realloc_col_ufp6(&set->matrix_encode[i],set->arr_bits_size[i]);
+        realloc_col_word(&set->matrix[i],set->arr_word_size[i]);
+        insert_word_char(set,words[k],i);
+        insert_ufp6(set,sizes_bin_dict,bin_dict,words[k],i);
+    }
+
+}
+
+void realloc_col_word(char **mat_row, int col_words_size) {
+        *mat_row = (char*) realloc(*mat_row,col_words_size *sizeof(char));
+        if(*mat_row == NULL){
+            fperror("Realloc mat_row in realloc_col_word");
+        }
+}
+
+void realloc_col_ufp6(int **mat_row, int col_words_size) {
+    *mat_row = (int*) realloc(*mat_row,col_words_size *sizeof(int));
+    if(*mat_row == NULL){
+        fperror("Realloc mat_row in realloc_col_ufp6");
+    }
+}
+
+void realloc_rows_matrix(SETS *set, int num_words) {
+    set->matrix = (char **)realloc(set->matrix,num_words * sizeof(char*));
+
+    if(set->matrix == NULL){
+        fperror("Realloc matrix in realloc_rows_ufp6");
+    }
+}
+
+void realloc_rows_ufp6(SETS *set, int num_words) {
+    set->matrix_encode = (int **)realloc(set->matrix_encode,num_words * sizeof(int*));
+
+    if(set->matrix_encode == NULL){
+        fperror("Realloc matrix in realloc_rows_ufp6");
+    }
+}
+

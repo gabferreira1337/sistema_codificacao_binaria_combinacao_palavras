@@ -84,7 +84,7 @@ void rnd_word_size_gen(int *arr, int W);
  * @params
  *
  */
-void insert_word_char(SETS *set,char **words,int start_row,  int number_words);
+void insert_word_char(SETS *set,char *word,int index);
 /** remove the a word from the matrix
  * @params
  *
@@ -95,7 +95,7 @@ void remove_word_matrix(SETS *set, int row);
  * @params
  *
  */
-void insert_ufp6(SETS *set,int sizes_bin_dict[],int bin_dict[RADIX][BITS],char *word,int index);
+void insert_ufp6(SETS *set,const int sizes_bin_dict[],const int bin_dict[RADIX][BITS],const char *word,int index);
 
 /** realloc matrixes
  * @params
@@ -114,6 +114,18 @@ void FillArray_Word_Size(SETS *set);
  */
 
 void matrix_encode_realloc(SETS *set);
+/**
+ * @paragraph insert words and their ufp6 representation at the end of both matrix
+ * this function reallocates the memory for both arrays holding the sizes of words and their ufp6
+ * representation , calculates the new words size and ufp6 and after reallocates
+ * also both matrix (matrix of words and matrix upf6) and then insert to the respective matrix.
+ * @param set - pointer to set that contains both matrix , both arrays with sizes and the number of words
+ * @param words - array of words to be inserted
+ * @param sizes_bin_dict - array with precomputed sizes of each ufp6 representation
+ * @param bin_dict - precomputed dictionary with each ufp6 representation
+ * @param num_words - number of words to be inserted
+ */
+void insert_words(SETS *set,const char **words,const int *sizes_bin_dict,const int bin_dict[RADIX][BITS], int num_words);
 
 /** print the size of the words
  * @params
@@ -127,8 +139,8 @@ void print_arr_word_size(const SETS *set);
  *
  */
 void print_matrix_char(const SETS *set);
-
-int *arr_bits_size(int *arr, int N);
+void calc_bin_size(SETS *set,int index, char *word,const int *sizes_bin);
+int *arr_bits_size_calloc(int *arr, int N);
 
 /** free memory allocated
  * @params
@@ -150,19 +162,19 @@ void reverseArray(char **arr, int start, int end);
 * @params
 *
 */
-void binary_dictionary(int bin_dict[62][BITS],int *size_bin);
-void print_binary_dictionary(int bin_dict[62][BITS], int *size_bin);
+void binary_dictionary(int bin_dict[MAX_UFP6][BITS],int *size_bin);
+void print_binary_dictionary(int bin_dict[MAX_UFP6][BITS], int *size_bin);
 /** Pre process all ASCII conversions
 * @params
 *
 */
-void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[62][BITS]);
+void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[MAX_UFP6][BITS]);
 
 void charToBinary(int c, int *result, int *size_bin);
 
 int fperror(char *message);
 
-void encode_word( char* word, int *encode,int *word_bits_size,int k, int sizes_bin[],int bin_dict[62][BITS]);
+void encode_word(const char* word, int *encode,int *word_bits_size,int k,const int sizes_bin[],const int bin_dict[MAX_UFP6][BITS]);
 
 void print_array(int *arr, int N);
 
@@ -189,6 +201,11 @@ void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
 void realloc_arr_words_size(SETS *set);
 void realloc_arr_ufp6_size(SETS *set);
+void realloc_rows_matrix(SETS *set, int num_words);
+void realloc_rows_ufp6(SETS *set, int num_words);
+
+void realloc_col_word(char **mat_row, int col_words_size);
+void realloc_col_ufp6(int **mat_row, int col_words_size);
 
 int calculate_index_char(char currentChar);
 /**

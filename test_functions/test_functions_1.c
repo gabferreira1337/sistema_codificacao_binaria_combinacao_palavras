@@ -84,25 +84,19 @@ void test_function1_feature3(SETS *set1, SETS *set2, int *sizes_bin_dict, int bi
     matrix_rnd_char_gen(set1);
     matrix_rnd_char_gen(set2);
 
-    char *insert_words1[] = {"ola", "olas"};
-    int N1 = 2;
+    const char *insert_words1[] = {"ola", "olas","L","123"};
+    int N1 = 4;
     //print_matrix_char(set1);
     encode_matrix_words(set1,sizes_bin_dict,bin_dict);
-    print_matrix_int(set1);
-    insert_word_char(set1,insert_words1,set1->rowsize, N1);
-
-
-
-    insert_ufp6(set1,sizes_bin_dict,bin_dict,"ola",5);
-    insert_ufp6(set1,sizes_bin_dict,bin_dict,"olas",6);
+    insert_words(set1,insert_words1,sizes_bin_dict,bin_dict, N1);
 
     printf("SET 1 !!!!\n");
     print_matrix_char(set1);
     print_matrix_int(set1);
-   /* char *insert_words2[2] = {"ola", "olas"};
+   /*const char *insert_words2[] = {"ola", "olas"};
     int N2 = 2;
 
-    insert_word_char(set2,insert_words2,set2->rowsize, N2);
+    insert_words(set2,insert_words2,sizes_bin_dict,bin_dict, N2);
     printf("SET 2 !!!!\n");
     print_matrix_char(set2);
     print_matrix_int(set2);*/

@@ -83,7 +83,6 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS s1 , SETS s2,
 void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, int index_ad);
 //int *find_Word_index(&arr->array_val[j].words_holder.s1,words[i], index_set1, 1);
 void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index);
-
 /**
  * sets struct
  */

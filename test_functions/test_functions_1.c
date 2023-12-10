@@ -28,7 +28,6 @@ int main_test_functions_1(int argc, char **argv) {
     freemem(&set1);
     freemem(&set2);
 
-    exit(0);
     return 0;
 }
 

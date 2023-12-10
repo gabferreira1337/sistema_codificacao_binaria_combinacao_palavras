@@ -92,7 +92,6 @@ void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, in
  * @param last_date - last update date of both sets
  */
 void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index);
-
 /**
  * sets struct
  */

@@ -28,7 +28,7 @@ int main_test_functions_1(int argc, char **argv) {
     freemem(&set1);
     freemem(&set2);
 
-    exit(0);
+   // exit(0);
     return 0;
 }
 
@@ -86,8 +86,8 @@ void test_function1_feature3(SETS *set1, SETS *set2, int *sizes_bin_dict, int bi
 
     const char *insert_words1[] = {"ola", "olas","L","123"};
     int N1 = 4;
-    //print_matrix_char(set1);
     encode_matrix_words(set1,sizes_bin_dict,bin_dict);
+    //print_matrix_int(set1);
     insert_words(set1,insert_words1,sizes_bin_dict,bin_dict, N1);
 
     printf("SET 1 !!!!\n");

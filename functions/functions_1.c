@@ -212,7 +212,6 @@ void print_matrix_int(const SETS *set) {
 
 //Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
-
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < *(set->arr_word_size + i); ++j) {
 
@@ -498,9 +497,8 @@ void FillArray_Word_Size(SETS *set) {
     }
 }
 
-void binary_dictionary( int bin_d[RADIX][BITS], int *sizes_bin) {
+void binary_dictionary( int bin_d[MAX_UFP6][BITS], int *sizes_bin) {
     int index = 0;
-
     // Convert '0' to '9' to binary
     for (char digit = '0'; digit <= '9'; digit++) {
         charToBinary(digit - '0', bin_d[index], sizes_bin);
@@ -564,6 +562,7 @@ void print_binary_dictionary(int (*bin_d)[BITS], int *size_bin) {
 
 
 void encode_word(const char* word, int *encoded,int *word_bits_size,int k,const int sizes_bin[],const int bin_dict[MAX_UFP6][BITS]) {
+    if(bin_dict[0][0] != 0) fperror("Bin_dict not precomputed endcode_matrix_words");
     int index = 0;
     int len =(int) strlen(word);
     word_bits_size[k] = 0; //initialize to 0 the array with ufp6 size

@@ -177,10 +177,6 @@ AD_WORDS_HOLDER* dynamic_array_init(int size) {
         fperror("Dynamic_array_init array_val calloc");
     }
 
-    //ver se é mesmo necessario inicializar desta maneira
-    /*for (int i = 0; i < size; ++i) {
-        arr->array_val[i].last_update_date = NULL;
-    }*/
     return arr;
 }
 
@@ -209,6 +205,14 @@ char *get_current_date() {
     return date_str;
 }
 
+/**
+ * @paragraph Insert element to AD in chronological order by date ASC
+ * @paragraph function uses binary search to search for the position in AD where
+ * new element will be inserted and adjusts the position of the other elements in AD before inserting
+ * when array is full double the size of AD S
+ * @paragraph This insertion function has a time complexity of O(2N +Dlog(N)) , Extra space O(1) (inplace)
+ * Shifting elements O(N) , realloc O(N) , binary_search function O(Dlog(N)), insertion O(1)
+ */
 void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder, SETS s1, SETS s2, char *last_date) {
     // Double the size when array is full
     if (ad_holder->count == ad_holder->size) {
@@ -221,16 +225,7 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder, SETS s1, SETS s2,
         ad_holder->array_val[i] = ad_holder->array_val[i - 1];
     }
 
-    ad_holder->array_val[pos].words_holder.s1 = s1;
-    ad_holder->array_val[pos].words_holder.s2 = s2;
-
-    ad_holder->array_val[pos].last_update_date = malloc(sizeof(char) * DATE_SIZE);
-
-    if (ad_holder->array_val[pos].last_update_date == NULL) {
-        fperror("Dynamic array last_update_date_malloc ");
-    }
-
-    strcpy(ad_holder->array_val[pos].last_update_date, last_date);
+    insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[pos],&s1,&s2,last_date);
 
     ad_holder->count++;
 }
@@ -267,11 +262,15 @@ void print_AD(const AD_WORDS_HOLDER *ad) {
     }
 }
 
-
+/**
+ * @paragraph binary search to search for the position in AD where
+ * new element will be inserted
+ * @paragraph binary_search O(log(N)) , strcmp O(D), Time complexity O(Dlog(N)) , Extra Space O(1) (inplace)
+ */
 int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din, char *date) {
     int lo = 0;
     int hi = arr_din->count - 1;
-    int mid;
+    int mid = 0;
 
     while(lo <= hi){
         mid = lo + (hi - lo) / 2;
@@ -291,45 +290,28 @@ int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din, char *date) {
     return lo;
 }
 
+/**
+ * @paragraph Insert element to VAL_AD_WORDS_HOLDER
+ */
+void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2, char *last_date) {
+    val_ad_words_holder->words_holder.s1 = *set1;
+    val_ad_words_holder->words_holder.s2 = *set2;
 
-/*void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, VAL_AD_WORDS_HOLDER *val_words_holder ,char*last_date, int index) {
-    // Double the size when array is full
-    if (ad_holder->count == ad_holder->size) {
-        realloc_AD(ad_holder, ad_holder->size * 2);
+    val_ad_words_holder->last_update_date = malloc(sizeof(char) * DATE_SIZE);
+
+    if (val_ad_words_holder->last_update_date == NULL) {
+        fperror("Val_ad_words-holder last_update_date_malloc in insert_to_VAL_AD_WORDS_HOLDER");
     }
 
-    for (int i = ad_holder->count; i > index; i--) {
-        ad_holder->array_val[i] = ad_holder->array_val[i - 1];
-    }
-
-    ad_holder->array_val[index] = *val_words_holder;
-
-    ad_holder->array_val[index].last_update_date = malloc(sizeof(char) * DATE_SIZE);
-
-    if (ad_holder->array_val[index].last_update_date == NULL) {
-        fperror("Dynamic array last_update_date_malloc ");
-    }
-
-    strcpy(ad_holder->array_val[index].last_update_date, last_date);
-
-    ad_holder->count++;
+    strcpy(val_ad_words_holder->last_update_date, last_date);
 }
-*/
-
-void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2) {
-    WORDS_HOLDER words_holder;
-    words_holder.s1 = *(set1);
-    words_holder.s2 = *(set2);
-
-    val_ad_words_holder = malloc(sizeof(VAL_AD_WORDS_HOLDER));
-
-    if(val_ad_words_holder == NULL){
-        fperror("val_ad_words_holder malloc in insert_to_VAL_AD_WORDS_HOLDER");
-    }
-
-    val_ad_words_holder->words_holder = words_holder;
-}
-
+/**
+ * @paragraph Insert element to AD in given index
+ * @paragraph function shifts elements to insert new element in the given index and fill VAl_AD_WORDS_HOLDER
+ * with the values passes in the function
+ * @paragraph This insertion function has a time complexity of O(2N + D)) , Extra space O(1) (inplace)
+ * Shifting elements O(N) , realloc O(N) , insertion O(1), strcpy date O(D)
+ */
 void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index) {
     // Double the size when array is full or when want to insert in index equal to ad size
     if (ad_holder->count == ad_holder->size) {
@@ -342,19 +324,11 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
         ad_holder->array_val[i] = ad_holder->array_val[i - 1];
     }
 
-    ad_holder->array_val[index].words_holder.s1 = *set1;
-    ad_holder->array_val[index].words_holder.s2 = *set2;
-
-    ad_holder->array_val[index].last_update_date = malloc(sizeof(char) * DATE_SIZE);
-
-    if (ad_holder->array_val[index].last_update_date == NULL) {
-        fperror("Dynamic array last_update_date_malloc ");
-    }
-
-    strcpy(ad_holder->array_val[index].last_update_date, last_date);
+    insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[index], set1,set2,last_date);
 
     ad_holder->count++;
 }
+
 
 void delete_element_index(AD_WORDS_HOLDER *ad, int index) {
     //halve the size when array is one-quarterfull

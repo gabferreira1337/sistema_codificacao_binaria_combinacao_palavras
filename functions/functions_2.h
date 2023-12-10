@@ -58,7 +58,7 @@ AD_WORDS_HOLDER* dynamic_array_init(int size);
  */
 void dynamic_array_realloc(AD_WORDS_HOLDER *arr);
 /**
- * sets struct
+ * @paragraph
  */
 void create_dynamic_array(AD_WORDS_HOLDER *arr);
 /**
@@ -66,22 +66,31 @@ void create_dynamic_array(AD_WORDS_HOLDER *arr);
  */
 void init_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_holder);
 /**
- * sets struct
+ * @paragraph print dynamic array
+ * @param ad - pointer to AD_WORDS_HOLDER struct
  */
 void print_AD(const AD_WORDS_HOLDER *ad);
 /**
- * sets struct
+ * @paragraph Insert element in dynamic array in chronological order by date ASC
+ * @param ad_holder - pointer to AD_WORDS_HOLDER struct
+ * @param set1 - pointer to set of matrix with words and ufp6
+ * @param set2 - pointer to set of matrix with words and ufp6
+ * @param last_date - last update date of both sets
  */
 void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS s1 , SETS s2, char *last_date);
 /**
  * sets struct
  */
-//void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder,VAL_AD_WORDS_HOLDER *val_words_holder, char *last_date, int index);
-/**
- * sets struct
- */
 void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, int index_ad);
 //int *find_Word_index(&arr->array_val[j].words_holder.s1,words[i], index_set1, 1);
+/**
+ * @paragraph Insert element in dynamic array in given index , if index >= count of elements realloc 2 * size_ad and insert at that index
+ * if ad is full doubles the size of ad
+ * @param ad_holder - pointer to AD_WORDS_HOLDER struct
+ * @param set1 - pointer to set of matrix with words and ufp6
+ * @param set2 - pointer to set of matrix with words and ufp6
+ * @param last_date - last update date of both sets
+ */
 void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index);
 /**
  * sets struct
@@ -90,13 +99,22 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
 /**
  * sets struct
  */
-void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2);
+void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2, char*last_date);
 /**
  * sets struct
  */
 char *get_current_date();
 /**
- * sets struct
+ * @paragraph Function to search for the position in AD to insert new element
+ * using binary search
+ * @param arr_din - pointer to AD_WORDS_HOLDER struct
+ * @param date - new_date of the element we want to insert
+ * @return if more than 1 element equal inside ad it returns the position to the right of existing equal elements
+ * if find same date returns the exact index
+ * if doesn't find same date returns the right position where it should be added
+ * example1: index 0 24-11-2023 index 1 26-11-2023 , new_date 25-11-2023 - returns 1
+ * exmaple2 :index 0 24-11-2023 , new_date 23-11-2023 return   0
+ * exmaple3 :index 0 24-11-2023 , new_date 25-11-2023 return   1
  */
 int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din, char *date);
 /**

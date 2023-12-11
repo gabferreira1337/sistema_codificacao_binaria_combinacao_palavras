@@ -790,6 +790,7 @@ int write_set_to_txt(const SETS *set, FILE *fp) {
         }
         fprintf(fp, "\n");
     }
+   // fprintf(fp, "UFP6:\n");
     write_set_ufp6_to_txt(set, fp);
     return 0;
 }
@@ -895,6 +896,7 @@ void read_txt_to_set(SETS *set, char *filename) {
     // Read set of words
     read_txt_words(set, fp);
     //Read ufp6 from set
+
     read_ufp6_file_to_set(set, fp);
 
     fclose(fp);
@@ -931,7 +933,7 @@ void read_ufp6_file_to_set(SETS *set, FILE *fp) {
     for (int i = 0; i < set->rowsize; ++i) {
         //fscanf(fp, "%*[^:] ");
         fscanf(fp, "%d", &set->arr_bits_size[i]);
-        printf("%d\n", set->arr_bits_size[i]);
+       // printf("%d\n", set->arr_bits_size[i]);
         //allocate for each row number of columns
         calloc_col_ufp6(&set->matrix_encode[i],set->arr_bits_size[i]);
         for (int j = 0; j < set->arr_bits_size[i]; ++j) {

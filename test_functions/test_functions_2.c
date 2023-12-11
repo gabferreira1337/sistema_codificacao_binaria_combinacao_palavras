@@ -13,7 +13,7 @@
 #define DATE_SIZE 11
 #define AD_SIZE 4
 #define NUM_SETS 4
-#define FILE "sets.txt"
+#define FILE "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set.txt"
 
 int main_test_functions_2(int argc, char **argv) {
     int dict[MAX_UFP6][BITS] = {0};
@@ -21,14 +21,14 @@ int main_test_functions_2(int argc, char **argv) {
 
     AD_WORDS_HOLDER *ad = NULL;
     //precompute bin_dict to encode words
-    test_function1_feature2(NULL, NULL, sizes, dict);
+    //test_function1_feature2(NULL, NULL, sizes, dict);
 
-    test_function_2_a(&ad);
+    //test_function_2_a(&ad);
 
     //test_function_2_8_b(&ad, sizes,dict);
-    test_function_2_8_c(&ad, sizes,dict);
+   // test_function_2_8_c(&ad, sizes,dict);
 
-    // test_function_2_10();
+     test_function_2_10();
 
     free_dynamic_array(ad);
 
@@ -72,7 +72,7 @@ void test_function_2_10() {
 
    //save_set_txt(&set1, "set.txt");
 
-    save_both_sets_to_txt(&set1, &set2, "set.txt");
+    save_both_sets_to_txt(&set1, &set2, FILE);
 
     SETS *set3 = calloc(1,sizeof(SETS));
     read_txt_to_set(set3, FILE);

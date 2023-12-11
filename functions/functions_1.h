@@ -13,7 +13,6 @@
  * sets struct
  */
 typedef struct{
-
     char **matrix;              /// matrix with words
     int **matrix_encode;        /// matrix with ufp6 encode
     int *arr_word_size;         /// arr with number of cols from each row on matrix
@@ -54,8 +53,6 @@ void matrix_rnd_char_gen(SETS *set);
  *
  */
 int **matrix_init_int(int row ,int col);
-
-
 /**  initialize matrix of char to 0
  * @params
  *
@@ -89,7 +86,6 @@ void insert_word_char(SETS *set,char *word,int index);
  * @params
  *
  */
-
 void remove_word_matrix(SETS *set, int row);
 /** remove the a word from the matrix
  * @params
@@ -141,7 +137,6 @@ void print_arr_word_size(const SETS *set);
 void print_matrix_char(const SETS *set);
 void calc_bin_size(SETS *set,int index, char *word,const int *sizes_bin);
 int *arr_bits_size_calloc(int *arr, int N);
-
 /** free memory allocated
  * @params
  *
@@ -175,7 +170,6 @@ void charToBinary(int c, int *result, int *size_bin);
 int fperror(char *message);
 
 void encode_word(const char* word, int *encode,int *word_bits_size,int k,const int sizes_bin[],const int bin_dict[MAX_UFP6][BITS]);
-
 void print_array(int *arr, int N);
 
 void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w);
@@ -199,6 +193,7 @@ void remove_Word(SETS *set, int *arr_words);
 void realloc_row_delete(SETS *set, int row);
 void realloc_row_add(SETS *set, int row);
 void compute_words_size(const char **words,int *words_index, int W);
+
 void realloc_arr_words_size(SETS *set);
 void realloc_arr_ufp6_size(SETS *set);
 void realloc_rows_matrix(SETS *set, int num_words);
@@ -206,7 +201,6 @@ void realloc_rows_ufp6(SETS *set, int num_words);
 
 void realloc_col_word(char **mat_row, int col_words_size);
 void realloc_col_ufp6(int **mat_row, int col_words_size);
-
 int calculate_index_char(char currentChar);
 /**
  * @paragraph Check if word is supported in UFP6

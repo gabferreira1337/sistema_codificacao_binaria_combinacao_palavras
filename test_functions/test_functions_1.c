@@ -15,14 +15,17 @@ int main_test_functions_1(int argc, char **argv) {
     SETS set1;
     SETS set2;
     //Feature 1
-    test_function1_feature1(&set1,&set2, R);
+    //test_function1_feature1(&set1,&set2, R);
 
     //Feature 2
     // dictionary with UFP6
-    int dic[MAX_UFP6][BITS];
+    int dic[MAX_UFP6][BITS]={
+            {0, 0},
+            {0, 0}
+    };
     // sizes of each binary representation
-    int sizes_bin_dic[MAX_UFP6];
-    test_function1_feature2(&set1,&set2, sizes_bin_dic, dic);
+    int sizes_bin_dic[MAX_UFP6] = {0};
+    //test_function1_feature2(&set1,&set2, sizes_bin_dic, dic);
     test_function1_feature3(&set1, &set2, sizes_bin_dic, dic);
 
     freemem(&set1);

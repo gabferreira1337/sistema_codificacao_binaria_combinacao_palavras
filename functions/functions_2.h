@@ -279,18 +279,21 @@ void read_txt_ufp6(SETS *set, FILE *fp);
  */
 void sets_struct_init_v2(SETS *set, int num_words);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Allocate memory for cells in a matrix row and initialize to NULL / 0
+ * @param mat_row - row from matrix to allocate memory to store word
+ * @param col_words_size - number of columns to be allocated
  */
 void calloc_col_word(char **mat_row, int col_words_size);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Allocate memory for cells in a matrix row and initialize to NULL / 0
+ * @param mat_row - row from matrix to allocate memory to store word
+ * @param col_words_size - number of columns to be allocated
  */
 void calloc_col_ufp6(int **mat_row, int col_words_size);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Read ufp6 from a txt file and insert to a given set
+ * @param set - pointer to set where we want to store the data read from txt
+ * @param fp - pointer to a file where we want to read the data
  */
 void read_ufp6_file_to_set(SETS *set, FILE *fp);
 

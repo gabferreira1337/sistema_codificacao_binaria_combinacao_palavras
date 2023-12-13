@@ -402,12 +402,13 @@ void insertionSort(char** arr, int low, int high, int d) {
     }
 }
 
-void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
+void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool  flag) {
     if (hi <= lo) return;
 
     int count[RADIX + 2] = {0};
     int *arr_sizes = calloc(sizeof(int) , set->rowsize);
 
+    //Add frequencies of each char to count array
     for (int i = lo; i <= hi; i++) {
         //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
@@ -425,11 +426,10 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
             count[charIndex - 'A' + 36 + 2]++;
         }
     }
-
+    //Update cumulative frequencies of each char
     for (int r = 0; r < RADIX + 1; ++r) {
         count[r + 1] += count[r];
     }
-
 
     /* Insert words into aux array in right order */
     for (int i = lo; i <= hi; ++i) {
@@ -464,7 +464,7 @@ void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool flag) {
         int high = lo + count[r + 1] - 1;
 
         if (high > low + 1) {
-            msdRadixSort_r(set, aux, low, high, d + 1,flag);
+            msdRadixSort_r(set, aux, low, high, d + 1, flag);
         }
     }
 }
@@ -496,9 +496,10 @@ void FillArray_Word_Size(SETS *set) {
     }
 }
 
-void binary_dictionary( int bin_d[MAX_UFP6][BITS], int *sizes_bin) {
+
+void binary_dictionary( int bin_d[][BITS], int *sizes_bin) {
     int index = 0;
-    // Convert '0' to '9' to binary
+    // Convert '0' to '9' to ufp6
     for (char digit = '0'; digit <= '9'; digit++) {
         charToBinary(digit - '0', bin_d[index], sizes_bin);
         if(digit - '0' == 0 || digit - '0' == 1){
@@ -509,14 +510,14 @@ void binary_dictionary( int bin_d[MAX_UFP6][BITS], int *sizes_bin) {
         index++;
     }
 
-    // Convert 'a' to 'z' to binary
+    // Convert 'a' to 'z' to ufp6
     for (char letter = 'a'; letter <= 'z'; letter++) {
         sizes_bin[index] = log2((letter - 'a' + 10)) + 1;
         charToBinary(letter - 'a' + 10, bin_d[index],sizes_bin);
         index++;
     }
 
-    // Convert 'A' to 'Z' to binary
+    // Convert 'A' to 'Z' to ufp6
     for (char letter = 'A'; letter <= 'Z'; letter++) {
         sizes_bin[index] = log2((letter - 'A' + 36)) + 1;
         charToBinary(letter - 'A' + 36, bin_d[index],sizes_bin);

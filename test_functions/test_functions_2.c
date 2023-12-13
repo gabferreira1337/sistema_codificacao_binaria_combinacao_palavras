@@ -23,10 +23,10 @@ int main_test_functions_2(int argc, char **argv) {
     //precompute bin_dict to encode words
     //test_function1_feature2(NULL, NULL, sizes, dict);
 
-    //test_function_2_a(&ad);
+    test_function_2_a(&ad);
 
-    //test_function_2_8_b(&ad, sizes,dict);
-   // test_function_2_8_c(&ad, sizes,dict);
+   // test_function_2_8_b(&ad, sizes,dict);
+    //test_function_2_8_c(&ad, sizes,dict);
 
      test_function_2_10();
 
@@ -76,7 +76,7 @@ void test_function_2_10() {
 
     SETS *set3 = calloc(1,sizeof(SETS));
     read_txt_to_set(set3, FILE);
-
+    print_matrix_char(set3);
     print_matrix_int(set3);
 
     freemem(&set1);

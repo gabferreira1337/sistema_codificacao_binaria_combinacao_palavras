@@ -13,14 +13,12 @@
  * sets struct
  */
 typedef struct{
-
     char **matrix;              /// matrix with words
     int **matrix_encode;        /// matrix with ufp6 encode
     int *arr_word_size;         /// arr with number of cols from each row on matrix
     int *arr_bits_size;         /// arr with number of cols from each row on matrix_encode
     int rowsize;                /// number of words in both matrix (number of rows)
     int colsize_encode;
-
 }SETS;
 
 void sets_struct_init(SETS *set, int number_words);

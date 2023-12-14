@@ -15,28 +15,27 @@
 #define NUM_SETS 4
 #define FILE "set.txt"
 
+
 int main_test_functions_2(int argc, char **argv) {
     int dict[MAX_UFP6][BITS] = {0};
     int sizes[MAX_UFP6];
 
-    AD_WORDS_HOLDER *ad = NULL;
     //precompute bin_dict to encode words
     //test_function1_feature2(NULL, NULL, sizes, dict);
 
-    test_function_2_a(&ad);
+    test_function_2_a();
 
    // test_function_2_8_b(&ad, sizes,dict);
     //test_function_2_8_c(&ad, sizes,dict);
 
      test_function_2_10();
 
-    free_dynamic_array(ad);
-
     return 0;
 }
+/*Perguntar como o professor pretende que implementamos encode na LL  */
+void test_function_2_a() {
 
-
-void test_function_2_a(AD_WORDS_HOLDER **ad) {
+    AD_WORDS_HOLDER *ad = NULL;
     *ad = dynamic_array_init(AD_SIZE);
 
     /*we double the size when ad_SIZE == count before inserting into ad
@@ -84,7 +83,11 @@ void test_function_2_10() {
     freemem(set3);
 }
 
-void test_function_2_8_b(AD_WORDS_HOLDER **ad_sorted,int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
+
+void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
+    AD_WORDS_HOLDER *ad_sorted = NULL;
+    ad_sorted = dynamic_array_init(AD_SIZE);
+
     SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
     sets_struct_init(&set1, R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
@@ -114,26 +117,29 @@ void test_function_2_8_b(AD_WORDS_HOLDER **ad_sorted,int *sizes_bin_dict, int bi
             "2024-01-24",
     };
 
-    insert_element_to_AD_in_order(*ad_sorted, set1, set2, testDates[0]);
-    insert_element_to_AD_in_order(*ad_sorted, set1, set2, testDates[1]);
-    insert_element_to_AD_in_order(*ad_sorted, set1, set2, testDates[2]);
-    insert_element_to_AD_in_order(*ad_sorted, set1, set2, testDates[3]);
-    insert_element_to_AD_in_order(*ad_sorted, set1, set2, testDates[4]);
+    insert_element_to_AD_in_order(ad_sorted, set1, set2, testDates[0]);
+    insert_element_to_AD_in_order(ad_sorted, set1, set2, testDates[1]);
+    insert_element_to_AD_in_order(ad_sorted, set1, set2, testDates[2]);
+    insert_element_to_AD_in_order(ad_sorted, set1, set2, testDates[3]);
+    insert_element_to_AD_in_order(ad_sorted, set1, set2, testDates[4]);
 
 
-    print_AD(*ad_sorted);
-
+    print_AD(ad_sorted);
+  
     freemem(&set1);
     freemem(&set2);
     freemem(&set3);
     freemem(&set4);
 
-    free_dynamic_array(*ad_sorted);
+    free_dynamic_array(ad_sorted);
 
     exit(0);
 }
 
-void test_function_2_8_c(AD_WORDS_HOLDER **ad, int *sizes_bin_dict, int (*bin_dict)[7]) {
+void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[7]) {
+    AD_WORDS_HOLDER *ad = NULL;
+    ad = dynamic_array_init(AD_SIZE);
+  
     SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
     sets_struct_init(&set1, R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
@@ -169,21 +175,20 @@ void test_function_2_8_c(AD_WORDS_HOLDER **ad, int *sizes_bin_dict, int (*bin_di
             "2024-01-24",
     };
 
-    insert_element_to_index_AD(*ad, &set1, &set2, testDates[0], 0);
-    insert_element_to_index_AD(*ad, &set2, &set3, testDates[1],1);
-    insert_element_to_index_AD(*ad, &set3, &set4, testDates[2],2);
-    insert_element_to_index_AD(*ad, &set1, &set4, testDates[3],3);
-    insert_element_to_index_AD(*ad, &set1, &set3, testDates[4],4);
+    insert_element_to_index_AD(ad, &set1, &set2, testDates[0], 0);
+    insert_element_to_index_AD(ad, &set2, &set3, testDates[1],1);
+    insert_element_to_index_AD(ad, &set3, &set4, testDates[2],2);
+    insert_element_to_index_AD(ad, &set1, &set4, testDates[3],3);
+    insert_element_to_index_AD(ad, &set1, &set3, testDates[4],4);
 
-
-    print_AD(*ad);
+    print_AD(ad);
 
     freemem(&set1);
     freemem(&set2);
     freemem(&set3);
     freemem(&set4);
 
-    free_dynamic_array(*ad);
+    free_dynamic_array(ad);
 
     exit(0);
 }

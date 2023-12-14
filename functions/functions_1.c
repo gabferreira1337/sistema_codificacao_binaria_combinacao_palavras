@@ -496,7 +496,6 @@ void FillArray_Word_Size(SETS *set) {
     }
 }
 
-
 void binary_dictionary( int bin_d[][BITS], int *sizes_bin) {
     int index = 0;
     // Convert '0' to '9' to ufp6

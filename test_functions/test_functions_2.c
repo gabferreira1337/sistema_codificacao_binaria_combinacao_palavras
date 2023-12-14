@@ -13,7 +13,8 @@
 #define DATE_SIZE 11
 #define AD_SIZE 4
 #define NUM_SETS 4
-#define FILE "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set.txt"
+#define FILE "set.txt"
+
 
 int main_test_functions_2(int argc, char **argv) {
     int dict[MAX_UFP6][BITS] = {0};
@@ -29,22 +30,20 @@ int main_test_functions_2(int argc, char **argv) {
 
      test_function_2_10();
 
-
     return 0;
 }
 /*Perguntar como o professor pretende que implementamos encode na LL  */
 void test_function_2_a() {
 
     AD_WORDS_HOLDER *ad = NULL;
-
-    ad = dynamic_array_init(AD_SIZE);
+    *ad = dynamic_array_init(AD_SIZE);
 
     /*we double the size when ad_SIZE == count before inserting into ad
      *
      * realloc_AD(ad, ad->size * 2)
      * /*/
 
-    free_dynamic_array(ad);
+   // free_dynamic_array(ad);
 }
 
 /**
@@ -83,6 +82,7 @@ void test_function_2_10() {
     freemem(&set2);
     freemem(set3);
 }
+
 
 void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
     AD_WORDS_HOLDER *ad_sorted = NULL;
@@ -125,7 +125,7 @@ void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
 
 
     print_AD(ad_sorted);
-
+  
     freemem(&set1);
     freemem(&set2);
     freemem(&set3);
@@ -139,6 +139,7 @@ void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
 void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[7]) {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
+  
     SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
     sets_struct_init(&set1, R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
@@ -179,7 +180,6 @@ void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[7]) {
     insert_element_to_index_AD(ad, &set3, &set4, testDates[2],2);
     insert_element_to_index_AD(ad, &set1, &set4, testDates[3],3);
     insert_element_to_index_AD(ad, &set1, &set3, testDates[4],4);
-
 
     print_AD(ad);
 

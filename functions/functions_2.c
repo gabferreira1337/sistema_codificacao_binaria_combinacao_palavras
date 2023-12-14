@@ -12,6 +12,7 @@
 
 #define DYNAMIC_ARRAY_SIZE 1
 
+
 int main_functions_2(int argc, char **argv) {
 
     AD_WORDS_HOLDER *arr_din;
@@ -489,7 +490,6 @@ NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date) {
         }else{
             return mid;
         }
-
     }
     return lo;
 }
@@ -505,8 +505,6 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORD
 
     node->words_holder.s1 = *set1;
     node->words_holder.s2 = *set2;
-
-
     node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
     strcpy(node->last_update_date, last_date);
 
@@ -602,8 +600,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     for (int i = 0; i < index - 1 && pos->pnext != NULL; ++i) {
         pos = pos->pnext;
     }
-
-
+  
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
         NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
@@ -758,6 +755,7 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
             //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "teste_find.txt");
             write_words_found_to_txt(current, index_set1, index_set2,"teste_find_1.txt", j);
+          
             free(index_set1);
             index_set1 = NULL;
             free(index_set2);
@@ -948,4 +946,3 @@ void calloc_col_ufp6(int **mat_encode_row, int col_words_size) {
         fperror("Matrix col calloc in calloc_col_words");
     }
 }
-

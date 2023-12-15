@@ -53,7 +53,7 @@ void test_function1_feature1(SETS *set1, SETS *set2,int number_words) {
 
 void test_function1_feature2(int sizes_bin_dict[], int bin_dict[MAX_UFP6][BITS]) {
     // Pre-compute dictionary of binary representations and their respective size
-    binary_dictionary(bin_dict, sizes_bin_dict);
+    ufp6_dictionary(bin_dict, sizes_bin_dict);
 
     char word[] = "ola";
     int W = 1;

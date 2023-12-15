@@ -77,7 +77,7 @@ void print_AD(const AD_WORDS_HOLDER *ad);
  * @param set2 - pointer to set of matrix with words and ufp6
  * @param last_date - last update date of both sets
  */
-void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS s1 , SETS s2, char *last_date);
+void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder, SETS *s1 ,SETS *s2,const char *last_date);
 /**
  * @param ad_holder - pointer to AD_WORDS_HOLDER struct
  * @param index_set1 - pointer to array with index of words found in set1 ///in first position of array store the count of indexes to use inside this function
@@ -102,7 +102,7 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
 /**
  * sets struct
  */
-void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder, SETS *set1, SETS *set2, char*last_date);
+void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder,const SETS *set1,const SETS *set2,const char *last_date);
 /**
  * sets struct
  */
@@ -119,7 +119,7 @@ char *get_current_date();
  * exmaple2 :index 0 24-11-2023 , new_date 23-11-2023 return   0
  * exmaple3 :index 0 24-11-2023 , new_date 25-11-2023 return   1
  */
-int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din, char *date);
+int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din,const char *date);
 /**
  * sets struct
  */
@@ -135,6 +135,11 @@ void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size);
  * @param arr - pointer to AD_WORDS_HOLDER
  */
 void free_dynamic_array(AD_WORDS_HOLDER *arr);
+/**
+ * @paragraph Initialize and return LL_WORDS_HOLDER struct
+ * @return pointer to dynamically allocated LL_WORDS_HOLDER struct
+ */
+LL_WORDS_HOLDER *ll_init();
 /**
  * @paragraph Free Linked List
  * @param arr - pointer to LL_WORDS_HOLDER
@@ -262,7 +267,7 @@ void write_index_array_ufp6_to_file(SETS *set,FILE *fp,const int *index_array, i
  * @paragraph Free Linked List
  * @param arr - pointer to LL_WORDS_HOLDER
  */
-void read_txt_to_set(SETS *set, char *filename);
+void read_txt_to_set(SETS *set, FILE *fp);
 /**
  * @paragraph Free Linked List
  * @param arr - pointer to LL_WORDS_HOLDER
@@ -296,6 +301,41 @@ void calloc_col_ufp6(int **mat_row, int col_words_size);
  * @param fp - pointer to a file where we want to read the data
  */
 void read_ufp6_file_to_set(SETS *set, FILE *fp);
+/**
+ * @paragraph Write Dynamic Array of VAL_AD_WORDS_HOLDER to txt file
+ * @param ad - pointer to AD_WORDS_HOLDER
+ * @param fn - file name
+ */
+void write_ad_to_txt(const AD_WORDS_HOLDER *ad,const char *fn);
+/**
+ * @paragraph Write both sets from WORDS_HOLDER to txt file
+ * @param wordsHolder - pointer to WORDS_HOLDER
+ * @param fp - file pointer
+ */
+void write_both_sets_to_txt(const WORDS_HOLDER *wordsHolder, FILE *fp);
+/**
+ * @paragraph Read from txt file to Dynamic array AD_WORDS_HOLDER
+ * @param ad - address of a pointer to AD_WORDS_HOLDER
+ * @param fp - file pointer
+ * @param flag - if set to 1 read in chronological order ASC
+ */
+void read_from_txt_to_ad(AD_WORDS_HOLDER **ad,const char *fn, bool flag);
+/**
+ * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to txt file
+ * @param ll - pointer to LL_WORDS_HOLDER struct
+ * @param fn - file name
+ */
+void write_ll_to_txt(const LL_WORDS_HOLDER *ll,const char *fn);
+/**
+ * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
+ * @param ll - address of a pointer to LL_WORDS_HOLDER
+ * @param fp - file pointer
+ * @param flag - if set to 1 read in chronological order ASC
+ */
+void read_from_txt_to_ll(LL_WORDS_HOLDER *ll,const char *fn, bool flag);
+
+
+
 
 int main_functions_2(int argc , char **argv);
 

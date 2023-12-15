@@ -14,9 +14,9 @@
  */
 typedef struct{
     char **matrix;              /// matrix with words
-    int **matrix_encode;        /// matrix with ufp6 encode
+    int **matrix_ufp6;          /// matrix with ufp6 representations
     int *arr_word_size;         /// arr with number of cols from each row on matrix
-    int *arr_bits_size;         /// arr with number of cols from each row on matrix_encode
+    int *arr_ufp6_size;         /// arr with number of cols from each row on matrix_ufp6
     int rowsize;                /// number of words in both matrix (number of rows)
     int colsize_encode;
 }SETS;
@@ -90,7 +90,7 @@ void remove_word_matrix(SETS *set, int row);
  * @params
  *
  */
-void insert_ufp6(SETS *set,const int sizes_bin_dict[],const int bin_dict[RADIX][BITS],const char *word,int index);
+void insert_ufp6(SETS *set, const int sizes_ufp6_dict[], int ufp6_dict[][BITS], const char *word, int index);
 
 /** realloc matrixes
  * @params
@@ -116,11 +116,11 @@ void matrix_encode_realloc(SETS *set);
  * also both matrix (matrix of words and matrix upf6) and then insert to the respective matrix.
  * @param set - pointer to set that contains both matrix , both arrays with sizes and the number of words
  * @param words - array of words to be inserted
- * @param sizes_bin_dict - array with precomputed sizes of each ufp6 representation
- * @param bin_dict - precomputed dictionary with each ufp6 representation
+ * @param sizes_ufp6_dict - array with precomputed sizes of each ufp6 representation
+ * @param ufp6_dict - precomputed dictionary with each ufp6 representation
  * @param num_words - number of words to be inserted
  */
-void insert_words(SETS *set,const char **words,const int *sizes_bin_dict,const int bin_dict[RADIX][BITS], int num_words);
+void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict, int ufp6_dict[][BITS], int num_words);
 
 /** print the size of the words
  * @params
@@ -134,7 +134,7 @@ void print_arr_word_size(const SETS *set);
  *
  */
 void print_matrix_char(const SETS *set);
-void calc_bin_size(SETS *set,int index, char *word,const int *sizes_bin);
+void calc_ufp6_size(SETS *set, int index, char *word, const int *sizes_ufp6);
 int *arr_bits_size_calloc(int *arr, int N);
 /** free memory allocated
  * @params
@@ -156,13 +156,13 @@ void reverseArray(char **arr, int start, int end);
 * @params
 *
 */
-void binary_dictionary(int bin_dict[MAX_UFP6][BITS],int *size_bin);
-void print_binary_dictionary(int bin_dict[MAX_UFP6][BITS], int *size_bin);
+void ufp6_dictionary(int bin_dict[][BITS], int *size_bin);
+void print_ufp6_dictionary(int bin_dict[][BITS], int *size_ufp6);
 /** Pre process all ASCII conversions
 * @params
 *
 */
-void encode_matrix_words(SETS *set, int sizes_bin_dict[],int bin_dict[MAX_UFP6][BITS]);
+void encode_matrix_words(SETS *set, int sizes_ufp6_dict[], int ufp6_dict[][BITS]);
 
 void charToBinary(int c, int *result, int *size_bin);
 

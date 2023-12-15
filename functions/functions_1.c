@@ -21,6 +21,7 @@ time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
 
 
 
+
 int main_functions_1(int argc , char **argv){
 
     /*
@@ -100,7 +101,7 @@ int main_functions_1(int argc , char **argv){
    /* puts("SET 2");
     print_matrix_char(set2);
     puts("SET 2 ENCODE");
-    print_matrix_int(set2);
+    print_matrix_int(set2);*/
 
     /* Sort Both arrays in descending order*/
    /* msdRadixSort(&set1, 0, set1.rowsize,0);
@@ -246,8 +247,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
         word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
     }
 }
-
-
 
 char gen_rnd_char(){
     int random_number;
@@ -589,6 +588,7 @@ void reverseArray(char **arr, int start, int end) {
         --end;
     }
 }
+
 
 int *arr_bits_size_calloc(int *arr, int N) {
     arr = (int*) calloc(sizeof(int) , N);
@@ -948,4 +948,3 @@ void realloc_rows_ufp6(SETS *set, int num_words) {
         fperror("Realloc matrix in realloc_rows_ufp6");
     }
 }
-

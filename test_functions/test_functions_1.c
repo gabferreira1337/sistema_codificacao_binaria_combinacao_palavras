@@ -27,7 +27,7 @@ int main_test_functions_1(int argc, char **argv) {
     int sizes_bin_dic[MAX_UFP6] = {0};
     //test_function1_feature2(&set1,&set2, sizes_bin_dic, dic);
     test_function1_feature3(sizes_bin_dic, dic);
-
+  
     freemem(&set1);
     freemem(&set2);
 

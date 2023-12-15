@@ -218,12 +218,12 @@ void test_function_2_10_ad() {
     //insert_element_to_index_AD(arr_din, &set1,&set2, testDates[0], 0);
    // insert_element_to_index_AD(arr_din, &set1,&set2, testDates[1], 1);
 
-    write_ad_to_txt(arr_din,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/ad_history.txt");
+    write_ad_to_txt(arr_din,FILE_AD);
 
     AD_WORDS_HOLDER *arr_din2 = NULL;
     // Last argument is a flag , if set to 1 read in chronological order
     //Pass to function adress of pointer arr_din so changes stay outside function
-    read_from_txt_to_ad(&arr_din2, "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/ad_history.txt", 1);
+    read_from_txt_to_ad(&arr_din2, FILE_AD, 1);
 
     print_AD(arr_din2);
 
@@ -268,12 +268,12 @@ void test_function_2_10_ll() {
     insert_node_ll_sorted(ll, &set1,&set2, testDates[0]);
     insert_node_ll_sorted(ll, &set1,&set2, testDates[1]);
 
-    write_ll_to_txt(ll,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/ll_history.txt");
+    write_ll_to_txt(ll,FILE_LL);
 
     LL_WORDS_HOLDER *ll_2 = ll_init();
     // Last argument is a flag , if set to 1 read in chronological order
     //Pass to function adress of pointer arr_din so changes stay outside function
-    read_from_txt_to_ll(ll_2,"/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/ll_history.txt", 1);
+    read_from_txt_to_ll(ll_2,FILE_LL, 1);
     print_ll_words_holder(ll_2);
 
     free_ll_words_holder(ll);

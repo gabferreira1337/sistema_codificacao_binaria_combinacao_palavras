@@ -30,8 +30,7 @@ int main_test_functions_1(int argc, char **argv) {
     */
     //test_functions1_feature5();
 
-
-    exit(0);
+   // exit(0);
     return 0;
 }
 
@@ -109,6 +108,7 @@ void test_function1_feature3() {
 
     const char *insert_words1[] = {"ol4", "ola","L","123"};
     int N1 = 4;
+
     encode_matrix_words(&set1,sizes_bin_dict,ufp6_dict);
     //print_matrix_int(set1);
     insert_words(&set1,insert_words1,sizes_bin_dict,ufp6_dict, N1);

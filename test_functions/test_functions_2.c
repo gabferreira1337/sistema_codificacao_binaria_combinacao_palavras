@@ -14,11 +14,10 @@
 #define AD_SIZE 4
 #define NUM_SETS 4
 #define FILE "set.txt"
-#define FILE_AD "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/ad_history.txt"
-#define FILE_AD_BIN "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/ad_history.bin"
-#define FILE_LL "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/LL_history.txt"
-#define FILE_LL_BIN "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/LL_history.bin"
-
+#define FILE_AD "ad_history.txt"
+#define FILE_AD_BIN "ad_history.bin"
+#define FILE_LL "LL_history.txt"
+#define FILE_LL_BIN "LL_history.bin"
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
 gettimeofday(&tv2, NULL);    \
@@ -63,7 +62,6 @@ int main_test_functions_2(int argc, char **argv) {
 void test_function_2_a() {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
-
     /*we double the size when ad_SIZE == count before inserting into ad
      *
      * realloc_AD(ad, ad->size * 2)
@@ -394,6 +392,5 @@ void test_functions_2_11_ll() {
 
     free_ll_words_holder(ll);
    // free_ll_words_holder(ll_2);
-
     exit(0);
 }

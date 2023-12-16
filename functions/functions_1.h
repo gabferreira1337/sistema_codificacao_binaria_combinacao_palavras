@@ -124,7 +124,6 @@ void matrix_encode_realloc(SETS *set);
  * @param num_words - number of words to be inserted
  */
 void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict, int ufp6_dict[][BITS], int num_words);
-
 /**
  * @paragraph Print the size of all words
  * @param set - pointer to SETS struct that contain the array to print
@@ -317,7 +316,6 @@ void compute_words_size(const char **words,int *words_index, int W);
  * @paragraph Reallocates memory for an array of ints that contains the size of each word
  * @param set - pointer to SETS struct where our array is located so we can realloc
  */
-
 void realloc_arr_words_size(SETS *set);
 
 /**
@@ -352,6 +350,7 @@ void realloc_col_word(char **mat_row, int col_words_size);
  * @param col_words_size - size of word, used to realloc
  */
 void realloc_col_ufp6(int **mat_row, int col_words_size);
+
 /**
  * @paragraph - Calculate char index in UFP6 codification
  * @param currentChar - char to calculate

@@ -22,24 +22,16 @@ typedef struct{
 }SETS;
 
 void sets_struct_init(SETS *set, int number_words);
-/**  encode a matrix of strings to UFP6 (binary)
- * @params
- *
+
+/**
+ * @paragraph Encode the words from an array located in the set struct
+ * @param set - pointer to SETS struct
  */
 void encode(SETS *set);
-/**  encode a matrix of strings to UFP6 (binary)
- * @params
- *
- */
-void int_to_bin(SETS *set);
-/**  encode a matrix of strings to UFP6 (binary)
- * @params
- *
- */
-void char_to_bin(SETS *set);
-/** generate random char
- * @params length - word length
- * @return  word generated
+
+/**
+ * @paragraph generates random char
+ * @return  generated char
  */
 char gen_rnd_char();
 /** Initialize matrix with random words generated
@@ -206,7 +198,7 @@ void realloc_col_ufp6(int **mat_row, int col_words_size);
 int calculate_index_char(char currentChar);
 /**
  * @paragraph Check if word is supported in UFP6
- * @param word - word to be checked
+ * @param word -pointer to word to be checked
  * @return return 1 if word is supported or return 0 if word is not supported
  */
 int is_ufp6(char *word);

@@ -776,7 +776,7 @@ void write_set_to_txt(const SETS *set, FILE *fp) {
     fprintf(fp, "number_words = %d\n", set->rowsize);
     for (int i = 0; i < set->rowsize; i++) {
         //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
-        fprintf(fp, "%d ",  set->arr_word_size[i]);
+        fprintf(fp, "%d-",  set->arr_word_size[i]);
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             fprintf(fp, "%c ",  set->matrix[i][j]);
         }
@@ -863,7 +863,7 @@ int save_set_txt(const SETS *set, char *filename) {
 void write_set_ufp6_to_txt(const SETS *set, FILE *fp) {
     //fprintf(fp, "UFP6 encode:\n");
     for (int i = 0; i < set->rowsize ; ++i) {
-        fprintf(fp,"%d", *((*set).arr_ufp6_size + i));
+        fprintf(fp,"%d-", *((*set).arr_ufp6_size + i));
         for (int j = 0; j < set->arr_ufp6_size[i]; j++) {
             fprintf(fp,"%d ", (*(*(set->matrix_ufp6 + i) + j)));
             //fprintf(fp, " %d", set->matrix_ufp6[i][j]);
@@ -950,7 +950,7 @@ void write_ad_to_txt(const AD_WORDS_HOLDER *ad,const char *fn) {
         fprintf(fp, "\nIndex %d\n", i);
         fprintf(fp, "Last Update Date: %s\n", ad->array_val[i].last_update_date);
         //Write both sets inside each index
-        write_both_sets_to_txt(&ad->array_val[i].words_holder, fp);
+        write_both_sets_to_txt(&ad->array_val[i].words_holder ,fp);
     }
     fclose(fp);
 }

@@ -39,10 +39,10 @@ int main_functions_1(int argc , char **argv){
     set2.rowsize = R;
     init_arr_word_size(&set2);
 
-    /* Generate words for both sets  */
+     Generate words for both sets
     matrix_rnd_char_gen(&set1);
     print_matrix_char(&set1);
-    // matrix_rnd_char_gen(&set2);
+    // matrix_rnd_char_gen(&set2);*/
 
     /* ENCODE V1  */
     // encode(&set1);
@@ -363,7 +363,7 @@ void matrix_encode_realloc(SETS *set) {
     }
 }*/
 
-int fperror(char *message) {
+void fperror(char *message) {
     fprintf(stderr, "ERROR: %s\n", message);
     exit(0);
 }
@@ -593,33 +593,6 @@ int *arr_bits_size_calloc(int *arr, int N) {
     return arr;
 }
 
-void print_array(int *arr, int N) {
-    for (int i = 0; i < N; ++i) {
-        printf("%d\n", arr[i]);
-    }
-
-}
-
-int write_matrix_char_txt(char **mat, int r, int *cols, char *filename) {
-    FILE *fp = fopen(filename, "w+");
-
-    if (fp == -1) {
-        perror("Error opening file");
-        exit(EXIT_FAILURE);
-    }
-
-    fprintf(fp, "Words set\n", NULL);
-    for (int i = 0; i < r; i++){
-        fwrite(mat[i], sizeof(char), cols[i], fp);  // Write each row
-        fputc('\n', fp);
-    }
-
-    // Close the file
-    fclose(fp);
-
-    return 0;
-}
-
 void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w) {
     for (int i = 0; i < N; i++) {
         char currentChar = word[i];
@@ -738,7 +711,7 @@ void print_found_words_and_ufp6(const SETS *set,const int *array_index) {
     // start in 1 because storing in index 0 the count of words found // if *array_index == 0 , no words found
     for (int k = 1; k <= *array_index; ++k) {
         printf("Index -> %d\n", *(array_index + k));
-        printf("Word = %s -> ", *(set->matrix + (*(array_index + k))));
+        printf("Word = %s |", *(set->matrix + (*(array_index + k))));
         printf(" UFP6 = ");
         for (int i = 0; i < *(set->arr_ufp6_size + (*(array_index + k))); i++) {
            // printf("%d", *(*(set->matrix_ufp6 + (*(array_index + k))))+ i);

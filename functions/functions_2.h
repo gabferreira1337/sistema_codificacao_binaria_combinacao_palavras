@@ -227,7 +227,7 @@ void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index
  * @param set - pointer to set
  * @param fp - file pointer to the file where data will be inserted
  */
-int write_set_to_txt(const SETS *set,FILE *fp);
+void write_set_to_txt(const SETS *set,FILE *fp);
 /**
  * @paragraph Free Linked List
  * @param arr - pointer to LL_WORDS_HOLDER
@@ -327,13 +327,80 @@ void read_from_txt_to_ad(AD_WORDS_HOLDER **ad,const char *fn, bool flag);
  */
 void write_ll_to_txt(const LL_WORDS_HOLDER *ll,const char *fn);
 /**
+* @paragraph Write one set to txt file
+* Words set: number_words = 5
+*5 r q m t v
+*1 n
+*5 e y w w v
+*4 l i u k
+*4 f o m s
+*UFP6:
+*25 1 1 0 1 1 1 1 0 1 0 1 0 1 1 0 1 1 1 0 1 1 1 1 1 1
+*5 1 0 1 1 1
+*27 1 1 1 0 1 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1 1 1 1
+*20 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 1 0 1 0 0
+*19 1 1 1 1 1 1 0 0 0 1 0 1 1 0 1 1 1 0 0
+* @param set - pointer to set
+* @param fp - file pointer to the file where data will be inserted
+*/
+void write_set_to_binfile(const SETS *set,FILE *fp);
+void write_set_ufp6_to_binfile(const SETS *set, FILE *fp);
+/**
+ * @paragraph Write both sets from WORDS_HOLDER to txt file
+ * @param wordsHolder - pointer to WORDS_HOLDER
+ * @param fp - file pointer
+ */
+void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp);
+/**
  * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
  * @param ll - address of a pointer to LL_WORDS_HOLDER
  * @param fp - file pointer
  * @param flag - if set to 1 read in chronological order ASC
  */
 void read_from_txt_to_ll(LL_WORDS_HOLDER *ll,const char *fn, bool flag);
-
+/**
+ * @paragraph Read ufp6 from a txt file and insert to a given set
+ * @param set - pointer to set where we want to store the data read from txt
+ * @param fp - pointer to a file where we want to read the data
+ */
+void read_ufp6_binfile_to_set(SETS *set, FILE *fp);
+/**
+ * @paragraph Read from txt file to Dynamic array AD_WORDS_HOLDER
+ * @param ad - address of a pointer to AD_WORDS_HOLDER
+ * @param fp - file pointer
+ * @param flag - if set to 1 read in chronological order ASC
+ */
+void read_from_bin_to_ad(AD_WORDS_HOLDER **ad,const char *fn, bool flag);
+/**
+ * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to txt file
+ * @param ll - pointer to LL_WORDS_HOLDER struct
+ * @param fn - file name
+ */
+void write_ad_to_bin(const AD_WORDS_HOLDER *ad,const char *fn);
+/**
+ * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to txt file
+ * @param ll - pointer to LL_WORDS_HOLDER struct
+ * @param fn - file name
+ */
+void read_binfile_to_set(SETS *set, FILE *fp);
+/**
+ * @paragraph Free Linked List
+ * @param arr - pointer to LL_WORDS_HOLDER
+ */
+void read_binfile_words(SETS *set, FILE *fp);
+/**
+ * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to .bin file
+ * @param ll - pointer to LL_WORDS_HOLDER struct
+ * @param fn - file name
+ */
+void write_ll_to_binfile(const LL_WORDS_HOLDER *ll,const char *fn);
+/**
+ * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
+ * @param ll - address of a pointer to LL_WORDS_HOLDER
+ * @param fp - file pointer
+ * @param flag - if set to 1 read in chronological order ASC
+ */
+void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll,const char *fn, bool flag);
 
 
 

@@ -324,7 +324,6 @@ void realloc_arr_words_size(SETS *set);
  * @paragraph Reallocates memory for an array of ints that contains the size of each  UFP6 representation
  * @param set - pointer to SETS struct where our array is located so we can realloc
  */
-
 void realloc_arr_ufp6_size(SETS *set);
 /**
  * @paragraph Reallocates memory, called inside insert_words as we need to reallocate in order

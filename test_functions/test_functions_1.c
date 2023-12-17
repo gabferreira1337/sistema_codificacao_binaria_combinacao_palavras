@@ -118,6 +118,9 @@ void test_function1_feature3() {
 
     remove_Words(&set1, insert_words1, N1);
 
+    encode_matrix_words(&set1,sizes_bin_dict,ufp6_dict);
+    //print_matrix_int(set1);
+    insert_words(&set1,insert_words1,sizes_bin_dict,ufp6_dict, N1);
     printf("SET 1 !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);

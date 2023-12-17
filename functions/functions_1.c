@@ -534,6 +534,7 @@ void print_ufp6_dictionary(int (*bin_d)[BITS], int *size_ufp6) {
     }
 }
 
+
 void encode_word(const char* word, int *encoded, int *word_bits_size, int k, const int sizes_ufp6[], const int ufp6_dict[MAX_UFP6][BITS]) {
     if(ufp6_dict[0][0] != 0) fperror("Bin_dict not precomputed endcode_matrix_words");
     int index = 0;

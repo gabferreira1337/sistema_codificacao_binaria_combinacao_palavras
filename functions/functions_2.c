@@ -217,6 +217,7 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS *s1,SETS *s2,
     for (int i = ad_holder->count; i > pos; i--) {
         ad_holder->array_val[i] = ad_holder->array_val[i - 1];
     }
+  
     insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[pos],s1,s2,last_date);
 
     ad_holder->count++;
@@ -826,10 +827,8 @@ int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1
 void write_index_array_words_to_file(SETS *set,FILE *fp,const int *array_index) {
     //count of indexes from the words found stored in first position of array
     for (int i = 1; i <= *array_index; i++) {
-        //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
         fprintf(fp, " %s",  set->matrix[array_index[i]]);
         write_index_array_ufp6_to_file(set, fp, array_index, i);
-       // current->words_holder.s2.matrix[index_array[i]]
         fputc('\n', fp);
     }
 }
@@ -1268,3 +1267,10 @@ void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     }
     fclose(fp);
 }
+
+int
+write_words_found_to_txt_set(const SETS *set, const int *index_words_found_set, const char *filename) {
+
+    return 0;
+}
+

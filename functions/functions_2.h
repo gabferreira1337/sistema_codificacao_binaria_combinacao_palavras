@@ -352,6 +352,12 @@ void write_set_ufp6_to_binfile(const SETS *set, FILE *fp);
  */
 void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp);
 /**
+* @paragraph Write words found in set to txt
+* @param
+* @param
+*/
+int write_words_found_to_txt_set(const SETS *set,const int *index_words_found_set,const char *filename);
+/**
  * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
  * @param ll - address of a pointer to LL_WORDS_HOLDER
  * @param fp - file pointer

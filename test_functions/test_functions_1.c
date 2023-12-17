@@ -24,13 +24,14 @@ int main_test_functions_1(int argc, char **argv) {
     // sizes of each binary representation
     int sizes_bin_dic[MAX_UFP6] = {0};
     //test_function1_feature2(&set1,&set2, sizes_bin_dic, dic);
-    test_function1_feature3();
+   // test_function1_feature3();
    /**5) Test functions to search words in a given set of words and their respective ufp6
     * representation and output sets of words
     */
-    //test_functions1_feature5();
+    test_functions1_feature5();
 
-   // exit(0);
+
+    exit(0);
     return 0;
 }
 
@@ -108,7 +109,6 @@ void test_function1_feature3() {
 
     const char *insert_words1[] = {"ol4", "ola","L","123"};
     int N1 = 4;
-
     encode_matrix_words(&set1,sizes_bin_dict,ufp6_dict);
     //print_matrix_int(set1);
     insert_words(&set1,insert_words1,sizes_bin_dict,ufp6_dict, N1);
@@ -118,6 +118,9 @@ void test_function1_feature3() {
 
     remove_Words(&set1, insert_words1, N1);
 
+    encode_matrix_words(&set1,sizes_bin_dict,ufp6_dict);
+    //print_matrix_int(set1);
+    insert_words(&set1,insert_words1,sizes_bin_dict,ufp6_dict, N1);
     printf("SET 1 !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
@@ -154,10 +157,15 @@ void test_functions1_feature5(){
     const  char *words_insert[] = {"ola", "olas"};
     int num_words = 2;
 
-    const  char *words_find[] = {"ola","olas"};
-    int num_words_find = 2;
-
+    const  char *words_search[] = {"ola","olas"};
+    int num_words_search = 2;
+    //insert words in set
     insert_words(&set1, words_insert, sizes_bin_dict, bin_dict, num_words);
+    //search for words and their respective ufp6 representation
+    find_Words(&set1, words_search, num_words_search);
+
+    freemem(&set1);
+    freemem(&set2);
 
     exit(0);
 }

@@ -18,6 +18,7 @@
 #define FILE_AD_BIN "ad_history.bin"
 #define FILE_LL "LL_history.txt"
 #define FILE_LL_BIN "LL_history.bin"
+
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
 gettimeofday(&tv2, NULL);    \
@@ -392,5 +393,6 @@ void test_functions_2_11_ll() {
 
     free_ll_words_holder(ll);
    // free_ll_words_holder(ll_2);
+  
     exit(0);
 }

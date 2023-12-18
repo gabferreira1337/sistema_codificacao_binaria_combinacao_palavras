@@ -13,8 +13,6 @@ void test_functions1_feature5();
 
 void test_functions1_feature6();
 
-
-
 int main_test_functions_1(int argc, char **argv);
 
 #endif //PROJETO_AED1_LP1_TEST_FUNCTIONS_1_H

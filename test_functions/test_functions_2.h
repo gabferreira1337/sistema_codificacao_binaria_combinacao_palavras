@@ -34,6 +34,5 @@ void test_functions_2_11_ad();
 void test_functions_2_11_ll();
 
 
-
 int main_test_functions_2(int argc, char **argv);
 #endif //PROJETO_AED1_LP1_TEST_FUNCTIONS_2_H

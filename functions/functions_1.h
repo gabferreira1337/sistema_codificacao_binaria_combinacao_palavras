@@ -260,7 +260,7 @@ void exch(int *arr, int i, int j);
 void ufp6_dictionary(int ufp6_dict[][BITS], int *size_ufp6);
 /**
  * @paragraph Function to print UFP6 pre-computed dictionary
-* @param ufp6_dict - Matrix to store ufp6 representations of each char
+ * @param ufp6_dict - Matrix to store ufp6 representations of each char
  * @param size_ufp6 - pointer to int array with sizes of each char in ufp6
  */
 void print_ufp6_dictionary(int bin_dict[][BITS], int *size_ufp6);
@@ -392,7 +392,6 @@ void realloc_arr_words_size(SETS *set);
  * @paragraph Reallocates memory for an array of ints that contains the size of each  UFP6 representation
  * @param set - pointer to SETS struct where our array is located so we can realloc
  */
-
 void realloc_arr_ufp6_size(SETS *set);
 /**
  * @paragraph Reallocates memory, called inside insert_words as we need to reallocate in order

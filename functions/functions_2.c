@@ -12,6 +12,7 @@
 
 #define DYNAMIC_ARRAY_SIZE 1
 
+
 int main_functions_2(int argc, char **argv) {
 
     AD_WORDS_HOLDER *arr_din;
@@ -216,7 +217,7 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS *s1,SETS *s2,
     for (int i = ad_holder->count; i > pos; i--) {
         ad_holder->array_val[i] = ad_holder->array_val[i - 1];
     }
-
+  
     insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[pos],s1,s2,last_date);
 
     ad_holder->count++;
@@ -481,7 +482,6 @@ NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date) {
         }else{
             return mid;
         }
-
     }
     return lo;
 }
@@ -497,8 +497,6 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORD
 
     node->words_holder.s1 = *set1;
     node->words_holder.s2 = *set2;
-
-
     node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
     strcpy(node->last_update_date, last_date);
 
@@ -594,8 +592,7 @@ void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *las
     for (int i = 0; i < index - 1 && pos->pnext != NULL; ++i) {
         pos = pos->pnext;
     }
-
-
+  
     if (pos->pback != NULL && pos->pnext != NULL) {
         //insert between two nodes
         NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
@@ -749,9 +746,11 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
             print_words_found_ll(current, index_set1, index_set2, j);
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
             //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "teste_find.txt");
+
             if(flag == 1){
                 write_words_found_to_txt(current, index_set1, index_set2,fn, j);
             }
+          
             free(index_set1);
             index_set1 = NULL;
             free(index_set2);
@@ -832,6 +831,7 @@ void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *array_i
     for (int i = 1; i <= *array_index; i++) {
         fprintf(fp, "Index -> %d\n",  array_index[i]);
         fprintf(fp, "Word = %s |",  set->matrix[array_index[i]]);
+      
         write_index_array_ufp6_to_file(set, fp, array_index, i);
         fputc('\n', fp);
     }
@@ -875,13 +875,13 @@ void write_set_ufp6_to_txt(const SETS *set, FILE *fp) {
 void read_txt_to_set(SETS *set, FILE *fp) {
     //read rowsize from file
     fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
-
     sets_struct_init_v2(set, set->rowsize);
 
     // Read set of words
     read_txt_words(set, fp);
 
     //Read ufp6 from set
+    //UFP6: read for void
     read_ufp6_file_to_set(set, fp);
 }
 
@@ -1031,9 +1031,6 @@ void write_ll_to_txt(const LL_WORDS_HOLDER *ll, const char *fn) {
     }
     fclose(fp);
 }
-
-
-
 
 void read_from_txt_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     FILE *fp = NULL;

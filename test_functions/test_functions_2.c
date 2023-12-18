@@ -393,6 +393,5 @@ void test_functions_2_11_ll() {
 
     free_ll_words_holder(ll);
    // free_ll_words_holder(ll_2);
-  
     exit(0);
 }

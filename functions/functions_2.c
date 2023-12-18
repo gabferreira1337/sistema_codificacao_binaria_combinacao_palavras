@@ -340,7 +340,7 @@ void delete_element_index(AD_WORDS_HOLDER *ad, int index) {
 }
 
 
-void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi) {
+void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, int hi,const char *fn,bool flag) {
     if(lo < 0 || hi >= arr->count){
         fperror("LO or HI out of bounds");
     }
@@ -719,7 +719,7 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
     ll->nnodes--;
 }
 
-void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
+void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi, const char *fn, bool flag) {
     //Check if out of bounds
     if(lo < 0 || hi >= ll->nnodes){
         fperror("LO or HI out of bounds");
@@ -746,7 +746,10 @@ void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi) {
             print_words_found_ll(current, index_set1, index_set2, j);
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
             //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "teste_find.txt");
-            write_words_found_to_txt(current, index_set1, index_set2,"teste_find_1.txt", j);
+
+            if(flag == 1){
+                write_words_found_to_txt(current, index_set1, index_set2,fn, j);
+            }
           
             free(index_set1);
             index_set1 = NULL;
@@ -799,23 +802,22 @@ void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
     fclose(fp);
 }
 
-int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename, int index_ll) {
+int write_words_found_to_txt(const NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2,const char *filename, int index_ll) {
     FILE *fp = fopen(filename, "a+");
 
     if (fp == NULL) {
-        perror("Error opening file");
-        exit(EXIT_FAILURE);
+        fperror("Opening file in write_words_found_to txt");
     }
-
+    //if found words in set1 or set2
     if (index_set1 != NULL || index_set2 != NULL){
         fprintf(fp, "NODE %d\n", index_ll);
     }
-
+    //if found words in set1
     if (index_set1 != NULL){
         fprintf(fp, "->Words set 1\n");
         write_index_array_words_to_file(&current->words_holder.s1, fp, index_set1);
     }
-
+    //if found words in set2
     if (index_set2 != NULL){
         fprintf(fp, "->Words set 2\n");
         write_index_array_words_to_file(&current->words_holder.s2, fp, index_set2);
@@ -824,16 +826,18 @@ int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1
     return 0;
 }
 
-void write_index_array_words_to_file(SETS *set,FILE *fp,const int *array_index) {
-    //count of indexes from the words found stored in first position of array
+void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *array_index) {
+    //count of indexes from the words found in set stored in first position of array
     for (int i = 1; i <= *array_index; i++) {
-        fprintf(fp, " %s",  set->matrix[array_index[i]]);
+        fprintf(fp, "Index -> %d\n",  array_index[i]);
+        fprintf(fp, "Word = %s |",  set->matrix[array_index[i]]);
+      
         write_index_array_ufp6_to_file(set, fp, array_index, i);
         fputc('\n', fp);
     }
 }
 
-void write_index_array_ufp6_to_file(SETS *set, FILE *fp, const int *array_index, int r) {
+void write_index_array_ufp6_to_file(const SETS *set, FILE *fp, const int *array_index, int r) {
     fprintf(fp," UFP6 = ");
     for (int i = 0; i < *(set->arr_ufp6_size + (*(array_index + r))); i++) {
         // fprintf(fp,"%d", *(*(set->matrix_ufp6 + (*(array_index + k))))+ i);
@@ -1268,9 +1272,14 @@ void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     fclose(fp);
 }
 
-int
-write_words_found_to_txt_set(const SETS *set, const int *index_words_found_set, const char *filename) {
+void write_words_found_to_txt_set(const SETS *set, const int *array_index_words_found_set, const char *filename) {
+    FILE *fp = fopen(filename, "a");
 
-    return 0;
+    if(fp == NULL){
+        fperror("Opening file in write_words_found_to_txt_set");
+    }
+    fprintf(fp, "Word found in set:\n");
+    write_index_array_words_to_file(set, fp, array_index_words_found_set);
+
+    fclose(fp);
 }
-

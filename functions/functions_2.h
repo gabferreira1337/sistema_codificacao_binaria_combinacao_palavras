@@ -97,9 +97,11 @@ void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, in
 void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index);
 
 /**
- * sets struct
+ * @paragraph
+ * @param fn - filename
+ * @param flag - if set to 1 output to a file
  */
- void find_word_ad(AD_WORDS_HOLDER *arr, char **words,int W, int lo, int hi);
+ void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, int hi,const char *fn,bool flag);
 /**
  * sets struct
  */
@@ -201,8 +203,10 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
  * @param W - size of words array
  * @param lo - start index node
  * @param hi - end index node
+ * @param fn - file name
+ * @param flag - if set to 1 write output to a txt file
  */
-void find_word_ll(LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi);
+void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi,const char *fn, bool flag);
 /**
  * @paragraph Print words found in Linked List
  * @param ll - pointer to Linked List Words Holder
@@ -251,19 +255,19 @@ void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
  * @param ll - pointer to Linked List Words Holder
  * @param index - node of Linked List to be deleted
  */
-int write_words_found_to_txt(NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2, char *filename, int index_ll);
+int write_words_found_to_txt(const NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2,const char *filename, int index_ll);
 /**
  * @paragraph Delete node in a given position/index
  * @param ll - pointer to Linked List Words Holder
  * @param index - node of Linked List to be deleted
  */
-void write_index_array_words_to_file(SETS *set,FILE *fp,const int *index_array);
+void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *index_array);
 /**
  * @paragraph Delete node in a given position/index
  * @param ll - pointer to Linked List Words Holder
  * @param index - node of Linked List to be deleted
  */
-void write_index_array_ufp6_to_file(SETS *set,FILE *fp,const int *index_array, int r);
+void write_index_array_ufp6_to_file(const SETS *set,FILE *fp,const int *index_array, int r);
 /**
  * @paragraph Free Linked List
  * @param arr - pointer to LL_WORDS_HOLDER
@@ -357,7 +361,7 @@ void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp);
 * @param
 * @param
 */
-int write_words_found_to_txt_set(const SETS *set,const int *index_words_found_set,const char *filename);
+void write_words_found_to_txt_set(const SETS *set, const int *array_index_words_found_set, const char *filename);
 /**
  * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
  * @param ll - address of a pointer to LL_WORDS_HOLDER

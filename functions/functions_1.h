@@ -155,47 +155,113 @@ void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6
 int *arr_bits_size_calloc(int *arr, int N);
 
 /**
- * @paragraph free memory allocated
- * @param set -
+ * @paragraph free memory allocated from set
+ * @param set - pointer to SET struct
 */
 void freemem(SETS *set);
 /** msdRadixSort
- * @param set -
- * @param lo -
- * @param hi -
- * @param flag - flag can only hold
- * @return
+ * @paragraph Sort both matrix and matrix_ufp6 in alphabetical order (ASC and DESC)
+ * using MSD algorithm
+ * Time complexity: O(2 W(N+R))
+ * R = Radix, N number of strings,
+ * W max number of chars in single word
+ * Extra Space: O(2N + DR)
+ * 2N = both aux arrays of size N, R = count array with size R to store char cumulative
+ * frequencies and D is the number of function-call stack depth
+ * (length of longest prefix match)
+ * @param set - pointer to SET struct
+ * @param lo -  lower bound of matrix
+ * @param hi - higher bound of matrix
+ * @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
  */
-int msdRadixSort(SETS *set, int lo, int hi, bool flag);
-
+void msdRadixSort(SETS *set,const int *array_sizes_ufp6, int lo, int hi, bool flag);
 /**
- * @paragraph
- * @param set -
- * @param aux -
- * @param lo -
- * @param hi -
- * @param d -
- * @param flag -
+ * @paragraph MSD algorithm , partition array into R pieces according to first char
+ * (use Key_indexed countin) and after recursively sort all strings that start with
+ * each char .
+ * @param set - pointer to SET struct
+ * @param aux - char pointers array to store sorted strings
+ * @param array_sizes_ufp6 - int pointers array to store sorted ufp6 and
+ * @param lo -  lower bound of matrix
+ * @param hi - higher bound of matrix
+ * @param d - depth of
+ * @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
  */
-// small columns ///
-void msdRadixSort_r(SETS *set,char **aux, int lo, int hi, int d, bool flag);
+void msdRadixSort_r(SETS *set,char **aux,int **aux_ufp6,const int *array_sizes_ufp6, int lo, int hi, int d, bool flag);
 /**
- * @paragraph
- * @param arr -
- * @param start -
- * @param end -
+ * @paragraph Sort both matrix and matrix_ufp6 by words size (in ASC and DESC order)
+ * using quicksort algorithm
+ * @param set - pointer to set struct
+ * @param flag -boolean, if set to 1 sort in ASC order, if set to 0 sort in DESC order
  */
-void reverseArray(char **arr, int start, int end);
+void sort_size(SETS *set,bool flag);
 /**
- * @paragraph
- * @param bin_dict -
- * @param size_bin -
+ * @paragraphThis Quick sort algorithm to sort both matrix and matrix_ufp6,
+ * it uses divide and conquer strategy like merge sort,
+ * we first shuffle the array using Knuth-Shuffle algorithm
+ * then we partition the array so that for pivot,
+ * entry a[pivot] is in place , no larger entry to the left of pivot
+ * and no smaller entry to the right of pivot
+ * and then sort each subarray recursively
+ * For tiny sub-arrays use insertion sort (CUTOFF = 10) , because qsort
+ * has too much overhead for tiny sub-arrays
+ * Time Complexity: worst O(1/2N^2)
+ * Extra Space: O(log(N))
+ * Not stable
+ * @param set - pointer to set struct
+ * @param arr - pointer to array with words size
+ * @param lo - start pos of low = 0
+ * @param hi - start pos of hi =  number of rows - 1
  */
-void ufp6_dictionary(int bin_dict[][BITS], int *size_bin);
+void q_sort(SETS *set,int *arr, int lo , int hi, bool flag);
 /**
- * @paragraph
- * @param bin_dict -
- * @param size_ufp6 -
+ * @paragraph This function is used in quicksort algorithm,
+ * to partition the array in half , so when pivot is changed
+ * on his left are the numbers lower than him and at his left are the number greater
+ * than pivot so pivot is already sorted
+ * @param set - pointer to set struct
+ * @param arr - pointer to array with words size
+ * @param lo - start pos of low = 0
+ * @param hi - start pos of hi =  number of rows - 1
+ */
+int partition(SETS *set,int *arr, int lo, int hi, bool flag);
+/**
+ * @paragraph Find median between arr[lo], arr[mid] and arr[hi]
+ * to improve qsort
+ * @param arr - pointer to array with words size
+ * @param lo - lower bound = 0
+ * @param mid - middle index of array
+ * @param hi -  higher bound
+ * @return return index of median
+ */
+int findMedian(const int *arr, int lo, int mid, int hi);
+/**
+ * @paragraph This function implements the Knuth-shuffle algoritm,
+ * it shuffles the array generating random indexes and swap elements between those index
+ * , for better performance in qsort algorithm
+ * @param arr - pointer to array with words size
+ * @param N - size of array
+ */
+void knuth_shuffle(int *arr, int N);
+/**
+ * @paragraph Exchange items between arr[i] and arr[j]
+ * @param arr - pointer to int array
+ * @param i - index of item to be swapped with item j
+ * @param j - index of item to be swapped with item i
+ */
+void exch(int *arr, int i, int j);
+/**
+ * @paragraph Function to pre-compute dictionary with ufp6 representations of
+ * each char
+ * @param ufp6_dict - Matrix to store ufp6 representations of each char
+ * @param size_ufp6 - pointer to int array to store ufp6
+ * representation sizes of each char
+ */
+void ufp6_dictionary(int ufp6_dict[][BITS], int *size_ufp6);
+/**
+ * @paragraph Function to print UFP6 pre-computed dictionary
+* @param ufp6_dict - Matrix to store ufp6 representations of each char
+ * @param size_ufp6 - pointer to int array with sizes of each char in ufp6
  */
 void print_ufp6_dictionary(int bin_dict[][BITS], int *size_ufp6);
 /**
@@ -269,8 +335,10 @@ void print_found_words_and_ufp6(const SETS *set,const int *array_index);
  * @param set - pointer to SETS struct that contains the arrays where the words are stored
  * @param words - pointer to an the array of words which contain the words to be removed
  * @param W - amount of words to remove
+ * @param fn - file name
+ * @param flag - if set to 1 write to a txt file words found
  */
-void find_Words(SETS *set, const char **words, int W);
+void find_Words(const SETS *set, const char **words, int W,const char *fn, bool flag);
 /**
  * @paragraph Remove words from set, given array with the indexes of the rows in both matrix, adjusting
  * both matrix .When adjusting rows If prev word size is lesser than the next, reallocate that row
@@ -355,9 +423,10 @@ void realloc_col_ufp6(int **mat_row, int col_words_size);
 /**
  * @paragraph - Calculate char index in UFP6 codification
  * @param currentChar - char to calculate
+ * @param flag -boolean, if set to 1 calculate in ASC order , if set to 0 calculate in DESC order
  * @return return the calculated index in UFP6 codification
  */
-int calculate_index_char(char currentChar);
+int calculate_index_char(char currentChar, bool flag);
 /**
  * @paragraph Check if word is supported in UFP6
  * @param word -pointer to word to be checked
@@ -368,6 +437,55 @@ int is_ufp6(const char *word);
  * @paragraph Function to create a sed based on processor time
  */
 void seed_random();
+/**
+ * @paragraph Exchange the pointer to row i with the pointer to row j in matrix_words
+ * @param set - pointer to SETS struct
+ * @param i - index of a row to swap
+ * @param j - index of a row to swap
+*/
+void exch_rows_matrix_char(SETS *set, int i, int j);
+/**
+ * @paragraph Exchange the pointer to row i with the pointer to row j in matrix_ufp6, and exchange sizes store in arr_ufp6_size
+ * @param set - pointer to SETS struct
+ * @param i - index of a row to swap
+ * @param j - index of a row to swap
+*/
+void exch_rows_matrix_ufp6(SETS *set, int i, int j);
+/**
+ * @paragraph Exchange the pointer to row i with the pointer to row j in both matrix,
+ * and exchange sizes stored in arr_ufp6_size,(no realloc needed)
+ * @param set - pointer to SETS struct
+ * @param i - index of a row to swap
+ * @param j - index of a row to swap
+*/
+void exch_rows_from_both_matrix(SETS *set, int i, int j);
+/**
+ * @paragraph This function sorts matrix of words and ufp6 in SETS struct,
+ * using insertion sort
+ * Time complexity: O(N^2)
+ * Extra Space: O(1)
+ * @param set - pointer to SETS struct
+ * @param N - size of rows
+ * @param flag -boolean, if set to 1 sort in ASC order, if set to 0 sort in DESC order
+*/
+void insertion_sort_char(SETS *set, int N,bool flag);
+/**
+ * @paragraph This function checks if matrix_words is sorted
+ * by alphabetical order
+ * @param set - pointer to SETS struct
+ * @param N - size of rows
+ * @param flag - boolean, if set to 1 check if sorted ASC, if set to 0 check if DESC
+*/
+void is_sorted_matrix(const SETS *set, int N, bool flag);
+/**
+ * @paragraph This function checks if matrix_words is sorted
+ * by words size
+ * @param set - pointer to SETS struct
+ * @param N - size of rows
+ * @param flag -boolean,  if set to 1 check if sorted ASC, if set to 0 check if DESC
+*/
+void is_sorted_sizes(const SETS *set, int N, bool flag);
+
 
 
 int main_functions_1(int argc , char **argv);

@@ -11,6 +11,7 @@ void test_function1_feature3();
 
 void test_functions1_feature5();
 
+void test_functions1_feature6();
 
 
 

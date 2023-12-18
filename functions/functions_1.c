@@ -2,135 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <sys/time.h>
 #include <ctype.h>
 #include <math.h>
 #include "functions_1.h"
+#include "functions_2.h"
 
+#define CUTOFF 10
 #define M_KMP 8
 #define R 5
 #define C 5
-#define WORD_LENGTH 5
 #define BITS 7
-#define RADIX 36
-#define TIMER_START() gettimeofday(&tv1, NULL)
-#define TIMER_STOP() \
-gettimeofday(&tv2, NULL);    \
-timersub(&tv2, &tv1, &tv);   \
-time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
-
+#define RADIX 63
 
 
 int main_functions_1(int argc , char **argv){
-
-    /*
-     * Initialize set1  *
-                        */
-   SETS set1;
-   sets_struct_init(&set1, R);
-
-    /*
-    * Initialize set2  *
-                       */
-   /* SETS set2;
-    set2.matrix_ufp6 = matrix_init_int(R,C);
-    set2.matrix = matrix_init_char(R,C);
-    set2.colsize_encode =C * BITS;
-    set2.rowsize = R;
-    init_arr_word_size(&set2);
-
-     Generate words for both sets
-    matrix_rnd_char_gen(&set1);
-    print_matrix_char(&set1);
-    // matrix_rnd_char_gen(&set2);*/
-
-    /* ENCODE V1  */
-    // encode(&set1);
-    //printf("\nHelloo ENCODe\n");
-    // print_matrix_char(set1);
-    // encode(&set2);
-
-   /* ENCODE V2 */
-    int dic[MAX_UFP6][BITS];
-    int sizes[MAX_UFP6];
-
-    ufp6_dictionary(dic, sizes);
-    // print_ufp6_dictionary(dic, sizes);
-    //encode_matrix_words(&set1, sizes, dic);
-
-    /* Remove word */
-    char pattern[BITS + 1] = "ola";
-    int dfa[MAX_UFP6][MAX_UFP6];
-    int *index_words_found = calloc(set1.rowsize, sizeof(int));
-    KMP(pattern,dfa);
-    index_words_found =  search_KMP(&set1, dfa, strlen(pattern));
-   // const char *arr_words[100] = {"ola", "olas"};
-    //int *arr_words_found = malloc(sizeof(int) * index_words_found[0]);
-
-   // arr_words_found = find_Words(&set1, arr_words, index_words_found, 2);
-
-    //start in 1 because pos 0 is storing size of array;
-    for (int i = 1; i < index_words_found[0]; ++i) {
-        printf("%d\n", index_words_found[i]);
-    }
-    print_matrix_int(&set1);
-    remove_Word(&set1, index_words_found);
-
-    encode_matrix_words(&set1,sizes,dic);
-
-    free(index_words_found);
-
-    /* 5) */
-   /* char pattern[BITS + 1] = "ola";
-    int dfa[MAX_UFP6][MAX_UFP6];
-    int *index_words_found = calloc(set1.rowsize, sizeof(int));
-    KMP(pattern,dfa);
-    index_words_found =  search_KMP(&set1, dfa, strlen(pattern));
-    print_KMP_BinMatches(&set1, index_words_found);
-
-    free(index_words_found);*/
-
-   // print_kmp(dfa);
-
-    /* Print both sets  */
-    puts("SET 1");
-    print_matrix_char(&set1);
-    puts("SET 1 ENCODE");
-    print_matrix_int(&set1);
-   /* puts("SET 2");
-    print_matrix_char(set2);
-    puts("SET 2 ENCODE");
-    print_matrix_int(set2);
-
-    /* Sort Both arrays in descending order*/
-   /* msdRadixSort(&set1, 0, set1.rowsize,0);
-    puts("SET 1 . SORTED DESC");
-    print_matrix_char(set1);
-    encode(&set1);
-    print_matrix_int(set1);*/
-   /* msdRadixSort(&set2, 0, set2.rowsize, 0);
-    puts("SET 2 . SORTED");
-    print_matrix_char(set2);
-    encode(&set2);
-    print_matrix_int(set2);
-     /* Sort Both arrays in descending order*/
-    /* msdRadixSort(&set1, 0, set1.rowsize,1);
-    puts("SET 1 . SORTED ASC");
-    print_matrix_char(set1);
-    encode(&set1);
-    print_matrix_int(set1);
-    puts("SET 2 . SORTED ASC");
-    msdRadixSort(&set2, 0, set1.rowsize,1);
-    print_matrix_char(set2);
-    encode(&set2);
-    print_matrix_int(set2);*/
-
-    /* free memory  */
-   /* freemem(&set1);
-    freemem(&set2);
-   */
-
-    freemem(&set1);
 
     return 0;
 }
@@ -146,7 +31,7 @@ int **matrix_init_int(int row ,int col){
 
     for (int i = 0; i < row; ++i) {
         // Allocate memory for each pointer (cols)
-        *(mat+i) = (int*)calloc(col * 7, sizeof(int));
+        *(mat+i) = (int*)calloc(col * BITS, sizeof(int));
 
         if (*(mat+i) == NULL) {
             printf("Matrix int col malloc\n");
@@ -168,7 +53,8 @@ char **matrix_init_char(int row ,int *size_cols){
 
     for (int i = 0; i < row; ++i) {
         // Allocate memory for each pointer (cols)
-        *(mat + i) = (char*)calloc(size_cols[i], sizeof(char));
+        //for '\0'
+        *(mat + i) = (char*)calloc(size_cols[i] + 1, sizeof(char));
        // *(mat + i) = (char*)calloc(BITS + 1, sizeof(char));
         if (mat[i] == NULL) {
             printf("Matrix char cols malloc\n");
@@ -187,7 +73,6 @@ void print_matrix_int(const SETS *set) {
     }
 }
 
-//Apontador porque é mais eficiente do que uma cópia
 void print_matrix_char(const SETS *set) {
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < *(set->arr_word_size + i); ++j) {
@@ -237,8 +122,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
     /* seed to generate random numbers */
     seed_random();
 
-    //srand((unsigned int)time(NULL));
-   // sleep(10);
     for (int i = 0; i < W; ++i) {
         /* Generate numbers from 1 to BITS - 1 // sum + 1 to the result so never generates 0 */
         /* And store in word_length */
@@ -259,10 +142,14 @@ void matrix_rnd_char_gen(SETS *set) {
     /* seed to generate random numbers */
     seed_random();
     //srand((unsigned int)time(NULL));
+    int j = 0;
     for (int i = 0; i < set->rowsize; ++i) {
-        for (int j = 0; j < set->arr_word_size[i]; ++j) {
+        for (j = 0; j < set->arr_word_size[i]; ++j) {
             *(*(set->matrix + i) +j) = gen_rnd_char();
         }
+        //terminate each word with '\0'
+        *(*(set->matrix + i) +j) = '\0';
+
     }
 }
 
@@ -369,102 +256,90 @@ void fperror(char *message) {
 }
 
 
-void insertionSort(char** arr, int low, int high, int d) {
-    for (int i = low + 1; i <= high; i++) {
-        for (int j = i; j > low && strcmp(arr[j], arr[j - 1]) < 0; j--) {
-            char* temp = arr[j];
-            arr[j] = arr[j - 1];
-            arr[j - 1] = temp;
-        }
-    }
-}
-
-void msdRadixSort_r(SETS *set, char **aux, int lo, int hi, int d, bool  flag) {
+void msdRadixSort_r(SETS *set, char **aux,int **aux_ufp6,const int *arr_sizes_ufp6, int lo, int hi, int d, bool flag) {
     if (hi <= lo) return;
-
+    //Store frequencies of each char
     int count[RADIX + 2] = {0};
-    int *arr_sizes = calloc(sizeof(int) , set->rowsize);
 
     //Add frequencies of each char to count array
     for (int i = lo; i <= hi; i++) {
-        //printf(" i : %d = %s\n",i, *(set->matrix + i));
         char currentChar = *(*(set->matrix + i) + d);
-        if (currentChar == ' '){
-            currentChar = '0';
-        }
-        int charIndex = (int)currentChar;
-
-        if (charIndex >= '0' && charIndex <= '9') {
-           // printf(" i : %d = %s\n",i, *(set->matrix + i));
-            count[charIndex - '0' + 2]++;
-        } else if (charIndex >= 'a' && charIndex <= 'z') {
-            count[charIndex - 'a' + 10 + 2]++;
-        } else if (charIndex >= 'A' && charIndex <= 'Z') {
-            count[charIndex - 'A' + 36 + 2]++;
-        }
+        //calculate Index to insert into count
+        int charIndex = calculate_index_char(currentChar, flag);
+        // + 2 for after store cumulative frequencies
+        count[charIndex + 2]++;
     }
+
     //Update cumulative frequencies of each char
     for (int r = 0; r < RADIX + 1; ++r) {
         count[r + 1] += count[r];
     }
 
-    /* Insert words into aux array in right order */
+    // Insert words into aux array in the right order //
     for (int i = lo; i <= hi; ++i) {
+        // Get char from row i col d
         char currentChar = *(*(set->matrix + i) + d);
-        if (currentChar == ' ') {
-            currentChar = '0';
-        }
-
-        int charIndex = (int) currentChar;
-        if (charIndex >= '0' && charIndex <= '9') {
-            aux[count[(charIndex - '0') + 1]++] = *(set->matrix + i);
-            arr_sizes[count[(charIndex - '0') + 1]] = set->arr_word_size[i];
-        } else if (charIndex >= 'a' && charIndex <= 'z') {
-            aux[count[(charIndex - 'a' + 10) + 1]++] = *(set->matrix + i);
-            arr_sizes[count[(charIndex - 'a' + 10) + 1]] = set->arr_word_size[i];
-        } else if (charIndex >= 'A' && charIndex <= 'Z') {
-            aux[count[(charIndex - 'A' + 36) + 1]++] = *(set->matrix + i);
-            arr_sizes[count[(charIndex - 'A' + 36) + 1]] = set->arr_word_size[i];
-        }
+        // find right index in RADIX
+        int charIndex = calculate_index_char(currentChar, flag);
+        int index = *(count + charIndex + 1);
+        // insert into aux to aux and aux_ufp6 pointers to rows in sorted positions
+        *(aux_ufp6 + index) = *(set->matrix_ufp6 + i);
+        *(aux + index) = *(set->matrix + i);
+        //increment in count array to insert in next pos
+        count[charIndex + 1]++;
     }
 
-    /* Copy values */
+    // Copy values from aux to arr //
     for (int i = lo; i <= hi; ++i) {
-        *(set->matrix + i) = aux[i - lo];
-        set->arr_word_size[i] = arr_sizes[i-lo];
+        // aux is the sorted array, so change *(set->matrix + i) to point to sorted row from aux
+        *(set->matrix + i) = *(aux + i - lo);
+        *(set->matrix_ufp6 + i) = *(aux_ufp6 + i - lo);
+        // calculate size of ufp6 representation moved to ufp6_matrix and store into arr_sizes_ufp6
+        calc_ufp6_size(set, i, *(set->matrix + i), arr_sizes_ufp6);
+        // calculate size of word moved to matrix and store into arr_word_sizes
+        *(set->arr_word_size + i) = (int)strlen(*(set->matrix + i));
     }
-
-    free(arr_sizes);
 
     for (int r = 0; r < RADIX; ++r) {
+        //Calculate lower bound of a set of words
         int low = lo + count[r];
+        //Calculate higher bound of a set of words
         int high = lo + count[r + 1] - 1;
-
-        if (high > low + 1) {
-            msdRadixSort_r(set, aux, low, high, d + 1, flag);
-        }
+        //recursive call to sort sets between low and hi
+        //d + 1 to go to next column from left to right
+        msdRadixSort_r(set, aux, aux_ufp6,arr_sizes_ufp6, low, high, d + 1, flag);
     }
 }
 
-int msdRadixSort(SETS *set, int lo, int hi, bool flag) {
+void msdRadixSort(SETS *set,const int *array_sizes_ufp6 ,int lo, int hi, bool flag) {
+    //temp array of char pointers
     char **aux = (char **)malloc((hi - lo + 1) * sizeof(char *));
     if (aux == NULL) {
-        fperror("AUX in msdRadixSort Memory Allocation\n");
-        return -1;
+        fperror("aux in msdRadixSort Memory Allocation");
+    }
+    //temp array of int pointers
+    int **aux_ufp6 = (int **)malloc((hi - lo + 1) * sizeof(int *));
+    if (aux_ufp6 == NULL) {
+        fperror("aux_ufp6 in msdRadixSort Memory Allocation");
     }
 
     if(flag == 1){
-        msdRadixSort_r(set, aux, lo, hi - 1, 0,flag);
+        // For small arrays, use Insertion Sort because msd has too much overhead for small arrays
+        if (hi - lo <= CUTOFF) {
+            insertion_sort_char(set, hi, flag);
+            return;
+        }
+        msdRadixSort_r(set, aux,aux_ufp6,array_sizes_ufp6, lo, hi - 1, 0,flag);
     }else{
-        msdRadixSort_r(set, aux, lo, hi - 1, 0,flag);
-        reverseArray(set->matrix, 0, set->rowsize -1);
+        // For small arrays, use Insertion Sort because msd has too much overhead for small subarrays
+        if (hi - lo <= CUTOFF) {
+            insertion_sort_char(set, hi, flag);
+            return;
+        }
+
+        msdRadixSort_r(set, aux,aux_ufp6,array_sizes_ufp6, lo, hi - 1, 0,flag);
     }
-
-    //msdRadixSort_r(set, aux, lo, hi - 1, 0,flag);
-
     free(aux);
-    /* After sorting change array word sizes with current sizes */
-   //FillArray_Word_Size(set);
 }
 
 void FillArray_Word_Size(SETS *set) {
@@ -473,30 +348,30 @@ void FillArray_Word_Size(SETS *set) {
     }
 }
 
-void ufp6_dictionary(int bin_d[][BITS], int *sizes_bin) {
+void ufp6_dictionary(int ufp6_dict[][BITS], int *size_ufp6) {
     int index = 0;
     // Convert '0' to '9' to ufp6
     for (char digit = '0'; digit <= '9'; digit++) {
-        charToBinary(digit - '0', bin_d[index], sizes_bin);
+        charToBinary(digit - '0', ufp6_dict[index], size_ufp6);
         if(digit - '0' == 0 || digit - '0' == 1){
-            sizes_bin[index] = 1;
+            size_ufp6[index] = 1;
         }else{
-            sizes_bin[index] =(int) log2((digit - '0') ) + 1;
+            size_ufp6[index] = (int) log2((digit - '0') ) + 1;
         }
         index++;
     }
 
     // Convert 'a' to 'z' to ufp6
     for (char letter = 'a'; letter <= 'z'; letter++) {
-        sizes_bin[index] = log2((letter - 'a' + 10)) + 1;
-        charToBinary(letter - 'a' + 10, bin_d[index],sizes_bin);
+        size_ufp6[index] = log2((letter - 'a' + 10)) + 1;
+        charToBinary(letter - 'a' + 10, ufp6_dict[index], size_ufp6);
         index++;
     }
 
     // Convert 'A' to 'Z' to ufp6
     for (char letter = 'A'; letter <= 'Z'; letter++) {
-        sizes_bin[index] = log2((letter - 'A' + 36)) + 1;
-        charToBinary(letter - 'A' + 36, bin_d[index],sizes_bin);
+        size_ufp6[index] = log2((letter - 'A' + 36)) + 1;
+        charToBinary(letter - 'A' + 36, ufp6_dict[index], size_ufp6);
         index++;
     }
 }
@@ -573,16 +448,6 @@ void encode_matrix_words(SETS *set, int *sizes_ufp6_dict, int ufp6_dict[][BITS])
     }
 }
 
-// Reverse array in O(N)
-void reverseArray(char **arr, int start, int end) {
-    while (start < end) {
-        char *temp = arr[start];
-        arr[start] = arr[end];
-        arr[end] = temp;
-        ++start;
-        --end;
-    }
-}
 
 int *arr_bits_size_calloc(int *arr, int N) {
     arr = (int*) calloc(sizeof(int) , N);
@@ -630,14 +495,15 @@ void KMP (const char pattern[BITS], int dfa[MAX_UFP6][BITS]) {
         }
     }
 
-    //Calculate index of char in UFP6 ASCII table
-    indexChar = calculate_index_char(pattern[0]);
+    //Calculate index of char in UFP6 ASCII table in ASC order
+    indexChar = calculate_index_char(pattern[0], 1);
 
     dfa[indexChar][0] = 1;              //Initialize first col of given row to 1
 
     for (int X = 0, j = 1; j < pattern_size; ++j){
         for (int c = 0; c < MAX_UFP6 ; ++c) {
-           indexChar = calculate_index_char(pattern[j]);
+            //Calculate index char in ufp6 ASCII table in ASC order
+           indexChar = calculate_index_char(pattern[j], 1);
            dfa[c][j] = dfa[c][X];       //copy mismatch cases
         }
         dfa[indexChar][j] = j + 1;      //set match case
@@ -646,18 +512,29 @@ void KMP (const char pattern[BITS], int dfa[MAX_UFP6][BITS]) {
    // print_kmp(dfa);
 }
 
-int calculate_index_char(char currentChar) {
+int calculate_index_char(char currentChar, bool flag) {
     int charIndex = 0;
-
+    //if char is supported in UFP6
     if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||
         (currentChar >= 'a' && currentChar <= 'z')) {
-
-        if (currentChar >= 'A' && currentChar <= 'Z') {
-            charIndex = (currentChar - 'A' + 36);
-        } else if (currentChar >= '0' && currentChar <= '9') {
-            charIndex = (currentChar - '0');
+        //Calculate in ASC order
+        if (flag == 1) {
+            if (currentChar >= 'A' && currentChar <= 'Z') {
+                charIndex = (currentChar - 'A' + 36);
+            } else if (currentChar >= '0' && currentChar <= '9') {
+                charIndex = (currentChar - '0');
+            } else {
+                charIndex = (currentChar - 'a' + 10);
+            }
         } else {
-            charIndex = (currentChar - 'a' + 10);
+            //Reverse subtraction to calculate index in DESC order
+            if (currentChar >= 'A' && currentChar <= 'Z') {
+                charIndex = ('Z' - currentChar);
+            } else if (currentChar >= '0' && currentChar <= '9') {
+                charIndex = ('9' - currentChar + 36);
+            } else {
+                charIndex = ('z' - currentChar + 10);
+            }
         }
     }
     return charIndex;
@@ -679,7 +556,8 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size){
     int l = 1;
     for (int k = 0; k < set->rowsize; ++k) {
         for (i = 0, j = 0; i < strlen(*(set->matrix + k)) && j < word_size ; ++i) {
-            indexChar = calculate_index_char(*(*(set->matrix + k ) + i));
+            //Calculate index char in ufp6 ASCII table in ASC order
+            indexChar = calculate_index_char(*(*(set->matrix + k ) + i), 1);
             j = dfa[indexChar][j];          //no backup
         }
         // Search for words with the exact size of the pattern ex: ola has size 3 and the words we found can be ola , olas etc
@@ -724,12 +602,11 @@ void print_found_words_and_ufp6(const SETS *set,const int *array_index) {
 /**
  * Find words in a given set using KMP Algorithm
  * This function has Time Complexity of O(W (M + N))
- * M = length of longest patter N = number of rows W = number of words to search for
+ * M = length of longest pattern N = number of rows (words in set) W = number of words to search for
  */
-void find_Words(SETS *set, const char **words, int W) {
+void find_Words(const SETS *set, const char **words, int W,const char *fn, bool flag) {
     if (W <= 0) {
-        printf("Number of words <= 0");
-        return;
+        fperror("Incorrect number words (less or equal to 0) in find_Words");
     }
 
     //array to store the indexes of the words found in set
@@ -737,6 +614,10 @@ void find_Words(SETS *set, const char **words, int W) {
     // For each word
     for (int i = 0; i <W; ++i) {
         find_Word(set, words[i], &array_index);
+        //If flag == 1 write words found and their respective ufp6 representation to a txt file
+        if(flag == 1){
+            write_words_found_to_txt_set(set, array_index, fn);
+        }
     }
 }
 
@@ -854,7 +735,6 @@ void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6
             set->arr_ufp6_size[index] += sizes_ufp6[charIndex];
         }
     }
-
 }
 
 
@@ -863,12 +743,6 @@ void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict, int
     /* Realloc memory for arr_word_size and arr_ufp6_size */
     realloc_arr_words_size(set);
     realloc_arr_ufp6_size(set);
-
-    //fill array with new words size
-   /* for (int i = set->rowsize - num_words, k=0; i < set->rowsize && k < num_words; ++i, k++) {
-        set->arr_word_size[i] = (int)  strlen(words[k]);
-        calc_ufp6_size(set,i,words[k],sizes_ufp6_dict);
-    }*/
 
     /* Realloc mem for both matrix */
     realloc_rows_matrix(set,set->rowsize);
@@ -884,7 +758,6 @@ void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict, int
         insert_word_char(set,words[k],i);
         insert_ufp6(set, sizes_ufp6_dict, ufp6_dict, words[k], i);
     }
-
 }
 
 void realloc_col_word(char **mat_row, int col_words_size) {
@@ -957,3 +830,205 @@ void remove_UFP6(SETS *set, int index) {
     }
 }
 
+int partition(SETS *set,int *arr, int lo, int hi, bool flag) {
+    int i = lo;
+    int j = hi + 1;
+
+    int pivot = arr[lo];
+
+    while(1){
+        //Scan from left to right as long as (arr[++i] < pivot)
+        //if flag to 1 sort in asc order
+        if(flag == 1){
+            while(arr[++i] < pivot){
+                if(i == hi) break;
+            }
+
+            //Scan from right to left as long as (arr[--j] > pivot)
+            while(arr[--j] > pivot){
+                if(j == lo) break;
+            }
+
+        }else{
+            //Scan from left to right as long as (arr[++i] > pivot)
+            //in desc order
+            while(arr[++i] > pivot){
+                if(i == hi) break;
+            }
+            //Scan from right to left as long as (arr[--j] < pivot)
+            while(arr[--j] < pivot){
+                if(j == lo) break;
+            }
+        }
+
+        //if pointers cross switch j with pivot and return pivot index
+        if(i >= j){
+            exch_rows_from_both_matrix(set,lo, j);
+            exch(arr, lo, j);
+            return j;
+        }
+        //swap rows in both matrix
+        exch_rows_from_both_matrix(set, i, j);
+        //swap with partitioning item arr_size
+        exch(arr, i, j);
+    }
+}
+
+void exch(int *arr, int i, int j){
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+void q_sort(SETS *set, int *arr, int lo, int hi, bool flag) {
+    //Cutoff to small subarrays // size 10
+    if(hi <= lo) return;
+
+    //Improvement median of 3
+    int median = findMedian(arr, lo, lo + (hi-lo)/2, hi);
+    //Exchange arr[lo] with arr[median]
+    exch(arr, lo, median);
+    //Exchange matrix[lo] with matrix[median], arr_size[lo] with arr_size[median],
+    //matrix_ufp6[lo] with matrix_ufp6[lo] and matrix_ufp6_size[lo] with matrix_ufp6_size[median]
+    exch_rows_from_both_matrix(set, lo, median);
+
+    int p = partition(set, arr, lo, hi, flag);
+    q_sort(set, arr, lo, p - 1, flag);
+    q_sort(set, arr, p+1, hi, flag);
+}
+
+void knuth_shuffle(int *arr, int N) {
+    srand(time(NULL));
+    int index = 0;
+
+    for (int i = N - 1; i > 0; i--) {
+        index = rand() % i + 1;
+        exch(arr, index, i);
+    }
+}
+
+int findMedian(const int *arr, int lo, int mid, int hi) {
+    if(arr[lo] < arr[mid] && arr[mid] < arr[hi] || arr[hi] < arr[mid] && arr[lo] > arr[mid]){
+        return  mid;
+    }else if(arr[mid] < arr[lo] && arr[lo] > arr[hi] || arr[lo] < arr[mid] && arr[lo] > arr[hi]){
+        return lo;
+    }else{
+        return hi;
+    }
+}
+
+void sort_size(SETS *set, bool flag) {
+    q_sort(set,set->arr_word_size, 0, set->rowsize - 1, flag);
+}
+
+void exch_rows_matrix_char(SETS *set, int i, int j) {
+    char  *temp = *(set->matrix + i);
+    //point row i to j
+    *(set->matrix + i) = *(set->matrix + j);
+    //point j to i stored in temp
+    *(set->matrix + j) = temp;
+}
+
+void exch_rows_matrix_ufp6(SETS *set, int i, int j) {
+    int  *temp = *(set->matrix_ufp6 + i);
+    //point row i to j
+    *(set->matrix_ufp6 + i) = *(set->matrix_ufp6 + j);
+    //point j to i stored in temp
+    *(set->matrix_ufp6 + j) = temp;
+    //Exchange in arr_ufp6_size
+    exch(set->arr_ufp6_size, i, j);
+}
+
+void exch_rows_from_both_matrix(SETS *set, int i, int j) {
+    exch_rows_matrix_char(set, i, j);
+    exch_rows_matrix_ufp6(set, i, j);
+}
+
+void insertion_sort_char(SETS *set, int N, bool flag) {
+    int i = 0, j = 0;
+    char *key = NULL;
+    //In Ascending order
+    if (flag == 1) {
+        for (i = 1; i < N; i++) {
+            //store in key row[i]
+            key = set->matrix[i];
+            j = i - 1;
+            //swap elements from j until 0 if is not sorted
+            while (j >= 0 && strcmp(set->matrix[j], key) > 0) {
+                //swap row j + 1 with j
+                set->matrix[j + 1] = set->matrix[j];
+                //exchange rows from matrix_ufp6 to sort properly and in arr_ufp6_sizes
+                exch_rows_matrix_ufp6(set, j + 1, j);
+                //exchange sizes in arr_word_size
+                int temp = set->arr_word_size[j + 1];
+                set->arr_word_size[j + 1] = set->arr_word_size[j];
+                set->arr_word_size[j] = temp;
+                j--;
+            }
+            //swap row j + 1 with j
+            set->matrix[j + 1] = key;
+        }
+        //In descending order
+    } else {
+        for (i = N - 1; i >= 0; i--) {
+            key = set->matrix[i];
+            j = i + 1;
+            //swap elements from j until N if is not sorted
+            while (j < N && strcmp(set->matrix[j], key) > 0) {
+                //swap row in matrix j + 1 with j
+                set->matrix[j - 1] = set->matrix[j];
+                //exchange rows from matrix_ufp6 to sort properly and in arr_ufp6_sizes
+                exch_rows_matrix_ufp6(set, j - 1, j);
+                //exchange sizes in arr_word_size
+                int temp = set->arr_word_size[j - 1];
+                set->arr_word_size[j - 1] = set->arr_word_size[j];
+                set->arr_word_size[j] = temp;
+                j++;
+            }
+            set->matrix[j - 1] = key;
+        }
+    }
+}
+
+void is_sorted_matrix(const SETS *set, int N, bool flag) {
+    for (int i = 0; i < N - 1; ++i) {
+        if(flag == 1){
+            if (strcmp(set->matrix[i], set->matrix[i + 1]) > 0) {
+                printf("Not sorted in ASC order\n");
+                return;
+            }
+        }else{
+            if (strcmp(set->matrix[i], set->matrix[i + 1]) < 0) {
+                printf("Not sorted in DESC order\n");
+                return;
+            }
+        }
+    }
+
+    if(flag == 1){
+        printf("Set sorted properly by alphabetical  ASC!!!\n");
+    }else{
+        printf("Set sorted properly by alphabetical  DESC !!!\n");
+    }
+}
+
+void is_sorted_sizes(const SETS *set, int N, bool flag) {
+        for (int i = 0; i < N - 1; ++i) {
+            if (flag == 1) {
+                if (set->arr_word_size[i] > set->arr_word_size[i + 1]) {
+                    printf("Not sorted by ASC order\n");
+                    return;
+                }
+            } else {
+                if (set->arr_word_size[i] < set->arr_word_size[i + 1]) {
+                    printf("Not sorted in DESC order\n");
+                    return;
+                }
+            }
+        }
+        if(flag == 1){
+            printf("Set sorted properly by words size ASC !!!\n");
+        }else{
+            printf("Set sorted properly by words size DESC !!!\n");
+        }
+}

@@ -310,12 +310,13 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
  */
 void KMP(const char pattern[BITS], int dfa[MAX_UFP6][BITS]);
 /**
- * @paragraph
+ * @paragraph Search function to search for a pattern in matrix of words
  * @param set - pointer SETS struct
  * @param dfa - Deterministic finite state automaton (abstract string-searching
  * machine)
- * @param word_size - size of word
- * @return
+ * @param word_size - size of word to be searched
+ * @return returns an array with indexes of words found in matrix,
+ * in the first pos of array it's stored the number of words (indexes) found
  */
 int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size);
 /**
@@ -332,8 +333,8 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 void print_found_words_and_ufp6(const SETS *set,const int *array_index);
 /**
  * @paragraph Remove specific words from a SETS struct by using KMP
- * @param set - pointer to SETS struct that contains the arrays where the words are stored
- * @param words - pointer to an the array of words which contain the words to be removed
+ * @param set - pointer to SETS struct
+ * @param words - pointer to an the array of strings to be searched
  * @param W - amount of words to remove
  * @param fn - file name
  * @param flag - if set to 1 write to a txt file words found

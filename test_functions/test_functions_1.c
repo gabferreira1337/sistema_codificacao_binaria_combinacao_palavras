@@ -46,7 +46,6 @@ int main_test_functions_1(int argc, char **argv) {
     */
      test_functions1_feature6();
      //TIMER_STOP();
-
    // fprintf(stdout, "time_delta %f\n", time_delta);
 
     exit(0);

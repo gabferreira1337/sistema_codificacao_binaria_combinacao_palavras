@@ -448,7 +448,6 @@ void encode_matrix_words(SETS *set, int *sizes_ufp6_dict, int ufp6_dict[][BITS])
 }
 
 
-
 int *arr_bits_size_calloc(int *arr, int N) {
     arr = (int*) calloc(sizeof(int) , N);
 

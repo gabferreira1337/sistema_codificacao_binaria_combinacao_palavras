@@ -14,6 +14,7 @@
 #define AD_SIZE 4
 #define NUM_SETS 4
 #define FILE "set.txt"
+
 #define FILE_AD "ad_history.txt"
 #define FILE_AD_BIN "ad_history.bin"
 #define FILE_LL "LL_history.txt"

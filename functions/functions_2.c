@@ -217,7 +217,6 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS *s1,SETS *s2,
     for (int i = ad_holder->count; i > pos; i--) {
         ad_holder->array_val[i] = ad_holder->array_val[i - 1];
     }
-  
     insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[pos],s1,s2,last_date);
 
     ad_holder->count++;
@@ -746,11 +745,9 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
             print_words_found_ll(current, index_set1, index_set2, j);
             //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
             //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "teste_find.txt");
-
             if(flag == 1){
                 write_words_found_to_txt(current, index_set1, index_set2,fn, j);
             }
-          
             free(index_set1);
             index_set1 = NULL;
             free(index_set2);

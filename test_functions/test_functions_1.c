@@ -12,7 +12,7 @@
 #define WORD_LENGTH 5
 #define BITS 7
 #define RADIX 63
-#define  FILE_WORDS_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
+#define  FILE_WORDS_FOUND_SET "set_words_found.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -24,7 +24,6 @@ struct timeval tv1, tv2, tv;
 float time_delta;
 
 int main_test_functions_1(int argc, char **argv) {
-
    // TIMER_START();
     /**1) Test functions to search words in a given set of words and their respective ufp6
     * representation and output into console and txt file
@@ -47,7 +46,6 @@ int main_test_functions_1(int argc, char **argv) {
     */
      test_functions1_feature6();
      //TIMER_STOP();
-
    // fprintf(stdout, "time_delta %f\n", time_delta);
 
     exit(0);
@@ -152,6 +150,9 @@ void test_function1_feature3() {
 
     remove_Words(&set1, insert_words1, N1);
 
+    encode_matrix_words(&set1,sizes_bin_dict,ufp6_dict);
+    //print_matrix_int(set1);
+    insert_words(&set1,insert_words1,sizes_bin_dict,ufp6_dict, N1);
     printf("SET 1 !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);

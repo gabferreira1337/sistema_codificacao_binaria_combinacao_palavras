@@ -15,6 +15,7 @@
 #define RADIX 63
 
 
+
 int main_functions_1(int argc , char **argv){
 
     return 0;
@@ -128,8 +129,6 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
         word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
     }
 }
-
-
 
 char gen_rnd_char(){
     int random_number;
@@ -269,7 +268,7 @@ void msdRadixSort_r(SETS *set, char **aux,int **aux_ufp6,const int *arr_sizes_uf
         // + 2 for after store cumulative frequencies
         count[charIndex + 2]++;
     }
-
+  
     //Update cumulative frequencies of each char
     for (int r = 0; r < RADIX + 1; ++r) {
         count[r + 1] += count[r];
@@ -504,6 +503,7 @@ void KMP (const char pattern[BITS], int dfa[MAX_UFP6][BITS]) {
         for (int c = 0; c < MAX_UFP6 ; ++c) {
             //Calculate index char in ufp6 ASCII table in ASC order
            indexChar = calculate_index_char(pattern[j], 1);
+          
            dfa[c][j] = dfa[c][X];       //copy mismatch cases
         }
         dfa[indexChar][j] = j + 1;      //set match case

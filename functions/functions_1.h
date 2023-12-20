@@ -310,7 +310,7 @@ void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, in
  */
 void KMP(const char pattern[BITS], int dfa[MAX_UFP6][BITS]);
 /**
- * @paragraph Search function to search for a pattern in matrix of words
+ * @paragraph Search function to search for a pattern in matrix of words in SETS struct
  * @param set - pointer SETS struct
  * @param dfa - Deterministic finite state automaton (abstract string-searching
  * machine)
@@ -326,22 +326,25 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size);
  */
 void print_kmp(int dfa[MAX_UFP6][M_KMP]);
 /**
- * @paragraph Print all the found words
+ * @paragraph Print all found words with pattern given an array with the indexes of rows that contain that pattern
  * @param set - pointer SETS struct that contains the array with all the words
- * @param array_index - pointer to an array with found words index
+ * @param array_index - pointer to an array with found words indexes (rows indexes) in first pos of array
+ * store the number of words
  */
 void print_found_words_and_ufp6(const SETS *set,const int *array_index);
 /**
- * @paragraph Remove specific words from a SETS struct by using KMP
+ * @paragraph Search for words with given pattern from a SETS struct by using KMP algorithm
+ * This function has Time Complexity of O(W (M + N))
+ * M = length of longest pattern N = number of rows (words in set) W = number of words to search for
  * @param set - pointer to SETS struct
- * @param words - pointer to an the array of strings to be searched
- * @param W - amount of words to remove
+ * @param words - pointer to an array of patterns to be searched
+ * @param W - number of patterns to search
  * @param fn - file name
- * @param flag - if set to 1 write to a txt file words found
+ * @param flag - if set to 1 write to a txt file words found with given pattern
  */
 void find_Words(const SETS *set, const char **words, int W,const char *fn, bool flag);
 /**
- * @paragraph Remove words from set, given array with the indexes of the rows in both matrix, adjusting
+ * @paragraph Remove word from set, given array with the indexes of the rows in both matrix, adjusting
  * both matrix .When adjusting rows If prev word size is lesser than the next, reallocate that row
  * @param set - pointer to SETS struct
  * @param arr_index_words_found - pointer to an array of index, pos 0 has the number of words (indexes) found
@@ -355,7 +358,7 @@ void remove_Word(SETS *set,const int *arr_index_words_found);
  */
 void remove_Words(SETS *set,const char **words, int W);
 /**
- * @paragraph Find all occurrences of given word in set and store indexes in array_index
+ * @paragraph Find all occurrences of given pattern in set and store indexes in array_index
  * @param set - pointer to SETS struct
  * @param array_index - pointer to a pointer to array_index
  */

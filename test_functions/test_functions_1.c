@@ -44,7 +44,7 @@ int main_test_functions_1(int argc, char **argv) {
     /**6) Test functions to sort set by alphabetical order (ASC and DESC) and sort by words_size
      * (ASC and DESC)
     */
-     test_functions1_feature6();
+    // test_functions1_feature6();
      //TIMER_STOP();
    // fprintf(stdout, "time_delta %f\n", time_delta);
 

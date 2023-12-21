@@ -321,7 +321,7 @@ void generate_combination_without_repetition(int *row, int length);
  */
 void KMP(const char pattern[BITS], int dfa[MAX_UFP6][BITS]);
 /**
- * @paragraph Search function to search for a pattern in matrix of words in SETS
+ * @paragraph Search function to search for a pattern in matrix of words in SETS struct
  * @param set - pointer SETS struct
  * @param dfa - Deterministic finite state automaton (abstract string-searching
  * machine)

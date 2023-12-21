@@ -123,7 +123,7 @@ void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
     exit(0);
 }
 
-void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[7]) {
+void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[BITS]) {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
     SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};

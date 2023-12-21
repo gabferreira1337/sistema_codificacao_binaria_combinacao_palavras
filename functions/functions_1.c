@@ -11,7 +11,6 @@
 #define M_KMP 8
 #define R 5
 #define C 5
-#define BITS 7
 #define RADIX 63
 
 
@@ -1031,4 +1030,29 @@ void is_sorted_sizes(const SETS *set, int N, bool flag) {
         }else{
             printf("Set sorted properly by words size DESC !!!\n");
         }
+}
+void generatePermutations(int a[], int size, int N) {
+    if (size == 1) {
+        for (int i = 0; i < N; i++) {
+            printf("%d ", a[i]);
+        }
+        putchar('\n');
+        return;
+    }
+
+    for (int i = 0; i < size; i++) {
+        generatePermutations(a, size - 1, N);
+        // Swap elements based on the parity of 'size'
+        if (size % 2 == 1) {
+            exch(a, 0, size - 1);
+        } else {
+            exch(a, i, size - 1);
+        }
+    }
+}
+void combination_ufp6_in_both_sets(SETS *set1, SETS *set2) {
+    int arr[10] = {1,0, 0,1};
+  //  generate_combination_without_repetition(set1->matrix_ufp6[1], set1->arr_ufp6_size[1]);
+    //generate_combination_without_repetition(arr, 2);
+    generatePermutations(arr, 4, 4);
 }

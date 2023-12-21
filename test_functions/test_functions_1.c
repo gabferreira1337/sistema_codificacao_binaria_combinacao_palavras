@@ -10,7 +10,6 @@
 #define R 11
 #define C 5
 #define WORD_LENGTH 5
-#define BITS 7
 #define RADIX 63
 #define  FILE_WORDS_FOUND_SET "set_words_found.txt"
 
@@ -37,6 +36,10 @@ int main_test_functions_1(int argc, char **argv) {
     * representation and output into console and txt file
     */
    // test_function1_feature3();
+    /**4) Test functions to search words in a given set of words and their respective ufp6
+     * representation and output into console and txt file
+     */
+    test_function1_feature4();
    /**5) Test functions to search words in a given set of words and their respective ufp6
     * representation and output into console and txt file
     */
@@ -74,7 +77,7 @@ void test_function1_feature1(){
 
 }
 
-void test_function1_feature2(int sizes_bin_dict[], int bin_dict[MAX_UFP6][BITS]) {
+void test_function1_feature2(int sizes_bin_dict[], int bin_dict[][BITS]) {
     int dic[MAX_UFP6][BITS]={
             {0, 0},
             {0, 0}
@@ -257,6 +260,39 @@ void test_functions1_feature6() {
     print_arr_word_size(&set1);
     is_sorted_sizes(&set1, set1.rowsize, flag);
 */
+    freemem(&set1);
+    freemem(&set2);
+}
+
+void test_function1_feature4() {
+    int ufp6_dict[MAX_UFP6][BITS]={
+            {0, 0},
+            {0, 0}
+    };
+    // sizes of each binary representation
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ufp6_dictionary(ufp6_dict,sizes_ufp6_dict);
+    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
+    int  num_words_set1 = 1;
+    int  num_words_set2 = 1;
+
+    sets_struct_init(&set1, num_words_set1);
+    sets_struct_init(&set2, num_words_set2);
+
+    matrix_rnd_char_gen(&set1);
+    matrix_rnd_char_gen(&set2);
+
+    encode_matrix_words(&set1, sizes_ufp6_dict,ufp6_dict);
+
+   const char *words[] = {
+        "o"
+    };
+
+    insert_words(&set1, words, sizes_ufp6_dict, ufp6_dict, 1);
+    print_matrix_int(&set1);
+    combination_ufp6_in_both_sets(&set1, &set2);
+
     freemem(&set1);
     freemem(&set2);
 }

@@ -8,60 +8,44 @@
 #include "functions_2.h"
 
 #define CUTOFF 10
-#define M_KMP 8
-#define R 5
-#define C 5
-#define RADIX 63
 
 
 
 int main_functions_1(int argc , char **argv){
-
     return 0;
 }
 
-int **matrix_init_int(int row ,int col){
-    // Allocate memory for array of pointers
-    int** mat = (int**)calloc(row, sizeof(int*));
-
-    if (mat == NULL) {
-        printf("Matrix_init_int - row malloc\n");
-        exit(1);
+void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char){
+    /// Allocate memory for array of pointers
+    set->matrix_ufp6 = (int**)calloc(set->rowsize, sizeof(int*));
+    if (set->matrix_ufp6 == NULL) {
+        fperror("matrix_ufp6 malloc in matrix_ufp6_init");
     }
-
-    for (int i = 0; i < row; ++i) {
-        // Allocate memory for each pointer (cols)
-        *(mat+i) = (int*)calloc(col * BITS, sizeof(int));
-
-        if (*(mat+i) == NULL) {
-            printf("Matrix int col malloc\n");
-            free(mat);
-            exit(1);
+    ///Allocate memory for each pointer to arrays
+    for (int i = 0; i < set->rowsize; ++i) {
+        ///Calculate each word UFP6 representation to allocate exact number of columns
+        calculate_ufp6_sizes(*(set->matrix + i), sizes_ufp6_char, set->arr_ufp6_size,*(set->arr_word_size + i),i);
+        *(set->matrix_ufp6 + i) = (int*)calloc(*(set->arr_ufp6_size + i), sizeof(int));
+        if (*(set->matrix_ufp6 + i) == NULL) {
+            fperror("matrix_ufp6 row malloc in matrix_ufp6_init");
         }
     }
-    return mat;
 }
 
-char **matrix_init_char(int row ,int *size_cols){
-    // Allocate memory for array of pointers
-    char** mat = (char**) malloc(row * sizeof(char*));
-
-    if (mat == NULL) {
-        printf("Matrix int row malloc\n");
-        exit(0);
+void matrix_init_char(SETS *set){
+    /// Allocate memory for array of pointers
+    set->matrix = (char**) malloc(set->rowsize * sizeof(char*));
+    if (set->matrix == NULL) {
+        fperror("Matrix init malloc in matrix_init_char");
     }
 
-    for (int i = 0; i < row; ++i) {
-        // Allocate memory for each pointer (cols)
-        //for '\0'
-        *(mat + i) = (char*)calloc(size_cols[i] + 1, sizeof(char));
-       // *(mat + i) = (char*)calloc(BITS + 1, sizeof(char));
-        if (mat[i] == NULL) {
-            printf("Matrix char cols malloc\n");
-            exit(0);
+    for (int i = 0; i < set->rowsize; ++i) {
+        /// Allocate memory for each pointer to arrays (cols) // + 1 for '\0'
+        *(set->matrix + i) = (char*)calloc(*(set->arr_word_size + i) +  1, sizeof(char));
+        if (*(set->matrix + i) == NULL) {
+            fperror("Matrix char calloc pointers to arrays (cols) in matrix_init_char");
         }
     }
-    return mat;
 }
 
 void print_matrix_int(const SETS *set) {
@@ -87,7 +71,7 @@ void encode(SETS *set){
     int  j=0;
     for (int i = 0; i < set->rowsize; ++i) {
         j =0;
-        //calculate_bin_sizes ( *(*(set->));
+        //calculate_ufp6_sizes ( *(*(set->));
         for (int k = 0;k < *(set->arr_word_size + i); k++) {
             charCalc = (unsigned char) *(*(set->matrix + i) + k) ;
             if (charCalc >= '0' && charCalc <= '9') {
@@ -121,33 +105,49 @@ void encode(SETS *set){
 void rnd_word_size_gen(int *word_length_arr, int W) {
     /* seed to generate random numbers */
     seed_random();
-
     for (int i = 0; i < W; ++i) {
         /* Generate numbers from 1 to BITS - 1 // sum + 1 to the result so never generates 0 */
         /* And store in word_length */
-        word_length_arr[i] = (rand() % (BITS - 1)) + 1 ;
+        word_length_arr[i] = (rand() % (BITS - 1)) + 1;
     }
 }
 
 char gen_rnd_char(){
     int random_number;
-    /* Generate random number between 'a' and 'z' */
-    random_number = 'a' + rand() % 26;
-    return (char) random_number;
+    /* Generate random number between 0 and 62  */
+    random_number =  rand() % RADIX;
+    // '0' to '9' (digits)
+    if (random_number < 10) {
+        return (char) ('0' + random_number);
+        // 'a' to 'z' (lowercase letters)
+    } else if (random_number < 36 ) {
+        // 'a' + (random_number - 10 ) because in ASCII table
+        // 'a' = 97 dec but in UFP6 'a' = 10 so for example
+        // if random number = 10 we need to get char 'a'
+        //so  subtract 10 because from '0' to '9' it has digits
+        //and need to get the ASCII code from 'a' starting in '0' and sum the first char ('a')
+        //for example: 'a' + 10 - 10 = 'a'
+        return (char) ('a' + (random_number - 10));
+        // 'A' to 'Z' (uppercase letters)
+    } else if(random_number < RADIX){
+        //In here subtract 36 because  '0' to 'z' = 36 and the random number will be from 36 to RADIX
+        //and to get ASCII from 'A' to 'Z' start from '0' and sum 'A'
+        return (char) ('A' + (random_number - 36));
+    }
 }
 
-void matrix_rnd_char_gen(SETS *set) {
+void matrix_rnd_word_gen(SETS *set) {
     /* seed to generate random numbers */
     seed_random();
     //srand((unsigned int)time(NULL));
     int j = 0;
     for (int i = 0; i < set->rowsize; ++i) {
-        for (j = 0; j < set->arr_word_size[i]; ++j) {
+        ///generate random char to fill word
+        for (j = 0; j < *(set->arr_word_size + i); ++j) {
             *(*(set->matrix + i) +j) = gen_rnd_char();
         }
-        //terminate each word with '\0'
+        ///terminate each word with '\0'
         *(*(set->matrix + i) +j) = '\0';
-
     }
 }
 
@@ -204,11 +204,8 @@ void matrix_realloc(SETS *set){
 
 void init_arr_word_size(SETS *set){
     set->arr_word_size = (int *) calloc(set->rowsize, sizeof(int));
-
     if((set->arr_word_size) == NULL){
-        printf("Array word size calloc\n");
-        freemem(set);
-        exit(0);
+        fperror("arr_word_size calloc in init_arr_word_size");
     }
 }
 
@@ -346,52 +343,51 @@ void FillArray_Word_Size(SETS *set) {
     }
 }
 
-void ufp6_dictionary(int ufp6_dict[][BITS], int *size_ufp6) {
+void ufp6_dictionary(int ufp6_dict[][BITS - 1], int *size_ufp6) {
     int index = 0;
-    // Convert '0' to '9' to ufp6
+    /// Convert '0' to '9' to UFP6
     for (char digit = '0'; digit <= '9'; digit++) {
-        charToBinary(digit - '0', ufp6_dict[index], size_ufp6);
-        if(digit - '0' == 0 || digit - '0' == 1){
+        ///Convert each char to ufp6
+        charToUFP6(digit - '0', ufp6_dict[index], size_ufp6[index]);
+        ///Edge cases because log2(0) = undefined but we need one bit to represent '0'
+        if(digit - '0' == 0){
             size_ufp6[index] = 1;
         }else{
-            size_ufp6[index] = (int) log2((digit - '0') ) + 1;
+            ///Calculate size of each UFP6 representation based on binary
+            /// We know the number of bits to represent a given value by doing
+            /// log2((digit)) + 1
+            size_ufp6[index] = (int) log2((digit - '0')) + 1;
         }
         index++;
     }
-
-    // Convert 'a' to 'z' to ufp6
+    /// Convert 'a' to 'z' to UFP6
     for (char letter = 'a'; letter <= 'z'; letter++) {
         size_ufp6[index] = log2((letter - 'a' + 10)) + 1;
-        charToBinary(letter - 'a' + 10, ufp6_dict[index], size_ufp6);
+        charToUFP6(letter - 'a' + 10, ufp6_dict[index], size_ufp6[index]);
         index++;
     }
-
-    // Convert 'A' to 'Z' to ufp6
+    /// Convert 'A' to 'Z' to UFP6
     for (char letter = 'A'; letter <= 'Z'; letter++) {
         size_ufp6[index] = log2((letter - 'A' + 36)) + 1;
-        charToBinary(letter - 'A' + 36, ufp6_dict[index], size_ufp6);
+        charToUFP6(letter - 'A' + 36, ufp6_dict[index], size_ufp6[index]);
         index++;
     }
 }
 
 
-void charToBinary(int c, int *result, int *size_bin) {
-    int numBits = 0;
-    // Because log2(0) -inf
-    // We use numBits to only store the right number of bits of each value
-    // log2(value) because for example  2 = 10 so 2^1 is the number of bits needed
-    if(c == 0){
-        numBits = 1;
-    }else{
-      numBits =(int) (log2(c) + 1);
-    }
-
-    for (int i = numBits - 1; i >= 0; i--) {
-        result[numBits - 1 - i] = (c >> i) & 1;
+void charToUFP6(int c, int *result, int numBits_ufp6_char) {
+    /// Use numBits_ufp6_char to only store the right number of bits of each value
+    ///Convert filling array in reverse order
+    for (int i = numBits_ufp6_char - 1; i >= 0; i--) {
+       /// c >> i =  right-shifts the bits of c by i times
+       /// Moving the bit at position i to the least significant bit (LSB).
+       /// (c >> i) & 1 = bitwise AND with 1. Extracting the least significant bit (LSB)
+       /// after the right shift, checking whether the bit at position i is 0 or 1.
+        result[numBits_ufp6_char - 1 - i] = (c >> i) & 1;
     }
 }
 
-void print_ufp6_dictionary(int (*bin_d)[BITS], int *size_ufp6) {
+void print_ufp6_dictionary(int (*bin_d)[BITS - 1], int *size_ufp6) {
     for (int i = 0; i < 62; i++) {
         if( i < 10){
             printf("Binary for %c: ",  ('0' + i) );
@@ -408,41 +404,42 @@ void print_ufp6_dictionary(int (*bin_d)[BITS], int *size_ufp6) {
     }
 }
 
-
-void encode_word(const char* word, int *encoded, int *word_bits_size, int k, const int sizes_ufp6[], const int ufp6_dict[MAX_UFP6][BITS]) {
-    if(ufp6_dict[0][0] != 0) fperror("Bin_dict not precomputed endcode_matrix_words");
+/**@paragraph This function encodes a word into an array , using pre-computed UFP6 dictionary and
+ * word_ufp6_size array eith the sizes of each char representation
+ * Time complexity: O (W * M) W = length of each word M = UFP6 size representation
+ * Extra Space: O(1)
+ */
+void encode_word(const char* word, int *encoded, int *word_ufp6_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS - 1], int W) {
+    if(ufp6_dict[0][0] != 0) fperror("Bin_dict not precomputed encode_matrix_words");
     int index = 0;
-    int len =(int) strlen(word);
-    word_bits_size[k] = 0; //initialize to 0 the array with ufp6 size
-    for (int i = 0; i < len; i++) {
+    word_ufp6_size[k] = 0; //initialize to 0 the array with ufp6 size
+    //Check if word is supported in ufp6 to encode
+    is_ufp6(word, W);
+    for (int i = 0; i < W; i++) {
         char currentChar = word[i];
+        //get index in UFP6 Table
+        int charIndex = calculate_index_char(currentChar, 1);
 
-        // Check if the character is a valid key in dictionary
-        if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') || (currentChar >= 'a' && currentChar <= 'z')) {
-            int charIndex = 0;
-            if(currentChar >= 'A' && currentChar <= 'Z'){
-                charIndex = (currentChar - 'A' + 36);
-            }else if(currentChar >= '0' && currentChar <= '9'){
-                charIndex = (currentChar - '0');
-            }else{
-                charIndex = (currentChar - 'a' + 10);
-            }
+        // Store the size of ufp6 representation of each char encoded
+        word_ufp6_size[k] += sizes_ufp6[charIndex];
 
-            // Store the size of bits each word
-            word_bits_size[k] += sizes_ufp6[charIndex];
-
-            // Copy the binary representation to the encoded array
-            for (int j = 0; j < sizes_ufp6[charIndex]; j++) {
-                encoded[index++] = ufp6_dict[charIndex][j];
-            }
+        // Copy the ufp6 representation to the encoded array (row in matrix_ufp6)
+        for (int j = 0; j < sizes_ufp6[charIndex]; j++) {
+            encoded[index++] = ufp6_dict[charIndex][j];
         }
+
     }
 }
 
-
-void encode_matrix_words(SETS *set, int *sizes_ufp6_dict, int ufp6_dict[][BITS]) {
+/**@paragraph This function encodes a matrix of words from set using
+ * encode_word function to encode each word into matrix_ufp6 in set
+ * Time complexity: O (N (W * M)) N = number of words W = length of each word
+ * M = UFP6 size representation
+ * Extra Space: O(1)
+ */
+void encode_matrix_words(SETS *set, int *sizes_ufp6_dict, int ufp6_dict[][BITS - 1]) {
     for (int i = 0; i < set->rowsize; ++i) {
-        encode_word(set->matrix[i], set->matrix_ufp6[i], set->arr_ufp6_size, i, sizes_ufp6_dict, ufp6_dict);
+        encode_word(set->matrix[i], set->matrix_ufp6[i], set->arr_ufp6_size, i, sizes_ufp6_dict, ufp6_dict, set->arr_word_size[i]);
     }
 }
 
@@ -456,67 +453,58 @@ int *arr_bits_size_calloc(int *arr, int N) {
     return arr;
 }
 
-void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w) {
+void calculate_ufp6_sizes(const char *word, const int *arr_ufp6_sizes_char, int *words_ufp6_sizes, int N, int index_word) {
     for (int i = 0; i < N; i++) {
         char currentChar = word[i];
-
+        int charIndex = calculate_index_char(currentChar, 1);
         // Check if the character is a valid key in dictionary
-        if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||
-            (currentChar >= 'a' && currentChar <= 'z')) {
-            int charIndex = 0;
-            if (currentChar >= 'A' && currentChar <= 'Z') {
-                charIndex = (currentChar - 'A' + 36);
-            } else if (currentChar >= '0' && currentChar <= '9') {
-                charIndex = (currentChar - '0');
-            } else {
-                charIndex = (currentChar - 'a' + 10);
-            }
-
-            // Store the size of each word
-            words_bin_sizes[w] += arr_bin_sizes[charIndex];
+        if (charIndex == -1){
+            printf("char %c not supported in UFP6\n", word[i]);
+            fperror("in calculate_ufp6_sizes");
         }
+        // Store the size of each word
+        words_ufp6_sizes[index_word] += arr_ufp6_sizes_char[charIndex];
     }
 }
 
 /**
  * Function to Pre-compute the pattern building a DFA
  */
-void KMP (const char pattern[BITS], int dfa[MAX_UFP6][BITS]) {
+void KMP (const char pattern[BITS - 1], int dfa[MAX_UFP6][BITS - 1]) {
     int indexChar = 0;
     int pattern_size =(int) strlen(pattern);
 
-    //Initialize DFA to 0
+    ///Initialize DFA to 0
     for (int i = 0; i < MAX_UFP6; ++i) {
-        //Until word size
+        ///Until pattern_size
         for (int j = 0; j < pattern_size; ++j) {
             dfa[i][j] = 0;
         }
     }
 
-    //Calculate index of char in UFP6 ASCII table in ASC order
+    ///Calculate index of char in UFP6 ASCII table in ASC order
     indexChar = calculate_index_char(pattern[0], 1);
-
-    dfa[indexChar][0] = 1;              //Initialize first col of given row to 1
+    ///Initialize first col of given row to 1
+    dfa[indexChar][0] = 1;
 
     for (int X = 0, j = 1; j < pattern_size; ++j){
         for (int c = 0; c < MAX_UFP6 ; ++c) {
-            //Calculate index char in ufp6 ASCII table in ASC order
+            ///Calculate index char in ufp6 ASCII table in ASC order
            indexChar = calculate_index_char(pattern[j], 1);
           
-           dfa[c][j] = dfa[c][X];       //copy mismatch cases
+           dfa[c][j] = dfa[c][X];       ///copy mismatch cases
         }
-        dfa[indexChar][j] = j + 1;      //set match case
-        X = dfa[indexChar][X];          //update restart state
+        dfa[indexChar][j] = j + 1;      ///set match case
+        X = dfa[indexChar][X];          ///update restart state
     }
-   // print_kmp(dfa);
 }
 
 int calculate_index_char(char currentChar, bool flag) {
     int charIndex = 0;
-    //if char is supported in UFP6
+    ///if char is supported in UFP6
     if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||
         (currentChar >= 'a' && currentChar <= 'z')) {
-        //Calculate in ASC order
+        ///Calculate in ASC order
         if (flag == 1) {
             if (currentChar >= 'A' && currentChar <= 'Z') {
                 charIndex = (currentChar - 'A' + 36);
@@ -526,7 +514,7 @@ int calculate_index_char(char currentChar, bool flag) {
                 charIndex = (currentChar - 'a' + 10);
             }
         } else {
-            //Reverse subtraction to calculate index in DESC order
+            ///Reverse subtraction to calculate index in DESC order
             if (currentChar >= 'A' && currentChar <= 'Z') {
                 charIndex = ('Z' - currentChar);
             } else if (currentChar >= '0' && currentChar <= '9') {
@@ -535,8 +523,10 @@ int calculate_index_char(char currentChar, bool flag) {
                 charIndex = ('z' - currentChar + 10);
             }
         }
+        return charIndex;
     }
-    return charIndex;
+    ///If char is not supported return -1
+    return -1;
 }
 
 /**
@@ -557,11 +547,12 @@ int *search_KMP(SETS *set, int dfa[MAX_UFP6][BITS], int word_size){
         for (i = 0, j = 0; i < strlen(*(set->matrix + k)) && j < word_size ; ++i) {
             //Calculate index char in ufp6 ASCII table in ASC order
             indexChar = calculate_index_char(*(*(set->matrix + k ) + i), 1);
+            //go through DFA
             j = dfa[indexChar][j];          //no backup
         }
         // Search for words with the exact size of the pattern ex: ola has size 3 and the words we found can be ola , olas etc
         //And if found word in a row (if j gets to last state in DFA)
-        if (j == word_size && strlen(*(set->matrix + k )) == word_size){
+        if (j == word_size){
             arr_index[l++] = k;
         }
     }
@@ -599,22 +590,22 @@ void print_found_words_and_ufp6(const SETS *set,const int *array_index) {
 }
 
 /**
- * Find words in a given set using KMP Algorithm
+ * Find patterns in a given set using KMP Algorithm
  * This function has Time Complexity of O(W (M + N))
- * M = length of longest pattern N = number of rows (words in set) W = number of words to search for
+ * M = length of longest pattern N = number of rows (patterns in set) W = number of patterns to search for
  */
-void find_Words(const SETS *set, const char **words, int W,const char *fn, bool flag) {
+void find_words_with_pattern(const SETS *set, const char **patterns, int W, const char *fn, bool flag) {
     if (W <= 0) {
-        fperror("Incorrect number words (less or equal to 0) in find_Words");
+        fperror("Incorrect number patterns (less or equal to 0) in find_words_with_pattern");
     }
 
-    //array to store the indexes of the words found in set
+    //array to store the indexes of the patterns found in set
     int *array_index = NULL;
     // For each word
     for (int i = 0; i <W; ++i) {
-        find_Word(set, words[i], &array_index);
-        //If flag == 1 write words found and their respective ufp6 representation to a txt file
-        if(flag == 1){
+        find_word_with_pattern(set, patterns[i], &array_index);
+        //If flag == 1 and if found patterns with pattern write patterns found and their respective ufp6 representation to a txt file
+        if(flag == 1 && array_index != NULL){
             write_words_found_to_txt_set(set, array_index, fn);
         }
     }
@@ -661,15 +652,28 @@ void compute_words_size(const char **words, int *words_index ,int W) {
     }
 }
 
-void sets_struct_init(SETS *set, int num_words) {
+void sets_struct_init(SETS *set,const int *sizes_ufp6, int num_words) {
+    ///Store number of words (rows) of both matrix in set
     set->rowsize = num_words;
-    set->colsize_encode =C * BITS;
+    ///Initialize arrays to store words size and UFP6 words representation
     init_arr_word_size(set);
+    init_arr_ufp6_size(set);
+    ///Generate random words size and store in arr_word_size array in set
     rnd_word_size_gen(set->arr_word_size, set->rowsize);
-    set->matrix_ufp6 = matrix_init_int(set->rowsize, C);
-    set->matrix = matrix_init_char(set->rowsize,set->arr_word_size);
-    // set1.arr_ufp6_size = arr_bits_size_calloc(set1.arr_ufp6_size, set1.rowsize);
+    ///Initialize matrix to hold words given sizes generated and stored in arr_word_size
+    matrix_init_char(set);
+    ///Generate words given sizes stored in arr_word_size and store in matrix
+    matrix_rnd_word_gen(set);
+    ///Initialize matrix_ufp6 calculating size of each ufp6 representation of words
+    ///to allocate for each pointer to row
+    matrix_ufp6_init(set, sizes_ufp6);
+}
+
+void init_arr_ufp6_size(SETS *set){
     set->arr_ufp6_size = (int*) calloc(set->rowsize, sizeof(int));
+    if(set->arr_ufp6_size == NULL){
+        fperror("Calloc arr_ufp6_size in init_array_ufp6_size");
+    }
 }
 
 // clock function to measure processor time and use as a seed
@@ -678,9 +682,9 @@ void seed_random() {
     srand(seed);
 }
 
-int is_ufp6(const char *word) {
+int is_ufp6(const char *word, int W) {
     char currentChar = '\0';
-    for (int i = 0; i < strlen(word); ++i) {
+    for (int i = 0; i < W; ++i) {
         currentChar = *(word + i);
         if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||(currentChar >= 'a' && currentChar <= 'z')) {
             continue;
@@ -710,14 +714,13 @@ void realloc_arr_ufp6_size(SETS *set) {
 }
 
 void insert_ufp6(SETS *set, const int sizes_ufp6_dict[], int ufp6_dict[][BITS], const char *word, int index) {
-    encode_word(word, set->matrix_ufp6[index], set->arr_ufp6_size, index, sizes_ufp6_dict, ufp6_dict);
+    encode_word(word, set->matrix_ufp6[index], set->arr_ufp6_size, index, sizes_ufp6_dict, ufp6_dict, set->arr_word_size[index]);
 }
 
 void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6){
     set->arr_ufp6_size[index] =0;
     for (int i = 0; i < strlen(word); ++i) {
         char currentChar = word[i];
-
         // Check if the character is a valid key in dictionary
         if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||
             (currentChar >= 'a' && currentChar <= 'z')) {
@@ -729,7 +732,6 @@ void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6
             } else {
                 charIndex = (currentChar - 'a' + 10);
             }
-
             // Store the size of ufp6 representation of each word
             set->arr_ufp6_size[index] += sizes_ufp6[charIndex];
         }
@@ -789,20 +791,21 @@ void realloc_rows_ufp6(SETS *set, int num_words) {
     }
 }
 
-void find_Word(SETS *set, const char *word, int **array_index) {
-    // If the current word is in UFP6 notation, 0-9 a-z A-Z
-    if (is_ufp6(word) == -1) fperror("Word not supported in UFP6 in find_Words");
+void find_word_with_pattern(const SETS *set, const char *pattern, int **array_index) {
+    int length_pattern =(int) strlen(pattern);
+    // If the current pattern is in UFP6 notation, 0-9 a-z A-Z
+    if (is_ufp6(pattern, length_pattern) == -1) fperror("Word not supported in UFP6 in find_words_with_pattern");
     int dfa[MAX_UFP6][BITS];
     // Pre-process the pattern into dfa
-    KMP (word, dfa);
-    // Search for words with the exact size of the pattern ex: ola has size 3 and the words we found can be ola , olas etc
-    // And return pointer to array with indexes of words found
-    *array_index = search_KMP(set, dfa, strlen(word));
-    //if found word in set
-    if(array_index != NULL){
+    KMP (pattern, dfa);
+    // Search for words with given pattern
+    // And return address to array with indexes of words found in set with pattern
+    *array_index = search_KMP(set, dfa, length_pattern);
+    //if found pattern in set
+    if(*array_index != NULL){
         print_found_words_and_ufp6(set, *array_index);
     }else{
-        printf("Word %s not found in set\n", word);
+        printf("Pattern %s not found in set\n", pattern);
     }
 }
 
@@ -813,7 +816,7 @@ void remove_Words(SETS *set, const char **words, int W) {
     }
     for (int i = 0; i < W; ++i) {
         printf("word found \n");
-        find_Word(set, words[i], &array_index);
+        find_word_with_pattern(set, words[i], &array_index);
         remove_Word(set, array_index);
     }
     free(array_index);
@@ -1052,7 +1055,7 @@ void generatePermutations(int a[], int size, int N) {
 }
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2) {
     int arr[10] = {1,0, 0,1};
-  //  generate_combination_without_repetition(set1->matrix_ufp6[1], set1->arr_ufp6_size[1]);
+    //generate_combination_without_repetition(set1->matrix_ufp6[1], set1->arr_ufp6_size[1]);
     //generate_combination_without_repetition(arr, 2);
     generatePermutations(arr, 4, 4);
 }

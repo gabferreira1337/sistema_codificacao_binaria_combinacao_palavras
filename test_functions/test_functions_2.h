@@ -3,7 +3,7 @@
 
 void test_function_2_a();
 void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[][BITS]);
-void test_function_2_8_c(int *sizes_bin_dict, int bin_dict[][BITS]);
+void test_function_2_8_c(int *sizes_ufp6_dict, int bin_dict[][BITS]);
 /**
  * @paragraph Use txt files for input and output of sets of words and their
  * respective ufp6 representations

@@ -332,6 +332,17 @@ void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
  */
 void generate_combination_without_repetition(int *row, int length);
 /**
+ * @paragraph Not implemented
+ * @param word -
+ * @param arr_bin_sizes -
+ * @param words_bin_sizes -
+ * @param N -
+ * @param w -
+ */
+void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
+void generate_combination_without_repetition(int *row, int length);
+
+/**
  * @paragraph KMP Algorithm to build DFA of a patter (word)
  * @param pattern -pointer to pattern (word) to be found
  * @param dfa -pointer to Deterministic Finite State Automaton (abstract string-searching

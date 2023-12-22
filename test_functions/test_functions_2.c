@@ -119,6 +119,7 @@ void test_function_2_8_b(int *sizes_ufp6_dict, int bin_dict[RADIX][BITS]) {
     exit(0);
 }
 
+
 void test_function_2_8_c(int *sizes_ufp6_dict, int (*bin_dict)[BITS]) {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);

@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-#define BITS 7
-#define MAX_UFP6 63
-#define RADIX 63
-#define M_KMP 8
+#define BITS 8           /// max size of words + '\0'
+#define MAX_UFP6 62     ///Size of UFP6 ASCII
+#define RADIX 62
+#define M_KMP BITS
 
 
 /**
@@ -18,15 +18,14 @@ typedef struct{
     int *arr_word_size;         /// arr with number of cols from each row on matrix
     int *arr_ufp6_size;         /// arr with number of cols from each row on matrix_ufp6
     int rowsize;                /// number of words in both matrix (number of rows)
-    int colsize_encode;
 }SETS;
 
 /**
- * @paragraph Inicialize the struct set by calling other functions
+ * @paragraph Initialize SETS struct
  * @param set - pointer to SETS struct
- * @param number_words - number of words
+ * @param number_words - number of words to hold in set
  */
-void sets_struct_init(SETS *set, int number_words);
+void sets_struct_init(SETS *set,const int *sizes_ufp6, int number_words);
 
 /**
  * @paragraph Encode the words from an array located in the set struct
@@ -35,7 +34,7 @@ void sets_struct_init(SETS *set, int number_words);
 void encode(SETS *set);
 
 /**
- * @paragraph generates random char
+ * @paragraph generate random char
  * @return  generated char
  */
 char gen_rnd_char();
@@ -43,37 +42,40 @@ char gen_rnd_char();
  * @paragraph Initialize matrix with random words generated
  * @param set - pointer to SETS struct
  */
-void matrix_rnd_char_gen(SETS *set);
+void matrix_rnd_word_gen(SETS *set);
 /**
- * @paragraph Allocate memory for an int array of pointers (rows) and for each pointer (cols), initialize at 0
- * @param row - amount of rows to allocate
- * @param col - amount of columns to allocate
+ * @paragraph Initialize matrix with UFP6 representation of each word,
+ * calculating the size of each representation to allocate exact number of columns
+ * @param set - pointer to SETS struct
+ * @param sizes_ufp6_char - pointer to pre-computed array with the size
+ * of each UFP6 representation of each UFP6 char
  */
-int **matrix_init_int(int row ,int col);
-
+void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char);
 /**
- * @paragraph Allocate memory for an char array of pointers (rows) and for each pointer (cols)
- * @param row - amount of rows to allocate
- * @param size_cols - amount of columns to allocate
+ * @paragraph Allocate memory for matrix to store words, given array with pre-generated sizes of each word
+ * @param set - pointer to SETS struct
 */
-char **matrix_init_char(int row ,int *size_cols);
+void matrix_init_char(SETS *set);
 
 /**
- * @paragraph Allocates memory to the array arr_word_size
- * @param set - pointer to set which contains both matrix , both arrays with sizes and the number of words
+ * @paragraph Allocate memory to array arr_word_size in SETS struct
+ * @param set - pointer to SETS struct
 */
 void init_arr_word_size(SETS *set);
-
+/**
+ * @paragraph Allocate memory to  array arr_ufp6_size in SETS struct
+ * @param set - pointer to SETS struct
+*/
+void init_arr_ufp6_size(SETS *set);
 /**
  *  @paragraph Prints the UFP6 codification in a set using iteration
  *  @param set - pointer to set which contains both matrix , both arrays with sizes and the number of words
 */
 void print_matrix_int(const SETS *set);
-
 /**
- * @paragraph Generates a random word size, in order to auto fill the dynamic array with some words
- * @param arr - array that stores the size of each word
- * @param W - number of words to generate
+ * @paragraph Generate random word size to store in arr_word_size
+ * @param arr - pointer to array that stores the size of each word
+ * @param W - number of words to generate sizes
  */
 void rnd_word_size_gen(int *arr, int W);
 
@@ -113,7 +115,7 @@ void FillArray_Word_Size(SETS *set);
 */
 void matrix_encode_realloc(SETS *set);
 /**
- * @paragraph insert words and their ufp6 representation at the end of both matrix
+ * @paragraph Insert words and their ufp6 representation at the end of both matrix
  * this function reallocates the memory for both arrays holding the sizes of words and their ufp6
  * representation , calculates the new words size and ufp6 and after reallocates
  * also both matrix (matrix of words and matrix upf6) and then insert to the respective matrix.
@@ -253,46 +255,64 @@ void exch(int *arr, int i, int j);
 /**
  * @paragraph Function to pre-compute dictionary with ufp6 representations of
  * each char
- * @param ufp6_dict - Matrix to store ufp6 representations of each char
- * @param size_ufp6 - pointer to int array to store ufp6
+ * @param ufp6_dict - pointer to Matrix to store UFP6 representations of each char
+ * @param size_ufp6 - pointer to int array to store size of each UFP6 representation
  * representation sizes of each char
  */
-void ufp6_dictionary(int ufp6_dict[][BITS], int *size_ufp6);
+void ufp6_dictionary(int ufp6_dict[][BITS - 1], int *size_ufp6);
 /**
  * @paragraph Function to print UFP6 pre-computed dictionary
- * @param ufp6_dict - Matrix to store ufp6 representations of each char
- * @param size_ufp6 - pointer to int array with sizes of each char in ufp6
+ * @param ufp6_dict - pointer to Matrix of ufp6 representations of each char
+ * @param size_ufp6 - pointer to arr holding sizes of each char representation in UFP6
  */
-void print_ufp6_dictionary(int bin_dict[][BITS], int *size_ufp6);
-/**
- * @paragraph
+void print_ufp6_dictionary(int bin_dict[][BITS - 1], int *size_ufp6);
+/**@paragraph This function encodes a matrix of words from set using
+ * encode_word function to encode each word into matrix_ufp6 in set
+ * Time complexity: O (N (W * M)) N = number of words W = length of each word
+ * M = UFP6 size representation
+ * Extra Space: O(1)
  * @param set - pointer SETS struct
- * @param sizes_ufp6_dict -
- * @param ufp6_dict -
+ * @param sizes_ufp6_dict - array with ufp6 sizes of each char
+ * @param ufp6_dict - pre-computed dictionary with UFP6 representations
  */
-void encode_matrix_words(SETS *set, int sizes_ufp6_dict[], int ufp6_dict[][BITS]);
+void encode_matrix_words(SETS *set, int sizes_ufp6_dict[], int ufp6_dict[][BITS - 1]);
 /**
- * @paragraph
- * @param c -
- * @param result -
+ * @paragraph Convert char into UFP6 filling array in reverse order into Dictionary
+ * @param c - char to be converted
+ * @param result - pointer to array to store the result of each conversion
  * @param size_bin - pointer to an array with pre-computed sizes_uf6
  */
-void charToBinary(int c, int *result, int *size_bin);
+void charToUFP6(int c, int *result, int numBits_ufp6_char);
 /**
  * @paragraph Print a message and exit the application
  * @param message - message to print
  */
 void fperror(char *message);
-/**
- * @paragraph Function to encode a given word using the pre-computed ufp6_dictionary and the sizes_ufp6
+ /**@paragraph This function encodes a word into an array , using pre-computed UFP6 dictionary and
+ * word_ufp6_size array eith the sizes of each char representation
+ * Time complexity: O (W * M) W = length of each word M = UFP6 size representation
+ * Extra Space: O(1)
  * @param word - pointer to a given word
- * @param encode - pointer to a row in the matrix_ufp6 array
- * @param word_bits_size - pointer to an array of word_ufp6_sizes
+ * @param encode - pointer to a array (can be a row from matrix)
+ * @param word_ufp6_size - pointer to an array of pre-computed word_ufp6_sizes
  * @param k - index of matrix row
  * @param sizes_ufp6 - pointer to an array with pre-computed sizes_ufp6
- * @param ufp6_dict - pointer to a matrix (dictionary) with each ufp6 representation
+ * @param ufp6_dict - pointer to a matrix (dictionary) with each ufp6 representation pre-computed
+ * @param W - word length
  */
-void encode_word(const char* word, int *encode, int *word_bits_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS]);
+void encode_word(const char* word, int *encode, int *word_ufp6_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS - 1], int W);
+/**
+ * @paragraph This function calculates the size of UFP6 representation of a given word
+ * and stores into words_ufp6_sizes
+ * Time Complexity: O(N) N =  word length
+ * Extra Space: O(1)
+ * @param word - pointer to word to calculate UFP6 representation size
+ * @param arr_ufp6_sizes_char - pointer to pre-computed array with each UFP6 representation of each char in UFP6 ASCII
+ * @param words_ufp6_sizes - pointer to array to hold each size of UFP6 representation of given word
+ * @param N - word length
+ * @param index_word - index of words_ufp6_sizes to store the size calculated
+ */
+void calculate_ufp6_sizes(const char *word, const int *arr_bin_sizes, int *words_bin_sizes, int N, int w);
 /**
  * @paragraph Not implemented
  * @param word -
@@ -301,7 +321,16 @@ void encode_word(const char* word, int *encode, int *word_bits_size, int k, cons
  * @param N -
  * @param w -
  */
-void calculate_bin_sizes(char *word, int *arr_bin_sizes,int *words_bin_sizes, int N, int w);
+void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
+/**
+ * @paragraph Not implemented
+ * @param word -
+ * @param arr_bin_sizes -
+ * @param words_bin_sizes -
+ * @param N -
+ * @param w -
+ */
+void generate_combination_without_repetition(int *row, int length);
 /**
  * @paragraph Not implemented
  * @param word -
@@ -319,7 +348,7 @@ void generate_combination_without_repetition(int *row, int length);
  * @param dfa -pointer to Deterministic Finite State Automaton (abstract string-searching
  * machine)
  */
-void KMP(const char pattern[BITS], int dfa[MAX_UFP6][BITS]);
+void KMP(const char pattern[BITS - 1], int dfa[MAX_UFP6][BITS - 1]);
 /**
  * @paragraph Search function to search for a pattern in matrix of words in SETS struct
  * @param set - pointer SETS struct
@@ -344,16 +373,16 @@ void print_kmp(int dfa[MAX_UFP6][M_KMP]);
  */
 void print_found_words_and_ufp6(const SETS *set,const int *array_index);
 /**
- * @paragraph Search for words with given pattern from a SETS struct by using KMP algorithm
+ * @paragraph Search for patterns with given pattern from a SETS struct by using KMP algorithm
  * This function has Time Complexity of O(W (M + N))
- * M = length of longest pattern N = number of rows (words in set) W = number of words to search for
+ * M = length of longest pattern N = number of rows (patterns in set) W = number of patterns to search for
  * @param set - pointer to SETS struct
- * @param words - pointer to an array of patterns to be searched
+ * @param patterns - pointer to an array of pointers to characters (array of strings with patterns)
  * @param W - number of patterns to search
  * @param fn - file name
- * @param flag - if set to 1 write to a txt file words found with given pattern
+ * @param flag - if set to 1 write to a txt file patterns found with given pattern
  */
-void find_Words(const SETS *set, const char **words, int W,const char *fn, bool flag);
+void find_words_with_pattern(const SETS *set, const char **patterns, int W, const char *fn, bool flag);
 /**
  * @paragraph Remove word from set, given array with the indexes of the rows in both matrix, adjusting
  * both matrix .When adjusting rows If prev word size is lesser than the next, reallocate that row
@@ -364,16 +393,18 @@ void remove_Word(SETS *set,const int *arr_index_words_found);
 /**
  * @paragraph Remove given words from set, adjusting both matrix and matrix_ufp6 rows from set
  * @param set - pointer to SETS struct
- * @param words - pointer to an array of words
+ * @param words - pointer to an array of pointers to characters (array of strings) with words to be removed
  * @param W - number of words to remove
  */
 void remove_Words(SETS *set,const char **words, int W);
 /**
- * @paragraph Find all occurrences of given pattern in set and store indexes in array_index
+ * @paragraph Find all occurrences of given pattern in set and store indexes of occurrences in array_index
+ * and the number of occurrences in first position of that array
  * @param set - pointer to SETS struct
- * @param array_index - pointer to a pointer to array_index
+ * @param pattern - pattern to search for
+ * @param array_index - pointer to a pointer to an array_index
  */
-void find_Word(SETS *set,const char *word, int **array_index);
+void find_word_with_pattern(const SETS *set, const char *pattern, int **array_index);
 /**
  * @paragraph Remove given UFP6 from set, adjusting rows in matrix_ufp6 from set
  * @param set - pointer to SETS struct
@@ -444,9 +475,10 @@ int calculate_index_char(char currentChar, bool flag);
 /**
  * @paragraph Check if word is supported in UFP6
  * @param word -pointer to word to be checked
+ * @param W - length of word to be checked
  * @return return 1 if word is supported or return 0 if word is not supported
  */
-int is_ufp6(const char *word);
+int is_ufp6(const char *word, int W);
 /**
  * @paragraph Function to create a sed based on processor time
  */

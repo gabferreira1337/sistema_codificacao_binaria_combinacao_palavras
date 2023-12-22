@@ -72,23 +72,19 @@ void test_function_2_a() {
 }
 
 
-void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
+void test_function_2_8_b(int *sizes_ufp6_dict, int bin_dict[RADIX][BITS]) {
     AD_WORDS_HOLDER *ad_sorted = NULL;
     ad_sorted = dynamic_array_init(AD_SIZE);
 
     SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set1, R);
+    sets_struct_init(&set1, sizes_ufp6_dict, R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set2, R);
+    sets_struct_init(&set2, sizes_ufp6_dict, R);
     SETS set3 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set3, R);
+    sets_struct_init(&set3, sizes_ufp6_dict, R);
     SETS set4 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set4, R);
+    sets_struct_init(&set4, sizes_ufp6_dict, R);
 
-    matrix_rnd_char_gen(&set1);
-    matrix_rnd_char_gen(&set2);
-    matrix_rnd_char_gen(&set3);
-    matrix_rnd_char_gen(&set4);
 
     //or
     /*SETS sets[NUM_SETS];
@@ -123,28 +119,24 @@ void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[RADIX][BITS]) {
     exit(0);
 }
 
-void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[BITS]) {
+
+void test_function_2_8_c(int *sizes_ufp6_dict, int (*bin_dict)[BITS]) {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
     SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set1, R);
+    //Initialize sets with random words
+    sets_struct_init(&set1, sizes_ufp6_dict,R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set2, R);
+    sets_struct_init(&set2, sizes_ufp6_dict, R);
     SETS set3 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set3, R);
+    sets_struct_init(&set3, sizes_ufp6_dict, R);
     SETS set4 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set4, R);
+    sets_struct_init(&set4, sizes_ufp6_dict, R);
 
-    matrix_rnd_char_gen(&set1);
-    matrix_rnd_char_gen(&set2);
-    matrix_rnd_char_gen(&set3);
-    matrix_rnd_char_gen(&set4);
-
-    encode_matrix_words(&set1, sizes_bin_dict,bin_dict);
-    encode_matrix_words(&set2, sizes_bin_dict,bin_dict);
-    encode_matrix_words(&set3, sizes_bin_dict,bin_dict);
-    encode_matrix_words(&set4, sizes_bin_dict,bin_dict);
-
+    encode_matrix_words(&set1, sizes_ufp6_dict, bin_dict);
+    encode_matrix_words(&set2, sizes_ufp6_dict, bin_dict);
+    encode_matrix_words(&set3, sizes_ufp6_dict, bin_dict);
+    encode_matrix_words(&set4, sizes_ufp6_dict, bin_dict);
 
     //or
     /*SETS sets[NUM_SETS];
@@ -188,33 +180,33 @@ void test_function_2_8_c(int *sizes_bin_dict, int (*bin_dict)[BITS]) {
  */
 void test_function_2_10_ad() {
     AD_WORDS_HOLDER *arr_din = dynamic_array_init(AD_SIZE);
-    int dic[MAX_UFP6][BITS];
-    int sizes[MAX_UFP6];
+    int dict[MAX_UFP6][BITS];
+    int sizes_ufp6_dict[MAX_UFP6];
     //Pre-compute ufp6 dictionary
-    ufp6_dictionary(dic, sizes);
+    ufp6_dictionary(dict, sizes_ufp6_dict);
 
     SETS *set1 = (SETS *) calloc(1,sizeof(SETS));
     if(set1 == NULL) fperror("Calloc set1 in test_function_2_10_ad");
-    sets_struct_init(set1, R);
+    sets_struct_init(set1, sizes_ufp6_dict, R);
     SETS *set2 = (SETS *) calloc(1,sizeof(SETS));
     if(set2 == NULL) fperror("Calloc set2 in test_function_2_10_ad");
-    sets_struct_init(set2, R);
+    sets_struct_init(set2, sizes_ufp6_dict, R);
     SETS *set3 = (SETS *) calloc(1,sizeof(SETS));
     if(set3 == NULL) fperror("Calloc set3 in test_function_2_10_ad");
-    sets_struct_init(set3, R);
+    sets_struct_init(&set3, sizes_ufp6_dict, R);
     SETS *set4 = (SETS *) calloc(1,sizeof(SETS));
     if(set4 == NULL) fperror("Calloc set4 in test_function_2_10_ad");
-    sets_struct_init(set4, R);
+    sets_struct_init(&set4, sizes_ufp6_dict, R);
 
-    matrix_rnd_char_gen(set1);
-    matrix_rnd_char_gen(set2);
-    matrix_rnd_char_gen(set3);
-    matrix_rnd_char_gen(set4);
+    matrix_rnd_word_gen(set1);
+    matrix_rnd_word_gen(set2);
+    matrix_rnd_word_gen(set3);
+    matrix_rnd_word_gen(set4);
 
-    encode_matrix_words(set1, sizes,dic);
-    encode_matrix_words(set2, sizes,dic);
-    encode_matrix_words(set3, sizes,dic);
-    encode_matrix_words(set4, sizes,dic);
+    encode_matrix_words(set1, sizes_ufp6_dict,dict);
+    encode_matrix_words(set2, sizes_ufp6_dict,dict);
+    encode_matrix_words(set3, sizes_ufp6_dict,dict);
+    encode_matrix_words(set4, sizes_ufp6_dict,dict);
 
     char *testDates[] = {
             "2023-11-25",
@@ -253,21 +245,21 @@ void test_function_2_10_ad() {
 void test_function_2_10_ll() {
     LL_WORDS_HOLDER *ll = ll_init();
 
-    int dic[MAX_UFP6][BITS];
-    int sizes[MAX_UFP6];
+    int dict[MAX_UFP6][BITS];
+    int sizes_ufp6_dict[MAX_UFP6];
     //Pre-compute ufp6 dictionary
-    ufp6_dictionary(dic, sizes);
+    ufp6_dictionary(dict, sizes_ufp6_dict);
     SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set1, R);
+    sets_struct_init(&set1, sizes_ufp6_dict, R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set2, R);
+    sets_struct_init(&set2, sizes_ufp6_dict, R);
 
     //Generate random words
-    matrix_rnd_char_gen(&set1);
-    matrix_rnd_char_gen(&set2);
+    matrix_rnd_word_gen(&set1);
+    matrix_rnd_word_gen(&set2);
     //Encode to ufp6
-    encode_matrix_words(&set1, sizes,dic);
-    encode_matrix_words(&set2, sizes,dic);
+    encode_matrix_words(&set1, sizes_ufp6_dict,dict);
+    encode_matrix_words(&set2, sizes_ufp6_dict,dict);
 
     char *testDates[] = {
             "2023-11-25",
@@ -297,33 +289,29 @@ void test_function_2_10_ll() {
 void test_functions_2_11_ad() {
     AD_WORDS_HOLDER *arr_din = NULL;
     arr_din = dynamic_array_init(AD_SIZE);
-    int dic[MAX_UFP6][BITS];
-    int sizes[MAX_UFP6];
+    int dict[MAX_UFP6][BITS];
+    int sizes_ufp6_dict[MAX_UFP6];
     //Pre-compute ufp6 dictionary
-    ufp6_dictionary(dic, sizes);
+    ufp6_dictionary(dict, sizes_ufp6_dict);
 
     SETS *set1 = (SETS *) calloc(1,sizeof(SETS));
     if(set1 == NULL) fperror("Calloc set1 in test_function_2_10_ad");
-    sets_struct_init(set1, R);
+    sets_struct_init(&set1, sizes_ufp6_dict, R);
     SETS *set2 = (SETS *) calloc(1,sizeof(SETS));
     if(set2 == NULL) fperror("Calloc set2 in test_function_2_10_ad");
-    sets_struct_init(set2, R);
+    sets_struct_init(&set2, sizes_ufp6_dict, R);
     SETS *set3 = (SETS *) calloc(1,sizeof(SETS));
     if(set3 == NULL) fperror("Calloc set3 in test_function_2_10_ad");
-    sets_struct_init(set3, R);
+    sets_struct_init(&set3, sizes_ufp6_dict, R);
     SETS *set4 = (SETS *) calloc(1,sizeof(SETS));
     if(set4 == NULL) fperror("Calloc set4 in test_function_2_10_ad");
-    sets_struct_init(set4, R);
+    sets_struct_init(&set4, sizes_ufp6_dict, R);
 
-    matrix_rnd_char_gen(set1);
-    matrix_rnd_char_gen(set2);
-    matrix_rnd_char_gen(set3);
-    matrix_rnd_char_gen(set4);
 
-    encode_matrix_words(set1, sizes,dic);
-    encode_matrix_words(set2, sizes,dic);
-    encode_matrix_words(set3, sizes,dic);
-    encode_matrix_words(set4, sizes,dic);
+    encode_matrix_words(set1, sizes_ufp6_dict,dict);
+    encode_matrix_words(set2, sizes_ufp6_dict,dict);
+    encode_matrix_words(set3, sizes_ufp6_dict,dict);
+    encode_matrix_words(set4, sizes_ufp6_dict,dict);
 
     char *testDates[] = {
             "2023-11-25",
@@ -357,21 +345,18 @@ void test_functions_2_11_ad() {
 void test_functions_2_11_ll() {
     LL_WORDS_HOLDER *ll = ll_init();
 
-    int dic[MAX_UFP6][BITS];
-    int sizes[MAX_UFP6];
+    int dict[MAX_UFP6][BITS];
+    int sizes_ufp6_dict[MAX_UFP6];
     //Pre-compute ufp6 dictionary
-    ufp6_dictionary(dic, sizes);
+    ufp6_dictionary(dict, sizes_ufp6_dict);
     SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set1, R);
+    sets_struct_init(&set1, sizes_ufp6_dict, R);
     SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set2, R);
+    sets_struct_init(&set2, sizes_ufp6_dict, R);
 
-    //Generate random words
-    matrix_rnd_char_gen(&set1);
-    matrix_rnd_char_gen(&set2);
     //Encode to ufp6
-    encode_matrix_words(&set1, sizes,dic);
-    encode_matrix_words(&set2, sizes,dic);
+    encode_matrix_words(&set1, sizes_ufp6_dict,dict);
+    encode_matrix_words(&set2, sizes_ufp6_dict,dict);
 
     char *testDates[] = {
             "2023-11-25",

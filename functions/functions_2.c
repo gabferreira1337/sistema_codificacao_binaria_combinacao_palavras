@@ -15,55 +15,6 @@
 
 int main_functions_2(int argc, char **argv) {
 
-    AD_WORDS_HOLDER *arr_din;
-    arr_din = dynamic_array_init(DYNAMIC_ARRAY_SIZE);
-    int dic[MAX_UFP6][BITS];
-    int sizes[MAX_UFP6];
-
-    ufp6_dictionary(dic, sizes);
-    SETS set1 ;
-    sets_struct_init(&set1, R);
-    SETS set2 ;
-    sets_struct_init(&set2, R);
-
-    //VAL_AD_WORDS_HOLDER *val_ad_words_holder = NULL;
-
-    // insert_to_VAL_AD_WORDS_HOLDER(val_ad_words_holder, &set1, &set2);
-
-
-   /* char *testDates[] = {
-            "25-11-2023",
-            "24-11-2023",
-            "01-12-2022",
-            "15-01-2023",
-            "10-08-2022",
-    };
-
-
-    // LL 9)a)
-    LL_WORDS_HOLDER *ll = (LL_WORDS_HOLDER*) malloc(sizeof(LL_WORDS_HOLDER));
-
-    insert_word_char(&set1, set1.rowsize, 2);
-    insert_word_char(&set2, set2.rowsize, 1);
-
-    insert_node_ll_sorted(ll, &set1, &set2, testDates[0]);
-    insert_node_ll_sorted(ll, &set1, &set2, testDates[1]);
-    insert_node_ll_sorted(ll, &set1, &set2, testDates[3]);
-
-    encode_matrix_words(&set1, sizes, dic);
-    encode_matrix_words(&set2, sizes, dic);
-
-    /*char *words[] = {
-            "ola",
-            "olas",
-    };
-
-    find_word_ll(ll, words, 2, 0, 2);
-*/
-    /* print_ll_words_holder(ll);
-
-    free_ll_words_holder(ll);
-
   /* // b)
 
     /*insert_word_char(&set1, set1.rowsize, 2);
@@ -143,7 +94,7 @@ int main_functions_2(int argc, char **argv) {
 
     //free_dynamic_array(arr_din);
 
-    encode_matrix_words(&set1, sizes,dic);
+   /* encode_matrix_words(&set1, sizes,dic);
 
     print_matrix_char(&set1);
     print_matrix_char(&set2);
@@ -152,7 +103,7 @@ int main_functions_2(int argc, char **argv) {
     freemem(&set2);
 
     exit(0);
-
+*/
    // return 0;
 }
 
@@ -345,8 +296,10 @@ void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, i
     }
     int *index_set1 = NULL,*index_set2 = NULL;
     for (int i = 0; i < W; ++i) {
+        //Calculate length of string
+        int word_length =(int) strlen(words[i]);
         //check if word is valid in ufp6
-        if(is_ufp6(words[i]) == -1) continue;
+        if(is_ufp6(words[i], word_length) == -1) continue;
         int dfa[MAX_UFP6][BITS];
         KMP (words[i], dfa);
             for (int j = lo; j <= hi; ++j) {
@@ -734,17 +687,16 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
     }
 
     for (int i = 0; i < W; ++i) {
+        int word_length = (int) strlen(words[i]);
         //check if word is valid in ufp6
-        if(is_ufp6(words[i]) == -1) continue;
+        if(is_ufp6(words[i], word_length) == -1) continue;
         int dfa[MAX_UFP6][BITS];
         KMP (words[i], dfa);
         NODE_LL_WORDS_HOLDER *current = lo_node;
         for (int j = lo; j <= hi && current->pnext !=NULL; ++j) {
-            index_set1 = search_KMP(&current->words_holder.s1,dfa ,(int) strlen(words[i]));
-            index_set2 =  search_KMP(&current->words_holder.s2,dfa ,(int) strlen(words[i]));
+            index_set1 = search_KMP(&current->words_holder.s1,dfa ,word_length);
+            index_set2 =  search_KMP(&current->words_holder.s2,dfa ,word_length);
             print_words_found_ll(current, index_set1, index_set2, j);
-            //write_set_to_txt(&current->words_holder.s1,"teste_find.txt");
-            //write_both_sets_to_txt(&current->words_holder.s1, &current->words_holder.s2, "teste_find.txt");
             if(flag == 1){
                 write_words_found_to_txt(current, index_set1, index_set2,fn, j);
             }

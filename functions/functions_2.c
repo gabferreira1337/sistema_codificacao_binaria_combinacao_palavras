@@ -99,8 +99,8 @@ int main_functions_2(int argc, char **argv) {
     print_matrix_char(&set1);
     print_matrix_char(&set2);
 
-    freemem(&set1);
-    freemem(&set2);
+    freemem_set(&set1);
+    freemem_set(&set2);
 
     exit(0);
 */
@@ -127,8 +127,8 @@ void free_dynamic_array(AD_WORDS_HOLDER *arr) {
         free(arr->array_val[i].last_update_date);
         arr->array_val[i].last_update_date = NULL;
         //free both sets of each index
-        freemem(&arr->array_val[i].words_holder.s1);
-        freemem(&arr->array_val[i].words_holder.s2);
+        freemem_set(&arr->array_val[i].words_holder.s1);
+        freemem_set(&arr->array_val[i].words_holder.s2);
     }
 
     free(arr->array_val);
@@ -303,7 +303,6 @@ void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, i
         int dfa[MAX_UFP6][BITS];
         KMP (words[i], dfa);
             for (int j = lo; j <= hi; ++j) {
-            // perguntar! e search KMP também
             index_set1 = search_KMP(&arr->array_val[j].words_holder.s1,dfa ,(int) strlen(words[i]));
             index_set2 =  search_KMP(&arr->array_val[j].words_holder.s2,dfa ,(int) strlen(words[i]));
             print_words_found(arr, index_set1, index_set2, j);
@@ -1221,13 +1220,12 @@ void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     fclose(fp);
 }
 
-void write_words_found_to_txt_set(const SETS *set, const int *array_index_words_found_set, const char *filename) {
+void write_words_found_to_txt_set_with_pattern(const SETS *set, const int *array_index_words_found_set, const char *filename, const char *pattern) {
     FILE *fp = fopen(filename, "a");
-
     if(fp == NULL){
-        fperror("Opening file in write_words_found_to_txt_set");
+        fperror("Opening file in write_words_found_to_txt_set_with_pattern");
     }
-    fprintf(fp, "Word found in set:\n");
+    fprintf(fp, "Pattern \"%s\" found in these words from set:\n", pattern);
     write_index_array_words_to_file(set, fp, array_index_words_found_set);
 
     fclose(fp);

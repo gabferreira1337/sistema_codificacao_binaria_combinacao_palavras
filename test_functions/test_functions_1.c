@@ -6,11 +6,8 @@
 #include "test_functions_1.h"
 #include "../functions/functions_1.h"
 
-#define M_KMP 8
 #define R 11
-#define WORD_LENGTH 5
-#define RADIX 63
-#define  FILE_PATTERN_FOUND_SET "set_words_found.txt"
+#define  FILE_PATTERN_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -28,24 +25,25 @@ int main_test_functions_1(int argc, char **argv) {
      * and their UFP6 representation
      */
     //test_function1_feature1();
-    /**2) Test functions to encode to UFP6 matrix of words
+    /**2) Test functions to encode to UFP6 a matrix of words
     */
-   // test_function1_feature2();
+   //test_function1_feature2();
     /**3) Test functions to insert and remove words and their respective representation from set
+     * shifting rows
     */
-   // test_function1_feature3();
-    /**4) Test functions to search words in a given set of words and their respective ufp6
+   //test_function1_feature3();
+    /**4) Test functions to search words in a given set of words and their respective UFP6
      * representation and output into console and txt file
      */
     //test_function1_feature4();
-   /**5) Test functions to search words in a given set of words and their respective ufp6
+   /**5) Test functions to search for a pattern in a set of words and their respective UFP6
     * representation and output into console and txt file
     */
      //test_functions1_feature5();
-    /**6) Test functions to sort set by alphabetical order (ASC and DESC) and sort by words_size
+    /**6) Test functions to sort set (both matrix) by alphabetical order (ASC and DESC) and by words size
      * (ASC and DESC)
     */
-    // test_functions1_feature6();
+     test_functions1_feature6();
      //TIMER_STOP();
    // fprintf(stdout, "time_delta %f\n", time_delta);
 
@@ -54,7 +52,7 @@ int main_test_functions_1(int argc, char **argv) {
 }
 
 void test_function1_feature1(){
-    int dict[MAX_UFP6][BITS]={
+    int dict[MAX_UFP6][BITS - 1]={
             {0, 0},
             {0, 0}
     };
@@ -87,6 +85,8 @@ void test_function1_feature2() {
     ///Pre-compute dictionary of binary representations and their respective size
     ufp6_dictionary(dict, sizes_ufp6_dict);
 
+    //print_ufp6_dictionary(dict, sizes_ufp6_dict);
+
     char word[] = "1";
     int W = 1;
     ///result of ufp6 representation
@@ -115,110 +115,102 @@ void test_function1_feature2() {
 
 void test_function1_feature3() {
     ///Matrix (Dictionary) to hold all char representations of UFP6 encoding
-    int ufp6_dict[MAX_UFP6][BITS]={
+    int ufp6_dict[MAX_UFP6][BITS - 1]={
             {0, 0},
             {0, 0}
     };
-    /// sizes of each UFP6 representation of each char
+    /// Sizes of each UFP6 representation of each char
     int sizes_ufp6_dict[MAX_UFP6] = {0};
     ufp6_dictionary(ufp6_dict,sizes_ufp6_dict);
-    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set1 = {NULL, NULL, NULL, NULL, 0};
+
     int  num_words_set1 = 5;
-    int  num_words_set2 = 5;
 
     ///Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict,num_words_set1);
-    sets_struct_init(&set2, sizes_ufp6_dict, num_words_set2);
-
-    const char *insert_words1[] = {"ol4", "ola","L","123"};
-    int N1 = 4;
     encode_matrix_words(&set1,sizes_ufp6_dict,ufp6_dict);
     //print_matrix_int(set1);
+
+    const char *insert_words1[] = {"ol4", "ola","L", "-"};
+
+    int N1 = sizeof(insert_words1) / sizeof(insert_words1[0]);
+    ///Insert words and UFP6 in set
     insert_words(&set1,insert_words1,sizes_ufp6_dict,ufp6_dict, N1);
     printf("SET 1 !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
 
-    remove_Words(&set1, insert_words1, N1);
+    ///Remove words and UFP6 from set
+    const char *remove_words1[] = {"ol4"};
+    int N2 = sizeof(remove_words1) / sizeof(remove_words1[0]);
 
-    encode_matrix_words(&set1,sizes_ufp6_dict,ufp6_dict);
-    //print_matrix_int(set1);
-    insert_words(&set1,insert_words1,sizes_ufp6_dict,ufp6_dict, N1);
+    remove_Words(&set1, remove_words1, N2);
+
     printf("SET 1 !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
-    /*const char *insert_words2[] = {"ola", "olas"};
-    int N2 = 2;
-
-    insert_words(&set2,insert_words2,sizes_bin_dict,bin_dict, N2);
-    printf("SET 2 !!!!\n");
-    print_matrix_char(&set2);
-    print_matrix_int(&set2);*/
 }
 
 void test_functions1_feature5(){
-    int ufp6_dict[MAX_UFP6][BITS]={
+    int ufp6_dict[MAX_UFP6][BITS - 1]={
             {0, 0},
             {0, 0}
     };
-    // sizes of each binary representation
+    /// Sizes of each UFP6 representation from each char
     int sizes_ufp6_dict[MAX_UFP6] = {0};
-    //Pre-Compute UFP6 dictionary
+    ///Pre-Compute UFP6 dictionary
     ufp6_dictionary(ufp6_dict, sizes_ufp6_dict);
-    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set1 = {NULL, NULL, NULL, NULL, 0};
     int  num_words_set1 = 5;
-    //Initialize sets with random words
+    ///Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict,num_words_set1);
-    //Encode words
+    ///Encode words
     encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
-    print_matrix_char(&set1);
-    print_matrix_int(&set1);
 
     const  char *words_insert[] = {"ola", "olas"};
-    int num_words = 2;
-    //insert words in set
+    int num_words = sizeof(words_insert)/sizeof(words_insert[0]);
+    ///Insert words in set
     insert_words(&set1, words_insert, sizes_ufp6_dict, ufp6_dict, num_words);
-    const  char *pattern_search[] = {"p"};
-    int num_pattern_search = 1;
-    //search for words and their respective ufp6 representation with a given pattern without writing to a txt file
-   // find_words_with_pattern(&set1, pattern_search, num_pattern_search, NULL, 0);
-    //search for words and their respective ufp6 representation with a given pattern and writing to a txt file
-    find_words_with_pattern(&set1, pattern_search, num_pattern_search, FILE_PATTERN_FOUND_SET, 1);
+    const  char *pattern_search[] = {"-", "ol"};
+    int num_pattern_search = sizeof(pattern_search)/sizeof(pattern_search[0]);
+    ///Search for words and their respective ufp6 representation with a given pattern without writing to a txt file
+    find_words_with_pattern(&set1, pattern_search, num_pattern_search, NULL, 0);
+    ///Search for words and their respective ufp6 representation with a given pattern and writing to a txt file
+    //find_words_with_pattern(&set1, pattern_search, num_pattern_search, FILE_PATTERN_FOUND_SET, 1);
     print_matrix_char(&set1);
     print_matrix_int(&set1);
-    freemem(&set1);
+    freemem_set(&set1);
 }
 
 void test_functions1_feature6() {
-    int bin_dict[MAX_UFP6][BITS]={
+    int ufp6_dict[MAX_UFP6][BITS - 1]={
             {0, 0},
             {0, 0}
     };
-    // sizes of each ufp6 representation
-    int sizes_bin_dict[MAX_UFP6] = {0};
-    //Pre-Compute UFP6 dictionary
-    ufp6_dictionary(bin_dict, sizes_bin_dict);
-    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
+    /// Sizes of each ufp6 representation
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    /// Pre-Compute UFP6 dictionary
+    ufp6_dictionary(ufp6_dict, sizes_ufp6_dict);
+    SETS set1 = {NULL, NULL, NULL, NULL, 0};
+    SETS set2 = {NULL, NULL, NULL, NULL, 0};
     int num_words_set2 = R;
     int  num_words_set1 = R;
-    //Initialize sets with random words
-    sets_struct_init(&set1, sizes_bin_dict,num_words_set1);
-    sets_struct_init(&set2, sizes_bin_dict, num_words_set2);
+    ///Initialize sets with random words
+    sets_struct_init(&set1, sizes_ufp6_dict, num_words_set1);
+    sets_struct_init(&set2, sizes_ufp6_dict, num_words_set2);
 
-    encode_matrix_words(&set1, sizes_bin_dict, bin_dict);
-    encode_matrix_words(&set2, sizes_bin_dict, bin_dict);
+    encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
+    encode_matrix_words(&set2, sizes_ufp6_dict, ufp6_dict);
 
     print_matrix_int(&set1);
     print_matrix_char(&set1);
 
+    int flag = 1; // ASC
     /** @paragraph Sort by alphabetical order (ASC and DESC)
-     *  if flag set to 1 = ASC ,if set to 0 = DESC*/
+     *  if flag set to 1 = ASC ,if set to 0 = DESC */
     printf("Sort by alphabetical order\n");
-    int flag = 0; // ASC
     TIMER_START();
-     msdRadixSort(&set1,sizes_bin_dict, 0, set1.rowsize, flag);
+     msdRadixSort(&set1, sizes_ufp6_dict, 0, set1.rowsize, flag);
     TIMER_STOP();
     fprintf(stdout, "Time_delta MSD %f\n", time_delta);
     is_sorted_matrix(&set1, set1.rowsize, flag);
@@ -232,20 +224,19 @@ void test_functions1_feature6() {
 
     /** * @paragraph Sort by words_size in (ASC and DESC)
      *  if flag set to 1 = ASC, if set to 0 = DESC*/
-   /* printf("Sort by words size\n");
+    printf("\n\nSort by words size\n");
     sort_size(&set1, flag);
 
     print_matrix_char(&set1);
     print_matrix_int(&set1);
     print_arr_word_size(&set1);
     is_sorted_sizes(&set1, set1.rowsize, flag);
-*/
-    freemem(&set1);
-    freemem(&set2);
+    freemem_set(&set1);
+    freemem_set(&set2);
 }
 
 void test_function1_feature4() {
-    int ufp6_dict[MAX_UFP6][BITS]={
+    int ufp6_dict[MAX_UFP6][BITS - 1]={
             {0, 0},
             {0, 0}
     };
@@ -272,6 +263,6 @@ void test_function1_feature4() {
     print_matrix_int(&set1);
     combination_ufp6_in_both_sets(&set1, &set2);
 
-    freemem(&set1);
-    freemem(&set2);
+    freemem_set(&set1);
+    freemem_set(&set2);
 }

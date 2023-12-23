@@ -26,6 +26,7 @@ typedef struct{
  * @param number_words - number of words to hold in set
  */
 void sets_struct_init(SETS *set,const int *sizes_ufp6, int number_words);
+
 /**
  * @paragraph Encode the words from an array located in the set struct
  * @param set - pointer to SETS struct

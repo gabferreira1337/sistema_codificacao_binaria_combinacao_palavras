@@ -252,7 +252,6 @@ void test_function1_feature4() {
     sets_struct_init(&set1, sizes_ufp6_dict,num_words_set1);
     sets_struct_init(&set2, sizes_ufp6_dict, num_words_set2);
 
-
     encode_matrix_words(&set1, sizes_ufp6_dict,ufp6_dict);
 
    const char *words[] = {

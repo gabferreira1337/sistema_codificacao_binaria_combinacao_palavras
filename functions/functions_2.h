@@ -356,11 +356,13 @@ void write_set_ufp6_to_binfile(const SETS *set, FILE *fp);
  */
 void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp);
 /**
-* @paragraph Write words found in set to txt
-* @param
-* @param
+* @paragraph Write words found with given patter in set to txt
+* @param set - pointer to SETS struct
+* @param filename - pointer to string containing file name
+* @param array_index_words_found_set - array holding indexes of words from set with
+* pattern , in first pos of array it stores the number of words found
 */
-void write_words_found_to_txt_set(const SETS *set, const int *array_index_words_found_set, const char *filename);
+void write_words_found_to_txt_set_with_pattern(const SETS *set, const int *array_index_words_found_set, const char *filename, const char *pattern);
 /**
  * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
  * @param ll - address of a pointer to LL_WORDS_HOLDER

@@ -109,10 +109,10 @@ void test_function_2_8_b(int *sizes_ufp6_dict, int bin_dict[RADIX][BITS]) {
 
     print_AD(ad_sorted);
 
-    freemem(&set1);
-    freemem(&set2);
-    freemem(&set3);
-    freemem(&set4);
+    freemem_set(&set1);
+    freemem_set(&set2);
+    freemem_set(&set3);
+    freemem_set(&set4);
 
     free_dynamic_array(ad_sorted);
 
@@ -162,10 +162,10 @@ void test_function_2_8_c(int *sizes_ufp6_dict, int (*bin_dict)[BITS]) {
 
     print_AD(ad);
 
-    freemem(&set1);
-    freemem(&set2);
-    freemem(&set3);
-    freemem(&set4);
+    freemem_set(&set1);
+    freemem_set(&set2);
+    freemem_set(&set3);
+    freemem_set(&set4);
 
     free_dynamic_array(ad);
 

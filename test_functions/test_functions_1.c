@@ -7,7 +7,7 @@
 #include "../functions/functions_1.h"
 
 #define R 11
-#define  FILE_PATTERN_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
+#define  FILE_PATTERN_FOUND_SET "set_words_found.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -86,7 +86,6 @@ void test_function1_feature2() {
     ufp6_dictionary(dict, sizes_ufp6_dict);
 
     //print_ufp6_dictionary(dict, sizes_ufp6_dict);
-
     char word[] = "1";
     int W = 1;
     ///result of ufp6 representation
@@ -201,6 +200,7 @@ void test_functions1_feature6() {
 
     encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
     encode_matrix_words(&set2, sizes_ufp6_dict, ufp6_dict);
+
 
     print_matrix_int(&set1);
     print_matrix_char(&set1);

@@ -331,6 +331,8 @@ void generate_combination_without_repetition(int *row, int length);
  */
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
 void generate_combination_without_repetition(int *row, int length);
+void merge(SETS *set, char **aux, int lo, int mid, int hi);
+void sort(SETS *set, char **aux, int lo, int hi);
 
 /**
  * @paragraph KMP Algorithm to build DFA of a patter (word)

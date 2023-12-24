@@ -26,7 +26,6 @@ typedef struct{
  * @param number_words - number of words to hold in set
  */
 void sets_struct_init(SETS *set,const int *sizes_ufp6, int number_words);
-
 /**
  * @paragraph Encode the words from an array located in the set struct
  * @param set - pointer to SETS struct
@@ -332,6 +331,8 @@ void generate_combination_without_repetition(int *row, int length);
  */
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
 void generate_combination_without_repetition(int *row, int length);
+void merge(SETS *set, char **aux, int lo, int mid, int hi);
+void sort(SETS *set, char **aux, int lo, int hi);
 
 /**
  * @paragraph KMP Algorithm to build DFA of a patter (word)

@@ -1104,3 +1104,47 @@ void combination_ufp6_in_both_sets(SETS *set1, SETS *set2) {
     //generate_combination_without_repetition(arr, 2);
     generatePermutations(arr, 4, 4);
 }
+
+void sort(SETS *set, char **aux, int lo, int hi) {
+    if(hi <= lo) return;
+
+    /*if(hi < lo + CUTOFF - 1){
+        insertion_sort(a, hi);
+        return;
+    }
+
+    if(check_if_sorted(a, 16)){
+        return;
+    }*/
+
+    int mid = lo + (hi - lo) / 2;
+    sort(set, aux, lo, mid);
+    printf("merge : lo = %d, mid = %d, hi = %d\n", lo, mid, hi);
+    sort(set, aux, mid + 1, hi);
+    printf("merge : lo = %d, mid = %d, hi = %d\n", lo, mid, hi);
+
+    merge(set, aux, lo, mid, hi);
+}
+
+void merge(SETS *set, char **aux, int lo, int mid, int hi) {
+    int i, j;
+
+    for (int l = lo; l <= hi; ++l) {
+        aux[l] = set->matrix[l];
+    }
+
+    i = lo;
+    j = mid+1;
+
+    for (int k = lo; k <= hi; k++) {
+        if (i > mid) {
+            set->matrix[k] = aux[j++];
+        } else if (j > hi) {
+            set->matrix[k] = aux[i++];
+        } else if (aux[j] < aux[i]) {
+            set->matrix[k] = aux[j++];
+        } else {
+            set->matrix[k] = aux[i++];
+        }
+    }
+}

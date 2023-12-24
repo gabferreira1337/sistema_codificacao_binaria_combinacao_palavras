@@ -206,16 +206,21 @@ void test_functions1_feature6() {
     print_matrix_char(&set1);
 
     int flag = 1; // ASC
+    char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
      *  if flag set to 1 = ASC ,if set to 0 = DESC */
     printf("Sort by alphabetical order\n");
     TIMER_START();
-     msdRadixSort(&set1, sizes_ufp6_dict, 0, set1.rowsize, flag);
+    // msdRadixSort(&set1, sizes_ufp6_dict, 0, set1.rowsize, flag);
+    sort(&set1, aux_mat, 0, set1.rowsize -1);
     TIMER_STOP();
     fprintf(stdout, "Time_delta MSD %f\n", time_delta);
     is_sorted_matrix(&set1, set1.rowsize, flag);
     print_matrix_int(&set1);
-    print_matrix_char(&set1);
+    //print_matrix_char(&set1);
+    for (int i = 0; i < set1.rowsize; ++i) {
+        printf("%s\n", set1.matrix[i]);
+    }
    /* TIMER_START();
     insertion_sort_char(&set2, set2.rowsize, 1);
     TIMER_STOP();

@@ -134,7 +134,7 @@ void print_arr_word_size(const SETS *set);
 void print_matrix_char(const SETS *set);
 
 /**
- * @paragraph Function to calculate UFP6 representation of a given word and store in
+ * @paragraph Function to calculate UFP6 representation of all wordsand store in
  * set arr_ufp6_size at a given index
  * Time Complexity: O(W) = length of word
  * Extra Space: O(1)
@@ -292,18 +292,6 @@ void fperror(char *message);
  */
 void encode_word(const char* word, int *encode, int *word_ufp6_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS - 1], int W);
 /**
- * @paragraph This function calculates the size of UFP6 representation of a given word
- * and stores into words_ufp6_sizes
- * Time Complexity: O(N) N =  word length
- * Extra Space: O(1)
- * @param word - pointer to word to calculate UFP6 representation size
- * @param arr_ufp6_sizes_char - pointer to pre-computed array with each UFP6 representation of each char in UFP6 ASCII
- * @param words_ufp6_sizes - pointer to array to hold each size of UFP6 representation of given word
- * @param N - word length
- * @param index_word - index of words_ufp6_sizes to store the size calculated
- */
-void calculate_ufp6_sizes(const char *word, const int *arr_bin_sizes, int *words_bin_sizes, int N, int w);
-/**
  * @paragraph Not implemented
  * @param word -
  * @param arr_bin_sizes -
@@ -331,9 +319,41 @@ void generate_combination_without_repetition(int *row, int length);
  */
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
 void generate_combination_without_repetition(int *row, int length);
-void merge(SETS *set, char **aux, int lo, int mid, int hi);
-void sort(SETS *set, char **aux, int lo, int hi);
-
+/**
+ * @paragraph Sort matrix of words and UFP6 representations in chronological order (ASC or DESC)
+ * using mergesort algorithm
+ * Time Complexity: O(NlogN)
+ * Extra Space: O(2M) M = number of words
+ * @param set - pointer to SETS struct
+ * @param sizes_ufp6 - pointer to array with pre-computed sizes of UFP6 of each char
+ * @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
+ */
+void sort_by_alphabetical_order(SETS *set,const int *sizes_ufp6, bool flag);
+/**
+* @paragraph Merge function used in mergesort algorithm
+* Time Complexity: O(N)
+* Extra Space: O(1)
+* @param set - pointer to SETS struct
+* @param aux_matrix - pointer to an array of char pointers (auxiliary matrix_words)
+* @param aux_matrix_ufp6 - pointer to an array of int pointers (auxiliary matrix_ufp6)
+* @param lo - start index of array
+* @param mid - middle index of array
+* @param hi - end index of array
+* @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
+*/
+void merge(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int mid, int hi, bool flag);
+/**
+* @paragraph Mergesort recursive function , using "divide and conquer" strategy
+* Time Complexity: O(NlogN)
+* Extra Space: O(2N) M = number of words
+* @param set - pointer to SETS struct
+* @param aux_matrix - pointer to an array of char pointers (auxiliary matrix_words)
+* @param aux_matrix_ufp6 - pointer to an array of int pointers (auxiliary matrix_ufp6)
+* @param lo - start index of array
+* @param hi - end index of array
+* @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
+*/
+void sort(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int hi, bool flag);
 /**
  * @paragraph KMP Algorithm to build DFA of a patter (word)
  * Time Complexity: O(M) M = length of pattern
@@ -558,6 +578,20 @@ void is_sorted_sizes(const SETS *set, int N, bool flag);
  * @param prev_num_words - variable to store the number of strings supported in UFP6
 */
 void check_words_supported_UFP6(SETS *set, char **words, int W, int *prev_num_words);
+/**
+ * @paragraph This function calculates the words and UFP6 sizes from a set of words and it stores
+ * in arr_word_size and arr_ufp6_size from SETS struct
+ * @param set - pointer to SETS struct
+ * @param words - pointer to array holding sizes of UFP6 of each char
+*/
+void calculate_sizes_words_and_ufp6_from_set(SETS *set, const int *sizes_ufp6);
+/**
+ * @paragraph This function writes to a txt file the benchmark of 2 sorting algorithms implemented to better understand their
+ * Time Complexity
+ * @param set - pointer to SETS struct
+ * @param words - pointer to array holding sizes of UFP6 of each char
+*/
+void write_to_txt_benchmark_sorting(char *fn, float time_delta_merge_s, float time_delta_msd, unsigned long number_words);
 
 
 int main_functions_1(int argc , char **argv);

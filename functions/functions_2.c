@@ -126,11 +126,10 @@ void free_dynamic_array(AD_WORDS_HOLDER *arr) {
     for (int i = 0; i < arr->count; ++i) {
         free(arr->array_val[i].last_update_date);
         arr->array_val[i].last_update_date = NULL;
-        //free both sets of each index
+        ///free both sets of each index
         freemem_set(&arr->array_val[i].words_holder.s1);
         freemem_set(&arr->array_val[i].words_holder.s2);
     }
-
     free(arr->array_val);
     arr->array_val = NULL;
     free(arr);
@@ -143,9 +142,9 @@ char *get_current_date() {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
 
-    // Format the date
+    /// Format date
     char *date_str = malloc(sizeof(char) * DATE_SIZE); // Adjust the size as needed
-    strftime(date_str, 9, "%d/%m/%y", timeinfo);
+    strftime(date_str, DATE_SIZE, "%d/%m/%y", timeinfo);
     return date_str;
 }
 
@@ -158,7 +157,7 @@ char *get_current_date() {
  * Shifting elements O(N) , realloc O(N) , binary_search function O(Dlog(N)), insertion O(1)
  */
 void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS *s1,SETS *s2,const char *last_date) {
-    // Double the size when array is full
+    /// Double the size when array is full
     if (ad_holder->count == ad_holder->size) {
         realloc_AD(ad_holder, ad_holder->size * 2);
     }
@@ -174,14 +173,12 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS *s1,SETS *s2,
 }
 
 
-// Double the size when array is full , halve the size when array is one-quarterfull
+/// Double the size when array is full while inserting in ad, halve the size when array is one-quarterfull while removing element from ad
 void realloc_AD(AD_WORDS_HOLDER *ad_holder, int size) {
     ad_holder->array_val = (VAL_AD_WORDS_HOLDER*) realloc(ad_holder->array_val, size * sizeof(VAL_AD_WORDS_HOLDER));
-
     if (ad_holder->array_val == NULL) {
         fperror("Realloc AD");
     }
-
     ad_holder->size = size;
 }
 
@@ -275,7 +272,7 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
 
 
 void delete_element_index(AD_WORDS_HOLDER *ad, int index) {
-    //halve the size when array is one-quarterfull
+    ///halve the size when array is one-quarter full
     if (ad->count == (1/4 * ad->size)){
         realloc_AD(ad, ad->size / 2);
     }
@@ -296,11 +293,11 @@ void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, i
     }
     int *index_set1 = NULL,*index_set2 = NULL;
     for (int i = 0; i < W; ++i) {
-        //Calculate length of string
+        ///Calculate length of string
         int word_length =(int) strlen(words[i]);
-        //check if word is valid in ufp6
+        ///Check if word is valid in ufp6
         if(is_ufp6(words[i], word_length) == -1) continue;
-        int dfa[MAX_UFP6][BITS];
+        int dfa[MAX_UFP6][BITS - 1];
         KMP (words[i], dfa);
             for (int j = lo; j <= hi; ++j) {
             index_set1 = search_KMP(&arr->array_val[j].words_holder.s1,dfa ,(int) strlen(words[i]));

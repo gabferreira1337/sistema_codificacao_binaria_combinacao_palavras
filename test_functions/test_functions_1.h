@@ -15,6 +15,8 @@ void test_functions1_feature5();
 
 void test_functions1_feature6();
 
+void test_cmp_msd_mergesort();
+
 
 int main_test_functions_1(int argc, char **argv);
 

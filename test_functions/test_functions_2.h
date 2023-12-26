@@ -1,8 +1,15 @@
 #ifndef PROJETO_AED1_LP1_TEST_FUNCTIONS_2_H
 #define PROJETO_AED1_LP1_TEST_FUNCTIONS_2_H
 
-void test_function_2_a();
-void test_function_2_8_b(int *sizes_bin_dict, int bin_dict[][BITS]);
+/**
+ * @paragraph Test functions to init, reallocate and print AD_WORDS_HOLDER
+ */
+void test_function_2_8_a();
+/**
+ * @paragraph Test functions to insert an element in chronological order
+ * (by last modified date) in Dynamic array ,
+ */
+void test_function_2_8_b();
 void test_function_2_8_c(int *sizes_ufp6_dict, int bin_dict[][BITS]);
 /**
  * @paragraph Use txt files for input and output of sets of words and their

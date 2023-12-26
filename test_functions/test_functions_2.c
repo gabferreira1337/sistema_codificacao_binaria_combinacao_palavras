@@ -29,16 +29,17 @@ time_delta = (float)tv.tv_sec + tv.tv_usec / 1000000.0
 int main_test_functions_2(int argc, char **argv) {
     struct timeval tv1, tv2, tv;
     float time_delta = 0.0f;
-    int dict[MAX_UFP6][BITS] = {0};
-    int sizes[MAX_UFP6] = {0};
 
     //TIMER_START();
-    //precompute bin_dict to encode words
-    //test_function1_feature2(NULL, NULL, sizes, dict);
-
-    //test_function_2_a();
-
-    //test_function_2_8_b(&ad, sizes,dict);
+    /**
+    * @paragraph Test functions to init, reallocate and print AD_WORDS_HOLDER
+    */
+    test_function_2_8_a();
+    /**
+    * @paragraph Test functions to insert an element in chronological order
+    * (by last modified date) in Dynamic array ,
+    */
+    test_function_2_8_b();
     //test_function_2_8_c(&ad, sizes,dict);
     /*Test functions to input and output sets of words
      and their respective ufp6 representations  with AD// .txt file*/
@@ -52,7 +53,7 @@ int main_test_functions_2(int argc, char **argv) {
     //test_functions_2_11_ad();
     /*Test functions to input and output sets of words
     and their respective ufp6 representations with LL //.bin file*/
-     test_functions_2_11_ll();
+     //test_functions_2_11_ll();
     //TIMER_STOP();
     //fprintf(stdout, "%f secs\n", time_delta);
 
@@ -61,44 +62,52 @@ int main_test_functions_2(int argc, char **argv) {
     return 0;
 }
 
-void test_function_2_a() {
+void test_function_2_8_a() {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
-    /*we double the size when ad_SIZE == count before inserting into ad
-     *
+    /**we double the size when ad_SIZE == count before inserting into ad
      * realloc_AD(ad, ad->size * 2)
-     * /*/
+     * and halve when ad is one-quarter full when removing an element
+     * realloc_AD(ad, ad->size / 2)
+     **/
+    print_AD(ad);
     free_dynamic_array(ad);
 }
 
 
-void test_function_2_8_b(int *sizes_ufp6_dict, int bin_dict[RADIX][BITS]) {
+void test_function_2_8_b() {
+    int dict[MAX_UFP6][BITS - 1]={
+            {0, 0},
+            {0, 0}
+    };
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ///Pre-compute UFP6 dictionary and an array storing the sizes of
+    ///each representation of each UFP6 char
+    ufp6_dictionary(dict, sizes_ufp6_dict);
+
     AD_WORDS_HOLDER *ad_sorted = NULL;
     ad_sorted = dynamic_array_init(AD_SIZE);
 
-    SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
+    ///Initialize sets with random words
+    SETS set1  = {NULL, NULL, NULL, NULL, 0};
     sets_struct_init(&set1, sizes_ufp6_dict, R);
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
+    encode_matrix_words(&set1, sizes_ufp6_dict, dict);
+    SETS set2 = {NULL, NULL, NULL, NULL, 0};
     sets_struct_init(&set2, sizes_ufp6_dict, R);
-    SETS set3 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set3, sizes_ufp6_dict, R);
-    SETS set4 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set4, sizes_ufp6_dict, R);
-
+    encode_matrix_words(&set2, sizes_ufp6_dict, dict);
 
     //or
     /*SETS sets[NUM_SETS];
-
     for (int i = 0; i < NUM_SETS; ++i) {
         sets_struct_init(&sets[i], R);
     }*/
 
     char *testDates[] = {
-            "2023-11-25",
-            "2023-11-24",
-            "2022-12-01",
-            "2023-01-15",
-            "2024-01-24",
+            "25-11-2023",
+            "24-11-2023",
+            "01-12-2022",
+            "12-01-2023",
+            "24-01-2024",
     };
 
     insert_element_to_AD_in_order(ad_sorted, &set1, &set2, testDates[0]);
@@ -109,11 +118,6 @@ void test_function_2_8_b(int *sizes_ufp6_dict, int bin_dict[RADIX][BITS]) {
 
     print_AD(ad_sorted);
 
-    freemem_set(&set1);
-    freemem_set(&set2);
-    freemem_set(&set3);
-    freemem_set(&set4);
-
     free_dynamic_array(ad_sorted);
 
     exit(0);
@@ -123,14 +127,14 @@ void test_function_2_8_b(int *sizes_ufp6_dict, int bin_dict[RADIX][BITS]) {
 void test_function_2_8_c(int *sizes_ufp6_dict, int (*bin_dict)[BITS]) {
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
-    SETS set1  = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set1  = {NULL, NULL, NULL, NULL, 0};
     //Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict,R);
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set2 = {NULL, NULL, NULL, NULL, 0};
     sets_struct_init(&set2, sizes_ufp6_dict, R);
-    SETS set3 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set3 = {NULL, NULL, NULL, NULL, 0};
     sets_struct_init(&set3, sizes_ufp6_dict, R);
-    SETS set4 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set4 = {NULL, NULL, NULL, NULL, 0};
     sets_struct_init(&set4, sizes_ufp6_dict, R);
 
     encode_matrix_words(&set1, sizes_ufp6_dict, bin_dict);

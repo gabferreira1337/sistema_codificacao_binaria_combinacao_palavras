@@ -7,8 +7,8 @@
 #include "../functions/functions_1.h"
 
 #define R 11
-#define  FILE_PATTERN_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
-#define MSD_VS_MERGES_FILE "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/sorting_comp.txt"
+#define  FILE_PATTERN_FOUND_SET "set_words_found.txt"
+#define MSD_VS_MERGES_FILE "sorting_comp.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \

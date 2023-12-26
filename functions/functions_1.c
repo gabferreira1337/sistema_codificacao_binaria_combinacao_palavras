@@ -417,6 +417,7 @@ void encode_word(const char* word, int *encoded, int *word_ufp6_size, int k, con
         for (int j = 0; j < sizes_ufp6[charIndex]; j++) {
             encoded[index++] = ufp6_dict[charIndex][j];
         }
+
     }
 }
 

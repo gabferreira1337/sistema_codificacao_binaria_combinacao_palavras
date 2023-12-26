@@ -4,45 +4,42 @@
 #include <time.h>
 #include "functions_1.h"
 
-/**
- * WORDS_HOLDER struct
- *
- */
+
 typedef struct{
-    SETS s1;        ///one set with matrix of words and their UFP6 representation
+    SETS s1;        ///Set with matrix of words and their UFP6 representation
     SETS s2;
 
 }WORDS_HOLDER;
 
-/**
- * VAL_AD_WORDS_HOLDER struct
- */
+
 typedef struct{
-    WORDS_HOLDER words_holder;
-    char *last_update_date;
+    WORDS_HOLDER words_holder;  ///Copy of WORDS_HOLDER
+    char *last_update_date;     ///String containing last update date of WORDS_HOLDER
 
 }VAL_AD_WORDS_HOLDER;
 
 typedef struct{
-    int size;
-    int count;
-    VAL_AD_WORDS_HOLDER *array_val;
+    int size;                   /// Size of Dynamic array
+    int count;                  /// Number of elements in Dynamic array
+    VAL_AD_WORDS_HOLDER *array_val;     /// array of VAL_AD_WORDS_HOLDER
 
 }AD_WORDS_HOLDER;
 
 
 typedef struct node_ll_words_holder{
-    WORDS_HOLDER words_holder;
-    char *last_update_date;
-    struct node_ll_words_holder *pnext;
-    struct node_ll_words_holder *pback;
+    WORDS_HOLDER words_holder;          ///Copy of WORDS_HOLDER
+    char *last_update_date;             ///String containing last update date of WORDS_HOLDER
+    struct node_ll_words_holder *pnext; /// Pointer to next node
+    struct node_ll_words_holder *pback; /// Pointer to previous node
+
 }NODE_LL_WORDS_HOLDER;
 
 
 typedef struct ll_words_holder{
-   int nnodes;
-   NODE_LL_WORDS_HOLDER *phead;
-   NODE_LL_WORDS_HOLDER *ptail;
+   int nnodes;                          /// Number of nodes in Linked List
+   NODE_LL_WORDS_HOLDER *phead;         /// Pointer to head of Linked List
+   NODE_LL_WORDS_HOLDER *ptail;         /// Pointer to tail of Linked List
+
 }LL_WORDS_HOLDER;
 
 
@@ -66,7 +63,7 @@ void create_dynamic_array(AD_WORDS_HOLDER *arr);
  */
 void init_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_holder);
 /**
- * @paragraph print dynamic array
+ * @paragraph Print dynamic array
  * @param ad - pointer to AD_WORDS_HOLDER struct
  */
 void print_AD(const AD_WORDS_HOLDER *ad);
@@ -106,7 +103,8 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *se
  */
 void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder,const SETS *set1,const SETS *set2,const char *last_date);
 /**
- * sets struct
+ * @paragraph Function to get current date and return the date
+ * @return current date ex: "21/09/2023"
  */
 char *get_current_date();
 /**
@@ -123,7 +121,10 @@ char *get_current_date();
  */
 int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din,const char *date);
 /**
- * sets struct
+ * @paragraph Delete element from Dynamic array shifting elements,
+ * if dynamic array is one-quarter full halve the size
+ * @param ad - pointer to AD_WORDS_HOLDER
+ * @param index - index of Dynamic Array to remove element
  */
 void delete_element_index(AD_WORDS_HOLDER *ad,int index);
 /**
@@ -216,7 +217,8 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
 /**
  * @paragraph Write one set to txt file
- * Words set: number_words = 5
+ * Words set:
+ * number_words = 5
  *5 r q m t v
  *1 n
  *5 e y w w v

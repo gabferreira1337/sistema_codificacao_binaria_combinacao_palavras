@@ -8,6 +8,7 @@
 
 #define R 11
 #define  FILE_PATTERN_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
+#define MSD_VS_MERGES_FILE "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/sorting_comp.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -24,7 +25,7 @@ int main_test_functions_1(int argc, char **argv) {
      * and with exact number of columns in each matrix to hold words
      * and their UFP6 representation
      */
-    //test_function1_feature1();
+    test_function1_feature1();
     /**2) Test functions to encode to UFP6 a matrix of words
     */
    //test_function1_feature2();
@@ -41,13 +42,14 @@ int main_test_functions_1(int argc, char **argv) {
     */
      //test_functions1_feature5();
     /**6) Test functions to sort set (both matrix) by alphabetical order (ASC and DESC) and by words size
-     * (ASC and DESC)
+     * (ASC and DESC) also
     */
-     test_functions1_feature6();
+    // test_functions1_feature6();
+    // test_cmp_msd_mergesort();
      //TIMER_STOP();
    // fprintf(stdout, "time_delta %f\n", time_delta);
 
-    exit(0);
+   // exit(0);
     return 0;
 }
 
@@ -192,41 +194,26 @@ void test_functions1_feature6() {
     /// Pre-Compute UFP6 dictionary
     ufp6_dictionary(ufp6_dict, sizes_ufp6_dict);
     SETS set1 = {NULL, NULL, NULL, NULL, 0};
-    SETS set2 = {NULL, NULL, NULL, NULL, 0};
-    int num_words_set2 = R;
     int  num_words_set1 = R;
     ///Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict, num_words_set1);
-    sets_struct_init(&set2, sizes_ufp6_dict, num_words_set2);
 
     encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
-    encode_matrix_words(&set2, sizes_ufp6_dict, ufp6_dict);
-
-    print_matrix_int(&set1);
+    printf("Before sort\n");
     print_matrix_char(&set1);
-
+    print_matrix_int(&set1);
     int flag = 1; // ASC
-    char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
      *  if flag set to 1 = ASC ,if set to 0 = DESC */
-    printf("Sort by alphabetical order\n");
-    TIMER_START();
+    printf("\nSort by alphabetical order\n");
+    sort_by_alphabetical_order(&set1, sizes_ufp6_dict,flag);
     // msdRadixSort(&set1, sizes_ufp6_dict, 0, set1.rowsize, flag);
-    sort(&set1, aux_mat, 0, set1.rowsize -1);
-    TIMER_STOP();
-    fprintf(stdout, "Time_delta MSD %f\n", time_delta);
-    is_sorted_matrix(&set1, set1.rowsize, flag);
+    print_matrix_char(&set1);
     print_matrix_int(&set1);
-    //print_matrix_char(&set1);
-    for (int i = 0; i < set1.rowsize; ++i) {
-        printf("%s\n", set1.matrix[i]);
-    }
-   /* TIMER_START();
+    /* TIMER_START();
     insertion_sort_char(&set2, set2.rowsize, 1);
     TIMER_STOP();
-    is_sorted(&set2, set2.rowsize);
     fprintf(stdout, "Time_delta Insertion sort %f\n", time_delta);*/
-
     /** * @paragraph Sort by words_size in (ASC and DESC)
      *  if flag set to 1 = ASC, if set to 0 = DESC*/
     printf("\n\nSort by words size\n");
@@ -234,10 +221,10 @@ void test_functions1_feature6() {
 
     print_matrix_char(&set1);
     print_matrix_int(&set1);
-    print_arr_word_size(&set1);
-    is_sorted_sizes(&set1, set1.rowsize, flag);
+    //print_arr_word_size(&set1);
+   // is_sorted_sizes(&set1, set1.rowsize, flag);
     freemem_set(&set1);
-    freemem_set(&set2);
+    exit(0);
 }
 
 void test_function1_feature4() {
@@ -248,8 +235,8 @@ void test_function1_feature4() {
     // sizes of each binary representation
     int sizes_ufp6_dict[MAX_UFP6] = {0};
     ufp6_dictionary(ufp6_dict,sizes_ufp6_dict);
-    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
+    SETS set1 = {NULL, NULL, NULL, NULL, 0};
+    SETS set2 = {NULL, NULL, NULL, NULL, 0};
     int  num_words_set1 = 1;
     int  num_words_set2 = 1;
 
@@ -269,4 +256,43 @@ void test_function1_feature4() {
 
     freemem_set(&set1);
     freemem_set(&set2);
+}
+
+void test_cmp_msd_mergesort() {
+    int ufp6_dict[MAX_UFP6][BITS - 1]={
+            {0, 0},
+            {0, 0}
+    };
+    /// Sizes of each ufp6 representation
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    /// Pre-Compute UFP6 dictionary
+    ufp6_dictionary(ufp6_dict, sizes_ufp6_dict);
+
+    int flag = 1; ///Sort in ASC order
+    float time_delta_msd = 0.0f;
+    float time_delta_merge_s = 0.0f;
+    int arr_num_words[] = {10000, 1000000, 4000000,10000000};
+    for (int i = 0; i < 4; ++i) {
+        SETS set1 = {NULL, NULL, NULL, NULL, 0};
+        SETS set2 = {NULL, NULL, NULL, NULL, 0};
+        int num_words_set2 = arr_num_words[i];
+        int  num_words_set1 = arr_num_words[i];
+        ///Initialize sets with random words
+        sets_struct_init(&set1, sizes_ufp6_dict, num_words_set1);
+        sets_struct_init(&set2, sizes_ufp6_dict, num_words_set2);
+
+        encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
+        encode_matrix_words(&set2, sizes_ufp6_dict, ufp6_dict);
+        TIMER_START();
+        sort_by_alphabetical_order(&set1, sizes_ufp6_dict,flag);
+        TIMER_STOP();
+        time_delta_merge_s = time_delta;
+        TIMER_START();
+        msdRadixSort(&set2, sizes_ufp6_dict, 0, set2.rowsize, flag);
+        TIMER_STOP();
+        time_delta_msd = time_delta;
+        write_to_txt_benchmark_sorting(MSD_VS_MERGES_FILE, time_delta_merge_s, time_delta_msd, num_words_set1);
+        //is_sorted_matrix(&set1, set1.rowsize, flag);
+        //is_sorted_matrix(&set2, set2.rowsize, flag);
+    }
 }

@@ -22,8 +22,8 @@ void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char){
     }
     ///Allocate memory for each pointer to arrays
     for (int i = 0; i < set->rowsize; ++i) {
-        ///Calculate each word UFP6 representation to allocate exact number of columns
-        calculate_ufp6_sizes(*(set->matrix + i), sizes_ufp6_char, set->arr_ufp6_size,*(set->arr_word_size + i),i);
+        ///Calculate each UFP6 representation to allocate exact number of columns
+        calc_ufp6_size(set, i, *(set->matrix + i), sizes_ufp6_char);
         *(set->matrix_ufp6 + i) = (int*)calloc(*(set->arr_ufp6_size + i), sizeof(int));
         if (*(set->matrix_ufp6 + i) == NULL) {
             fperror("matrix_ufp6 row malloc in matrix_ufp6_init");
@@ -432,21 +432,6 @@ void encode_matrix_words(SETS *set, int *sizes_ufp6_dict, int ufp6_dict[][BITS -
     }
 }
 
-
-void calculate_ufp6_sizes(const char *word, const int *arr_ufp6_sizes_char, int *words_ufp6_sizes, int N, int index_word) {
-    for (int i = 0; i < N; i++) {
-        char currentChar = word[i];
-        int charIndex = calculate_index_char(currentChar, 1);
-        /// Check if the character is a valid key in dictionary
-        if (charIndex == -1){
-            printf("char %c not supported in UFP6\n", word[i]);
-            fperror("in calculate_ufp6_sizes");
-        }
-        /// Store the size of each word
-        words_ufp6_sizes[index_word] += arr_ufp6_sizes_char[charIndex];
-    }
-}
-
 /**
  * Function to build a DFA from a given pattern
  */
@@ -705,20 +690,14 @@ void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6
     set->arr_ufp6_size[index] =0;
     for (int i = 0; i < strlen(word); ++i) {
         char currentChar = word[i];
+        int charIndex = calculate_index_char(currentChar, 1);
         /// Check if the character is a valid key in dictionary
-        if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') ||
-            (currentChar >= 'a' && currentChar <= 'z')) {
-            int charIndex = 0;
-            if (currentChar >= 'A' && currentChar <= 'Z') {
-                charIndex = (currentChar - 'A' + 36);
-            } else if (currentChar >= '0' && currentChar <= '9') {
-                charIndex = (currentChar - '0');
-            } else {
-                charIndex = (currentChar - 'a' + 10);
-            }
-            /// Store the size of ufp6 representation of each word
-            set->arr_ufp6_size[index] += sizes_ufp6[charIndex];
+        if (charIndex == -1){
+            printf("char %c not supported in UFP6\n", word[i]);
+            fperror("in calculate_ufp6_sizes");
         }
+        /// Store the size of each word
+        set->arr_ufp6_size[index] += sizes_ufp6[charIndex];
     }
 }
 
@@ -1104,46 +1083,106 @@ void combination_ufp6_in_both_sets(SETS *set1, SETS *set2) {
     generatePermutations(arr, 4, 4);
 }
 
-void sort(SETS *set, char **aux, int lo, int hi) {
-    if(hi <= lo) return;
 
-    /*if(hi < lo + CUTOFF - 1){
-        insertion_sort(a, hi);
-        return;
-    }
+void sort(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int hi, bool flag) {
+     if(hi <= lo) return;
 
-    if(check_if_sorted(a, 16)){
-        return;
-    }*/
+     /*if(hi < lo + CUTOFF - 1){
+         insertion_sort(a, hi);
+         return;
+     }
+
+     if(check_if_sorted(a, 16)){
+         return;
+     }*/
 
     int mid = lo + (hi - lo) / 2;
-    sort(set, aux, lo, mid);
-    printf("merge : lo = %d, mid = %d, hi = %d\n", lo, mid, hi);
-    sort(set, aux, mid + 1, hi);
-    printf("merge : lo = %d, mid = %d, hi = %d\n", lo, mid, hi);
+    sort(set, aux_matrix, aux_matrix_ufp6, lo, mid, flag);
+    sort(set, aux_matrix, aux_matrix_ufp6, mid + 1, hi, flag);
 
-    merge(set, aux, lo, mid, hi);
+    merge(set, aux_matrix,aux_matrix_ufp6, lo, mid, hi, flag);
 }
 
-void merge(SETS *set, char **aux, int lo, int mid, int hi) {
+void merge(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int mid, int hi, bool flag) {
     int i, j;
-
     for (int l = lo; l <= hi; ++l) {
-        aux[l] = set->matrix[l];
+        aux_matrix[l] = set->matrix[l];
+        aux_matrix_ufp6[l] = set->matrix_ufp6[l];
     }
-
     i = lo;
     j = mid+1;
-
-    for (int k = lo; k <= hi; k++) {
-        if (i > mid) {
-            set->matrix[k] = aux[j++];
-        } else if (j > hi) {
-            set->matrix[k] = aux[i++];
-        } else if (aux[j] < aux[i]) {
-            set->matrix[k] = aux[j++];
-        } else {
-            set->matrix[k] = aux[i++];
+    ///Sort in ASC order
+    if(flag == 1) {
+        for (int k = lo; k <= hi; k++) {
+            if (i > mid) {
+               set->matrix_ufp6[k] = aux_matrix_ufp6[j];
+               set->matrix[k] = aux_matrix[j++];
+            } else if (j > hi) {
+                set->matrix_ufp6[k] = aux_matrix_ufp6[i];
+                set->matrix[k] = aux_matrix[i++];
+            } else if (strcmp(aux_matrix[j], aux_matrix[i]) < 0) {
+                set->matrix_ufp6[k] = aux_matrix_ufp6[j];
+                set->matrix[k] = aux_matrix[j++];
+            }  else {
+             set->matrix_ufp6[k] = aux_matrix_ufp6[i];
+                set->matrix[k] = aux_matrix[i++];
+            }
+        }
+        ///Sort in DESC order
+    }else{
+        for (int k = lo; k <= hi; k++) {
+            if (i > mid) {
+                set->matrix_ufp6[k] = aux_matrix_ufp6[j];
+                set->matrix[k] = aux_matrix[j++];
+            } else if (j > hi) {
+                set->matrix_ufp6[k] = aux_matrix_ufp6[i];
+                set->matrix[k] = aux_matrix[i++];
+            } else if (strcmp(aux_matrix[j], aux_matrix[i]) > 0) {
+                set->matrix_ufp6[k] = aux_matrix_ufp6[j];
+                set->matrix[k] = aux_matrix[j++];
+            }  else {
+                    set->matrix_ufp6[k] = aux_matrix_ufp6[i];
+                    set->matrix[k] = aux_matrix[i++];
+            }
         }
     }
+}
+
+
+void sort_by_alphabetical_order(SETS *set,const int *sizes_ufp6, bool flag){
+    ///Allocate memory for auxiliary arrays of pointers to use in mergesort algorithm
+    char **aux_mat = (char**) calloc(sizeof(char*), set->rowsize);
+    if (aux_mat == NULL){
+        fperror("Calloc aux_mat in sort_by_alphabetical_order");
+    }
+    int **aux_mat_ufp6 =  (int**) calloc(sizeof(int*), set->rowsize);
+    if (aux_mat_ufp6 == NULL){
+        fperror("Calloc aux_mat_ufp6 in sort_by_alphabetical_order");
+    }
+
+    sort(set, aux_mat, aux_mat_ufp6, 0, set->rowsize - 1, flag);
+    ///After sort calculate sizes of words and UFP6 from set of words
+    ///and store in both arrays in struct, instead of exchanging inside sort algorithm, to have less extra space
+    ///This function has a time complexity of O(N) so it won't change much about mergesort Time Complexity
+    calculate_sizes_words_and_ufp6_from_set(set, sizes_ufp6);
+
+    free(aux_mat);
+    free(aux_mat_ufp6);
+}
+
+void calculate_sizes_words_and_ufp6_from_set(SETS *set, const int *sizes_ufp6){
+    for (int i = 0; i < set->rowsize; ++i) {
+        set->arr_word_size[i] = (int) strlen(set->matrix[i]);
+        calc_ufp6_size(set, i, set->matrix[i], sizes_ufp6);
+    }
+}
+
+void write_to_txt_benchmark_sorting(char *fn, float time_delta_merge_s, float time_delta_msd, unsigned long number_words) {
+    FILE *fp = fopen(fn, "a");
+    if(fp == NULL){
+        fperror("Error opening file in write_to_txt_benchmark_sorting");
+    }
+    fprintf(fp, "Benchmark for %lu words\n", number_words);
+    fprintf(fp,"MSD time_delta : %2.6f MERGE SORT time_delta : %2.5f\n ", time_delta_msd, time_delta_merge_s);
+    fclose(fp);
 }

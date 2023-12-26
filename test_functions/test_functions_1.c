@@ -203,6 +203,7 @@ void test_functions1_feature6() {
     print_matrix_char(&set1);
     print_matrix_int(&set1);
     int flag = 1; // ASC
+    char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
      *  if flag set to 1 = ASC ,if set to 0 = DESC */
     printf("\nSort by alphabetical order\n");

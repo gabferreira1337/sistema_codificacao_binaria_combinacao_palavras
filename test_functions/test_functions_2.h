@@ -2,7 +2,7 @@
 #define PROJETO_AED1_LP1_TEST_FUNCTIONS_2_H
 
 /**
- * @paragraph Test functions to init, reallocate and print AD_WORDS_HOLDER
+ * @paragraph Test functions to init, reallocate and print Dynamic array AD_WORDS_HOLDER
  */
 void test_function_2_8_a();
 /**
@@ -10,7 +10,33 @@ void test_function_2_8_a();
  * (by last modified date) in Dynamic array ,
  */
 void test_function_2_8_b();
-void test_function_2_8_c(int *sizes_ufp6_dict, int bin_dict[][BITS]);
+/**
+ * @paragraph Test functions to insert an element at given index in Dynamic array
+ */
+void test_function_2_8_c();
+/**
+ * @paragraph Test functions to remove an element from dynamic array at given index,
+ * adjusting the positions of other elements
+ */
+void test_function_2_8_d();
+/**
+ * @paragraph Test functions to search for words and respective UFP6 only at given
+ * indexes of Dynamic array and output to a txt file
+ */
+void test_function_2_8_e();
+/**
+ * @paragraph Test functions to insert nodes to a LL in chronological order by
+ * last modified date DESC
+ */
+void test_function_2_9_a();
+/**
+ * @paragraph Test functions for inserting nodes at specific index in a linked list
+ */
+void test_function_2_9_b();
+/**
+ * @paragraph Test functions for delete nodes at specific index in a linked list
+ */
+void test_function_2_9_c();
 /**
  * @paragraph Use txt files for input and output of sets of words and their
  * respective ufp6 representations

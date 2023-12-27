@@ -44,8 +44,8 @@ int main_test_functions_1(int argc, char **argv) {
     /**6) Test functions to sort set (both matrix) by alphabetical order (ASC and DESC) and by words size
      * (ASC and DESC) also
     */
-    // test_functions1_feature6();
-    // test_cmp_msd_mergesort();
+     //test_functions1_feature6();
+     test_cmp_msd_mergesort();
      //TIMER_STOP();
    // fprintf(stdout, "time_delta %f\n", time_delta);
 
@@ -202,12 +202,15 @@ void test_functions1_feature6() {
     printf("Before sort\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
+
     int flag = 1; // ASC
     char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
-     *  if flag set to 1 = ASC ,if set to 0 = DESC */
+     *  if flag set to 1 = ASC ,if set to 0 = DESC
+     *  */
     printf("\nSort by alphabetical order\n");
     sort_by_alphabetical_order(&set1, sizes_ufp6_dict,flag);
+    is_sorted_matrix(&set1, set1.rowsize,flag);
     // msdRadixSort(&set1, sizes_ufp6_dict, 0, set1.rowsize, flag);
     print_matrix_char(&set1);
     print_matrix_int(&set1);
@@ -216,14 +219,16 @@ void test_functions1_feature6() {
     TIMER_STOP();
     fprintf(stdout, "Time_delta Insertion sort %f\n", time_delta);*/
     /** * @paragraph Sort by words_size in (ASC and DESC)
-     *  if flag set to 1 = ASC, if set to 0 = DESC*/
-    printf("\n\nSort by words size\n");
+     *  if flag set to 1 = ASC, if set to 0 = DESC
+     *  */
+    printf("\nSort by words size\n");
     sort_size(&set1, flag);
 
     print_matrix_char(&set1);
     print_matrix_int(&set1);
     //print_arr_word_size(&set1);
-   // is_sorted_sizes(&set1, set1.rowsize, flag);
+    is_sorted_sizes(&set1, set1.rowsize, flag);
+  
     freemem_set(&set1);
     exit(0);
 }
@@ -272,7 +277,8 @@ void test_cmp_msd_mergesort() {
     int flag = 1; ///Sort in ASC order
     float time_delta_msd = 0.0f;
     float time_delta_merge_s = 0.0f;
-    int arr_num_words[] = {10000, 1000000, 4000000,10000000};
+
+    int arr_num_words[] = {1000, 1000000, 4000000,10000000};
     for (int i = 0; i < 4; ++i) {
         SETS set1 = {NULL, NULL, NULL, NULL, 0};
         SETS set2 = {NULL, NULL, NULL, NULL, 0};
@@ -288,12 +294,14 @@ void test_cmp_msd_mergesort() {
         sort_by_alphabetical_order(&set1, sizes_ufp6_dict,flag);
         TIMER_STOP();
         time_delta_merge_s = time_delta;
+        printf("Time delta merge_sort %f\n", time_delta_merge_s);
         TIMER_START();
         msdRadixSort(&set2, sizes_ufp6_dict, 0, set2.rowsize, flag);
         TIMER_STOP();
         time_delta_msd = time_delta;
-        write_to_txt_benchmark_sorting(MSD_VS_MERGES_FILE, time_delta_merge_s, time_delta_msd, num_words_set1);
+        printf("Time delta msd %f\n", time_delta_msd);
+        //write_to_txt_benchmark_sorting(MSD_VS_MERGES_FILE, time_delta_merge_s, time_delta_msd, num_words_set1);
         //is_sorted_matrix(&set1, set1.rowsize, flag);
-        //is_sorted_matrix(&set2, set2.rowsize, flag);
+       // is_sorted_matrix(&set2, set2.rowsize, flag);
     }
 }

@@ -74,7 +74,7 @@ void print_AD(const AD_WORDS_HOLDER *ad);
  * @param set2 - pointer to set of matrix with words and ufp6
  * @param last_date - last update date of both sets
  */
-void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder, SETS *s1 ,SETS *s2,const char *last_date);
+void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,const SETS *s1 ,const SETS *s2,const char *last_date);
 /**
  * @param ad_holder - pointer to AD_WORDS_HOLDER struct
  * @param index_set1 - pointer to array with index of words found in set1 ///in first position of array store the count of indexes to use inside this function
@@ -84,22 +84,64 @@ void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder, SETS *s1 ,SETS *s
 void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, int index_ad);
 //int *find_Word_index(&arr->array_val[j].words_holder.s1,words[i], index_set1, 1);
 /**
- * @paragraph Insert element in dynamic array in given index , if index >= count of elements realloc 2 * size_ad and insert at that index
+ * @paragraph Insert element in dynamic array at given index , if dynamic array if full or if want to
+ * insert at position equal or greater than DA size, double the size of array
  * if ad is full doubles the size of ad
+ * @paragraph This function shifts elements to insert new element at the given index and fill VAl_AD_WORDS_HOLDER
+ * with the values passed to the function
+ * @paragraph Time complexity : O(2N + D)) ,
+ * Shifting elements O(N) , realloc O(N) , insertion O(1), strcpy date O(D)
+ * D = date size N = number of elements in dynamic array
+ * Extra space : O(1) (inplace)
  * @param ad_holder - pointer to AD_WORDS_HOLDER
  * @param set1 - pointer to set of matrix with words and ufp6
  * @param set2 - pointer to set of matrix with words and ufp6
  * @param last_date - last update date of both sets
+ * @param index - index where new element should be added in the Dynamic array
  */
-void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index);
+void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder,const SETS *set1,const SETS *set2,const char *last_date, int index);
 /**
- * @paragraph
- * @param fn - filename
- * @param flag - if set to 1 output to a file
+ * @paragraph Find words and respective UFP6 ,only at given indexes of Dynamic array,
+ * and write to a txt file the output
+ * Time Complexity: O(W * (E - S) * N)
+ * W = number of words to search for in dynamic array E - S = number of elements in da to search for words
+ * N = greatest number of rows between both sets
+ * Extra Space: O(N + M)
+ * N = number of words in set1 , M =  number of words in set2
+ * @param arr - pointer to AD_WORDS_HOLDER
+ * @param words - pointer to an array of pointers to strings containing the words to be found
+ * @param W - number of words to find
+ * @param start_index - first index of Dynamic array to search for each word
+ * @param end_index - last index of Dynamic array to search for each word
+ * @param fn - pointer to string containing filename
+ * @param flag - if set to 1 output to a txt file words found and their respective UFP6 representations
  */
- void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, int hi,const char *fn,bool flag);
+void find_words_ad(const AD_WORDS_HOLDER *arr, const char **words, int W, int start_index, int end_index, const char *fn, bool flag);
 /**
- * sets struct
+ * @paragraph Find word and respective UFP6 ,only at given indexes of Dynamic array
+ * Time Complexity: O(N)
+ * Extra Space: O(N)
+ * N = number of words in set
+ * @param set - pointer to SETS struct
+ * @param word - pointer to a string containing the word to be found
+ * @return if word is found in set return a pointer to an array containing the index of rows containing each word from given set and index
+ * of Dynamic array and at pos 0 it stores the number of indexes stored in array
+ * If the word is not found, return a pointer to NULL
+ */
+int *search_word(const SETS *set,const char *word);
+/**
+ * @paragraph Check if is a valid date
+ * @param date_str - pointer to string holding date
+ * @return  -
+ */
+int is_valid_date(const char *date_str);
+
+/**
+ * @paragraph Insert data to VAL_AD_WORDS_HOLDER
+ * @param val_ad_words_holder -
+ * @param set1 -
+ * @param set2 -
+ * @param last_date -
  */
 void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder,const SETS *set1,const SETS *set2,const char *last_date);
 /**
@@ -112,16 +154,15 @@ char *get_current_date();
  * using binary search
  * @param arr_din - pointer to AD_WORDS_HOLDER
  * @param date - new_date of the element we want to insert
- * @return if more than 1 element equal inside ad it returns the position to the right of existing equal elements
- * if find same date returns the exact index
- * if doesn't find same date returns the right position where it should be added
+ * @return lo - if found target it returns the position of target in dynamic array
+ * if target is not found returns the position where should be added
  * example1: index 0 24-11-2023 index 1 26-11-2023 , new_date 25-11-2023 - returns 1
- * exmaple2 :index 0 24-11-2023 , new_date 23-11-2023 return   0
- * exmaple3 :index 0 24-11-2023 , new_date 25-11-2023 return   1
+ * example2: index 0 24-11-2023 , new_date 23-11-2023 return   0
+ * example3: index 0 24-11-2023 , new_date 25-11-2023 return   1
  */
 int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din,const char *date);
 /**
- * @paragraph Delete element from Dynamic array shifting elements,
+ * @paragraph Delete element from Dynamic array by shifting the elements,
  * if dynamic array is one-quarter full halve the size
  * @param ad - pointer to AD_WORDS_HOLDER
  * @param index - index of Dynamic Array to remove element
@@ -149,40 +190,50 @@ LL_WORDS_HOLDER *ll_init();
  */
 void free_ll_words_holder(LL_WORDS_HOLDER *ll);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Create new node given 2 SETS and last update date and return it
+ * @param set1 - pointer to SETS struct
+ * @param set2 - pointer to SETS struct
+ * @param last_date - pointer to string containing the last update date
+ * @return pointer to new node
  */
-NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *s2, char *last_date);
+NODE_LL_WORDS_HOLDER *create_words_holder_node(const SETS *set1,const SETS *set2,const char *last_date);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Insert node into LL in chronological order by last modified date
+ * in DESC order
+ * Time Complexity: O(N) N = number of nodes in LL
+ * Extra space: O(1)
+ * @param ll - pointer to LL_WORDS_HOLDER
+ * @param set1 - pointer to SETS struct
+ * @param set2 - pointer to SETS struct
+ * @param last_date - pointer to string containing the last update date
  */
-void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date);
+void insert_node_ll_sorted(LL_WORDS_HOLDER *ll,const SETS *set1,const SETS *set2,const char *last_date);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
- */
-void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date, int index);
+ * @paragraph Insert node into LL at given index
+ * Time Complexity: O(N - 1) N = number of nodes in LL
+ * Extra space: O(1)
+ * @param ll - pointer to LL_WORDS_HOLDER
+ * @param set1 - pointer to SETS struct
+ * @param set2 - pointer to SETS struct
+ * @param last_date - pointer to string containing the last update date
+ * @param index - index to insert new node
+*/
+void insert_node_ll_index(LL_WORDS_HOLDER *ll,const SETS *set1,const SETS *set2,const char *last_date, int index);
 /**
  * @paragraph Print Linked List
  * @param ll - pointer to Linked List LL_Words_Holder
  */
 void print_ll_words_holder(LL_WORDS_HOLDER *ll);
 /**
- * @paragraph
- * @param ll - pointer to Linked List LL_Words_Holder
- * @param index - node of Linked List to be deleted
- */
-NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll,NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date);
-/**
- * @paragraph Search position in Linked List to add new node in chronological order DESC using binary search
+ * @paragraph Insert to LL new node given pointer to curr and prev nodes
  * @param ll - pointer to Linked List Words Holder
- * @param date - node of Linked List to be deleted
- * @return when new date > all nodes this function returns NULL ,
- * when new date < all nodes this function returns a pointer to the first node
- * and when new date between two nodes returns pointer to the left node
+ * @param set1 - pointer to SETS struct
+ * @param set2 - pointer to SETS struct
+ * @param last_date - pointer to string containing
+ * @param curr - pointer to current node
+ * @param prev - pointer to previous node
  */
-NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date);
+void insert_to_ll_given_pointers_node(LL_WORDS_HOLDER *ll, const SETS *set1, const SETS *set2, const char *last_date, NODE_LL_WORDS_HOLDER *curr, NODE_LL_WORDS_HOLDER *prev);
 /**
  * @paragraph Find midpoint of Linked List using fast_ptr and slow_ptr
  * @param lo - pointer to lower node
@@ -191,9 +242,11 @@ NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date);
  */
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
 /**
- * @paragraph Delete node in a given position/index
+ * @paragraph Delete node at a given position/index
+ * Time Complexity: O(N - 1) N = number of nodes in LL
+ * Extra Space: O(1)
  * @param ll - pointer to Linked List Words Holder
- * @param index - node of Linked List to be deleted
+ * @param index - index of node in Linked List to be deleted
  */
 void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
 /**
@@ -252,11 +305,27 @@ int save_set_txt(const SETS *set, char *filename);
  */
 void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
 /**
- * @paragraph Delete node in a given position/index
- * @param ll - pointer to Linked List Words Holder
- * @param index - node of Linked List to be deleted
+ * @paragraph Write to a txt file words found in Linked list ,
+ * with given arrays holding the indexes of all words found in each set at a given node,
+ * and at pos 0 of both arrays store the count of words to use in this function
+ * @param current - pointer to current NODE_LL_WORDS_HOLDER
+ * @param index_set1 - pointer to array containing the indexes of words found in set1 at given node from LL
+ * @param index_set2 - pointer to array containing the indexes of words found in set2 at given node from LL
+ * @param filename - pointer to string containing filename
+ * @param index_ll - index of LL (node) where words were found
  */
-int write_words_found_to_txt(const NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2,const char *filename, int index_ll);
+int write_words_found_in_ll_to_txt(const NODE_LL_WORDS_HOLDER *current, const int *index_set1, const int *index_set2, const char *filename, int index_ll);
+/**
+ * @paragraph Write to a txt file words found in dynamic array ,
+ * with given arrays holding the indexes of all words found in each set at a given index
+ * and at pos 0 of both arrays store the count of words to use in this function
+ * @param val_ad - pointer to VAL_AD_WORDS_HOLDER
+ * @param index_set1 - pointer to array containing the indexes of words found in set1 at given index of dynamic array
+ * @param index_set2 - pointer to array containing the indexes of words found in set2 at given index of dynamic array
+ * @param filename - pointer to string containing filename
+ * @param index_ad - index of dynamic array where words were found
+ */
+int write_words_found_in_da_to_txt(const VAL_AD_WORDS_HOLDER *val_ad, const int *index_set1, const int *index_set2, const char *filename, int index_ad);
 /**
  * @paragraph Delete node in a given position/index
  * @param ll - pointer to Linked List Words Holder

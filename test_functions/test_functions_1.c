@@ -6,9 +6,9 @@
 #include "test_functions_1.h"
 #include "../functions/functions_1.h"
 
-#define R 8
-#define  FILE_PATTERN_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
-#define MSD_VS_MERGES_FILE "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/sorting_comp.txt"
+#define R 11
+#define  FILE_PATTERN_FOUND_SET "set_words_found.txt"
+#define MSD_VS_MERGES_FILE "sorting_comp.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -25,7 +25,7 @@ int main_test_functions_1(int argc, char **argv) {
      * and with exact number of columns in each matrix to hold words
      * and their UFP6 representation
      */
-    //test_function1_feature1();
+    test_function1_feature1();
     /**2) Test functions to encode to UFP6 a matrix of words
     */
    //test_function1_feature2();
@@ -197,12 +197,14 @@ void test_functions1_feature6() {
     int  num_words_set1 = R;
     ///Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict, num_words_set1);
+
     encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
     printf("Before sort\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
 
     int flag = 1; // ASC
+    char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
      *  if flag set to 1 = ASC ,if set to 0 = DESC
      *  */
@@ -226,6 +228,7 @@ void test_functions1_feature6() {
     print_matrix_int(&set1);
     //print_arr_word_size(&set1);
     is_sorted_sizes(&set1, set1.rowsize, flag);
+  
     freemem_set(&set1);
     exit(0);
 }
@@ -274,6 +277,7 @@ void test_cmp_msd_mergesort() {
     int flag = 1; ///Sort in ASC order
     float time_delta_msd = 0.0f;
     float time_delta_merge_s = 0.0f;
+
     int arr_num_words[] = {1000, 1000000, 4000000,10000000};
     for (int i = 0; i < 4; ++i) {
         SETS set1 = {NULL, NULL, NULL, NULL, 0};

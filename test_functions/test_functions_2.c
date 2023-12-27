@@ -221,6 +221,7 @@ void test_function_2_8_e() {
     ufp6_dictionary(dict, sizes_ufp6_dict);
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
+  
     ///Initialize sets with random words and encode them
     SETS sets[NUM_SETS] = {0};
     for (int i = 0; i < NUM_SETS; ++i) {

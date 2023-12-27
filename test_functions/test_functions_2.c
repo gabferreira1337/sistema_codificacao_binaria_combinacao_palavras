@@ -9,7 +9,8 @@
 #include "test_functions_2.h"
 
 
-#define R 5
+
+#define R 10
 #define DATE_SIZE 11
 #define AD_SIZE 4
 #define NUM_SETS 8
@@ -20,6 +21,7 @@
 #define FILE_AD_BIN "../data/ad_history.bin"
 #define FILE_LL "../data/LL_history.txt"
 #define FILE_LL_BIN "../data/LL_history.bin"
+
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -148,6 +150,7 @@ void test_function_2_8_b() {
     exit(0);
 }
 
+
 void test_function_2_8_c() {
     int dict[MAX_UFP6][BITS - 1]={
             {0, 0},
@@ -234,6 +237,7 @@ void test_function_2_8_e() {
     ufp6_dictionary(dict, sizes_ufp6_dict);
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
+
     ///Initialize sets with random words and encode them
     SETS sets[NUM_SETS] = {0};
     for (int i = 0; i < NUM_SETS; ++i) {
@@ -340,6 +344,7 @@ void test_function_2_9_b() {
     free_ll_words_holder(ll);
     exit(0);
 }
+
 
 void test_function_2_9_c() {
     int dict[MAX_UFP6][BITS - 1] = {
@@ -623,4 +628,3 @@ void test_functions_2_11_ll() {
     free_ll_words_holder(ll_2);
     exit(0);
 }
-

@@ -6,78 +6,12 @@
 #include "functions_2.h"
 #include "functions_1.h"
 
-#define R 5
 #define DATE_SIZE 11
-#define BUFFER_SIZE 8096
-
-#define DYNAMIC_ARRAY_SIZE 1
 
 
 int main_functions_2(int argc, char **argv) {
 
-  /* // b)
-
-    /*insert_word_char(&set1, set1.rowsize, 2);
-    insert_word_char(&set2, set2.rowsize, 1);
-
-    encode_matrix_words(&set1, sizes, dic);
-    encode_matrix_words(&set2, sizes, dic);
-
-    insert_node_ll_index(ll, &set1, &set2, testDates[3], 0);
-    insert_node_ll_index(ll, &set1, &set2, testDates[2], 1);
-    insert_node_ll_index(ll, &set1, &set2, testDates[1], 2);
-    insert_node_ll_index(ll, &set1, &set2, testDates[3], 1);
-    insert_node_ll_index(ll, &set1, &set2, testDates[2], 2);
-
-   // insert_node_ll_index(ll, &set1, &set2, testDates[2], 0);
-
-    char *words[] = {
-            "ola",
-            "olas",
-    };
-
-    find_word_ll(ll, words, 2, 0, 4);
-
-   // delete_ll_node_index(ll, 5);
-   // delete_ll_node_index(ll, 4);
-   // insert_node_ll_index(ll, &set1, &set2, testDates[1], 1);
-    print_ll_words_holder(ll);
-
-    free_ll_words_holder(ll);*/
-
-   /* char *testDates[] = {
-            "2023-11-25",
-            "2023-11-24",
-            "2022-12-01",
-            "2023-01-15",
-            "2022-08-10",
-    };
-
-
-   // print_KMP_BinMatches(&set1, index_words_found);
-
-/*
-    char *words[] = {
-            "ola",
-            "olas",
-    };
-
-    find_word_ad(arr_din, words, 2, 0, 1);
-    print_AD(arr_din);*/
-
-    //free_dynamic_array(arr_din);
-
-   /* encode_matrix_words(&set1, sizes,dic);
-
-    print_matrix_char(&set1);
-    print_matrix_char(&set2);
-
-    freemem_set(&set1);
-    freemem_set(&set2);
-
-    exit(0);
-*/
-   // return 0;
+    return 0;
 }
 
 AD_WORDS_HOLDER *dynamic_array_init(int size) {
@@ -116,7 +50,7 @@ char *get_current_date() {
     timeinfo = localtime(&rawtime);
 
     /// Format date
-    char *date_str = malloc(sizeof(char) * DATE_SIZE); // Adjust the size as needed
+    char *date_str = malloc(sizeof(char) * DATE_SIZE);
     strftime(date_str, DATE_SIZE, "%d/%m/%y", timeinfo);
     return date_str;
 }
@@ -160,16 +94,12 @@ void print_AD(const AD_WORDS_HOLDER *ad) {
         printf("\nIndex %d\n", i);
         printf("last update date: %s\n", &(*(ad->array_val + i)->last_update_date));
         puts("SET 1 ");
-        puts("Words ");
         print_matrix_char(&((*(ad->array_val + i)).words_holder.s1));
-        puts("Encode ");
         // print_matrix_int(&ad->array_val[i].words_holder.s1);
         // with pointer notation
         print_matrix_int(&((*(ad->array_val + i)).words_holder.s1));
         puts("SET 2 ");
-        puts("Words ");
         print_matrix_char(&((*(ad->array_val + i)).words_holder.s2));
-        puts("Encode ");
         print_matrix_int(&((*(ad->array_val + i)).words_holder.s2));
     }
 }
@@ -350,7 +280,7 @@ void find_words_ad(const AD_WORDS_HOLDER *arr, const char **words, int W, int st
             index_set1 = search_word(&arr->array_val[j].words_holder.s1, words[i]);
             index_set2 =  search_word(&arr->array_val[j].words_holder.s2, words[i]);
             if(index_set1 == NULL && index_set2 == NULL){
-                printf("Word %s not found in element %d\n\n", words[i], j);
+                printf("Word %s not found in index %d\n\n", words[i], j);
             }else{
                 print_words_found(arr, index_set1, index_set2, j);
                 ///If flag set to 1 output found words and UFP6 to a txt file
@@ -591,18 +521,18 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
     ll->nnodes--;
 }
 
-void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi, const char *fn, bool flag) {
+/*
+void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int start_index_node, int end_index_node, const char *fn, bool flag) {
     ///Check if out of bounds
-    if(lo < 0 || hi >= ll->nnodes){
+    if(start_index_node < 0 || end_index_node >= ll->nnodes){
         fperror("LO or HI out of bounds");
-        //exit(0);
     }
 
     int *index_set1 = NULL,*index_set2 = NULL;
     NODE_LL_WORDS_HOLDER *lo_node;
     lo_node = ll->phead;
 
-    for (int i = 0; i < lo; ++i) {
+    for (int i = 0; i < start_index_node; ++i) {
         lo_node= lo_node->pnext;
     }
 
@@ -613,7 +543,7 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
         int dfa[MAX_UFP6][BITS - 1];
         KMP (words[i], dfa);
         NODE_LL_WORDS_HOLDER *current = lo_node;
-        for (int j = lo; j <= hi && current->pnext !=NULL; ++j) {
+        for (int j = start_index_node; j <= end_index_node && current->pnext !=NULL; ++j) {
             index_set1 = search_KMP(&current->words_holder.s1,dfa ,word_length);
             index_set2 =  search_KMP(&current->words_holder.s2,dfa ,word_length);
             print_words_found_ll(current, index_set1, index_set2, j);
@@ -627,22 +557,78 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
             current = current->pnext;
         }
     }
+}*/
+
+void find_words_ll(const LL_WORDS_HOLDER *ll, const char **words, const char *fn, int W, int start_index_node, int end_index_node, bool flag) {
+    ///Check if out of bounds
+    if(start_index_node < 0 || end_index_node >= ll->nnodes){
+        fperror("LO or HI out of bounds");
+    }
+
+    int *arr_index_set1 = NULL,*arr_index_set2 = NULL;
+    NODE_LL_WORDS_HOLDER *start_node = NULL;
+    ///If only want to find in last node given words
+   if (start_index_node != ll->nnodes - 1) {
+       start_node = ll->phead;
+       ///Get pointer to starting node given index
+       for (int i = 0; i < start_index_node; ++i) {
+           start_node = start_node->pnext;
+       }
+   }else{
+       ///Use pointer to last node in LL_WORDS_HOLDER so don't need to
+       ///traverse linked list to get pointer to last node
+       start_node = ll->ptail;
+   }
+
+    for (int i = 0; i < W; ++i) {
+        ///Calculate length of string
+        int word_length =(int) strlen(words[i]);
+        ///Check if word is valid in UFP6
+        if(is_ufp6(words[i], word_length) == -1){
+            printf("Word %s not valid in UFP6\n", words[i]);
+            continue;
+        }
+        NODE_LL_WORDS_HOLDER *curr = start_node;
+        for (int j = start_index_node; j <= end_index_node && curr != NULL; ++j) {
+            ///Search for words in each set and store indexes in
+            arr_index_set1 = search_word(&curr->words_holder.s1, words[i]);
+            arr_index_set2 =  search_word(&curr->words_holder.s2, words[i]);
+            if (arr_index_set1 == NULL && arr_index_set2 == NULL){
+                printf("Word %s not found in node %d\n\n", words[i], j);
+            }else {
+                print_words_found_ll(curr, arr_index_set1, arr_index_set2, j);
+                ///If flag set to 1 output found words and UFP6 to a txt file
+                if (flag == 1 && fn != NULL){
+                    write_words_found_in_ll_to_txt(curr, arr_index_set1, arr_index_set2, fn, j);
+                }
+            }
+            free_index_arrays(arr_index_set1, arr_index_set2);
+            curr = curr->pnext;
+        }
+    }
 }
 
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *current, int *index_set1, int *index_set2, int j) {
     if (index_set1 != NULL){
-        printf("LL NODE -> %d Set1 Match ", j);
+        printf("LL NODE -> %d Set1 Match\n", j);
         print_found_words_and_ufp6(&current->words_holder.s1, index_set1);
     }
 
     if (index_set2 != NULL){
-        printf("LL NODE -> %d Set2 Match, ", j);
+        printf("LL NODE -> %d Set2 Match\n", j);
         print_found_words_and_ufp6(&current->words_holder.s2, index_set2);
     }
 }
 
+void free_index_arrays(int *arr1, int *arr2){
+    free(arr1);
+    arr1 = NULL;
+    free(arr2);
+    arr2 = NULL;
+}
+
 void write_set_to_txt(const SETS *set, FILE *fp) {
-    //write rowsize (number of words in set) to file
+    ///write rowsize (number of words in set) to file
     fprintf(fp, "number_words = %d\n", set->rowsize);
     for (int i = 0; i < set->rowsize; i++) {
         //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
@@ -696,7 +682,7 @@ int write_words_found_in_da_to_txt(const VAL_AD_WORDS_HOLDER *val_ad, const int 
 }
 
 int write_words_found_in_ll_to_txt(const NODE_LL_WORDS_HOLDER *current, const int *index_set1, const int *index_set2, const char *filename, int index_ll) {
-    FILE *fp = fopen(filename, "a+");
+    FILE *fp = fopen(filename, "a");
     if (fp == NULL) {
         fperror("Opening file in write_words_found_to txt");
     }
@@ -720,7 +706,7 @@ int write_words_found_in_ll_to_txt(const NODE_LL_WORDS_HOLDER *current, const in
 
 
 void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *array_index) {
-    //count of indexes from the words found in set stored in first position of array
+    ///count of indexes from the words found in set stored in first position of array
     for (int i = 1; i <= *array_index; i++) {
         fprintf(fp, "Row Index -> %d\n",  array_index[i]);
         fprintf(fp, "Word = %s |",  set->matrix[array_index[i]]);
@@ -740,8 +726,7 @@ void write_index_array_ufp6_to_file(const SETS *set, FILE *fp, const int *array_
 }
 
 int save_set_txt(const SETS *set, char *filename) {
-    FILE *fp = fopen(filename, "a+");
-
+    FILE *fp = fopen(filename, "a");
     if (fp == NULL) {
         fperror("Error opening file in save_set_txt");
     }
@@ -749,7 +734,6 @@ int save_set_txt(const SETS *set, char *filename) {
     write_set_to_txt(set, fp);
 
     fclose(fp);
-
     return 0;
 }
 
@@ -766,15 +750,15 @@ void write_set_ufp6_to_txt(const SETS *set, FILE *fp) {
 }
 
 void read_txt_to_set(SETS *set, FILE *fp) {
-    //read rowsize from file
+    ///read rowsize from file
     fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
+    ///Initialize set
     sets_struct_init_v2(set, set->rowsize);
 
-    // Read set of words
+    /// Read set of words
     read_txt_words(set, fp);
 
-    //Read ufp6 from set
-    //UFP6: read for void
+    ///Read UFP from set
     read_ufp6_file_to_set(set, fp);
 }
 
@@ -782,6 +766,7 @@ void read_txt_words(SETS *set, FILE *fp) {
     for (int i = 0; i < set->rowsize; ++i) {
         fscanf(fp, "%d", &set->arr_word_size[i]);
         fscanf(fp, "%*[-]");
+        ///Allocate memory for each row to store word in matrix given size
         calloc_col_word(&set->matrix[i],set->arr_word_size[i]);
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             fscanf(fp, " %c ",&set->matrix[i][j]);
@@ -793,10 +778,12 @@ void read_txt_words(SETS *set, FILE *fp) {
  */
 void sets_struct_init_v2(SETS *set, int num_words) {
     set->rowsize = num_words;
+    ///Initialise array to hold each word size
     init_arr_word_size(set);
-    set->arr_ufp6_size = (int*) calloc(set->rowsize, sizeof(int));
-    set->matrix_ufp6 =(int**) calloc(set->rowsize, sizeof(int*));
-    set->matrix = (char**) calloc(set->rowsize, sizeof(char*));
+    ///Initialise array to hold each UFP6 size
+    init_arr_ufp6_size(set);
+    ///Initialize matrix words and UFP6 to num_words pointers
+    calloc_matrix_words_and_ufp6(set, num_words);
 }
 
 void calloc_col_word(char **mat_row, int col_words_size) {
@@ -807,14 +794,16 @@ void calloc_col_word(char **mat_row, int col_words_size) {
 }
 
 void read_ufp6_file_to_set(SETS *set, FILE *fp) {
-    //read UFP6: to void
+    ///read UFP6: to void
     fscanf(fp, "%*s");
     for (int i = 0; i < set->rowsize; ++i) {
+        ///Read size of UFP6 representation
         fscanf(fp, "%d", &set->arr_ufp6_size[i]);
         fscanf(fp, "%*[-]");
-        //allocate for each row number of columns read from file
+        ///allocate for each row number of columns read from file
         calloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
         for (int j = 0; j < set->arr_ufp6_size[i]; ++j) {
+            ///Read UFP6 representation to set
             fscanf(fp, "%d",&set->matrix_ufp6[i][j]);
         }
     }
@@ -829,20 +818,19 @@ void calloc_col_ufp6(int **mat_encode_row, int col_words_size) {
 
 void write_ad_to_txt(const AD_WORDS_HOLDER *ad,const char *fn) {
     FILE *fp = NULL;
-    //write mode
-    fp = fopen(fn, "w");
 
+    fp = fopen(fn, "w");
     if (fp == NULL) {
         fperror("Opening file in write_ad_to_file");
     }
-    //Write number of elements in dynamic array
+    ///Write number of elements in dynamic array
     fprintf(fp, "Number of elements: %d\n", ad->count);
 
     for (int i = 0; i < ad->count; ++i) {
-        //Write index of ad
+        ///Write index of ad
         fprintf(fp, "\nIndex %d\n", i);
         fprintf(fp, "Last Update Date: %s\n", ad->array_val[i].last_update_date);
-        //Write both sets inside each index
+        ///Write both sets inside each index
         write_both_sets_to_txt(&ad->array_val[i].words_holder ,fp);
     }
     fclose(fp);
@@ -857,31 +845,30 @@ void write_both_sets_to_txt(const WORDS_HOLDER *wordsHolder, FILE *fp) {
 
 void read_from_txt_to_ad(AD_WORDS_HOLDER **ad,const char *fn, bool flag) {
     FILE *fp = NULL;
-    //read mode
-    fp = fopen(fn, "r");
 
+    fp = fopen(fn, "r");
     if(fp == NULL){
         fperror("Opening File in read_from_txt_to_ad");
     }
-    // Read number of elements from file and initialize dynamic array
+    ///Read number of elements from file and initialize dynamic array
     int num_elem = 0;
-    //%*[^:]%*[:] = read until : to void and after read : to void
+    ///%*[^:]%*[:] = read until : to void and after read : to void
     fscanf(fp, "%*[^:]%*[:] %d", &num_elem);
     *ad = dynamic_array_init(num_elem);
 
     for (int i = 0; i < (*ad)->size; ++i) {
-        //Read line to void
+        ///Read line to void
         fscanf(fp, "%*s");
         char date[DATE_SIZE];
-        //Read last update date
+        ///Read last update date
         fscanf(fp, "%*[^:]%*[:] %s",date);
 
-        SETS set1 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set1 = {NULL, NULL, NULL, NULL, 0};
         read_txt_to_set(&set1, fp);
 
-        SETS set2 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set2 = {NULL, NULL, NULL, NULL, 0};
         read_txt_to_set(&set2,fp);
-        //Read in chronological order if set to 1
+        ///Read in chronological order ASC if set to 1
         if(flag == 1){
             insert_element_to_AD_in_order(*ad, &set1, &set2,date);
         }else{
@@ -902,22 +889,21 @@ LL_WORDS_HOLDER *ll_init() {
 
 void write_ll_to_txt(const LL_WORDS_HOLDER *ll, const char *fn) {
     FILE *fp = NULL;
-    //write mode
-    fp = fopen(fn, "w");
 
+    fp = fopen(fn, "w");
     if (fp == NULL) {
         fperror("Opening file in write_ll_to_file");
     }
-    //Write number of elements in dynamic array
+    ///Write number of elements in dynamic array
     fprintf(fp, "Number of nodes: %d\n", ll->nnodes);
-    //Pointer to traverse the ll from head to tail
+    ///Pointer to traverse the ll from head to tail
     NODE_LL_WORDS_HOLDER *ncurr = ll->phead;
     int i = 0;
     while(ncurr != NULL){
-        //Write index of ad
+        ///Write index of ad
         fprintf(fp, "\nNode %d\n", i);
         fprintf(fp, "Last Update Date: %s\n", ncurr->last_update_date);
-        //Write both sets inside each index
+        ///Write both sets inside each index
         write_both_sets_to_txt(&ncurr->words_holder, fp);
         ncurr = ncurr->pnext;
         i++;
@@ -927,30 +913,27 @@ void write_ll_to_txt(const LL_WORDS_HOLDER *ll, const char *fn) {
 
 void read_from_txt_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     FILE *fp = NULL;
-    //read mode
-    fp = fopen(fn, "r");
 
+    fp = fopen(fn, "r");
     if(fp == NULL){
         fperror("Opening File in read_from_txt_to_ad");
     }
 
     int num_nodes = 0;
-    //%*[^:]%*[:] = read until : to void and after read : to void
+    ///%*[^:]%*[:] = read until : to void and after read : to void
     fscanf(fp, "%*[^:]%*[:] %d", &num_nodes);
 
     for (int i = 0; i < num_nodes; ++i) {
-        //Read line to void
+        ///Read line to void
         fscanf(fp, "%*s");
-        char date[DATE_SIZE];
-        //Read last update date
+        char date[DATE_SIZE] = " ";
+        ///Read last update date
         fscanf(fp, "%*[^:]%*[:] %s",date);
-
-        SETS set1 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set1 = {NULL, NULL, NULL, NULL, 0};
         read_txt_to_set(&set1, fp);
-
-        SETS set2 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set2 = {NULL, NULL, NULL, NULL, 0};
         read_txt_to_set(&set2,fp);
-        //Read in chronological order if set to 1
+        ///Read in chronological order DESC if set to 1
         if(flag == 1){
             insert_node_ll_sorted(ll, &set1, &set2,date);
         }else{
@@ -960,57 +943,55 @@ void read_from_txt_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     fclose(fp);
 }
 
-// Typing in binary into a file
+
 void write_ad_to_bin(const AD_WORDS_HOLDER *ad, const char *fn) {
     FILE *fp = NULL;
-    //write mode
-    fp = fopen(fn, "wb");
 
+    fp = fopen(fn, "wb");
     if (fp == NULL) {
         fperror("Opening file in write_ad_to_file");
     }
-    //Write number of elements in dynamic array
+    ///Write number of elements in dynamic array
     fwrite(&ad->count, sizeof(ad->count), 1,fp);
 
     for (int i = 0; i < ad->count; ++i) {
         //Write index of ad
         //fprintf(fp, "\nIndex %d\n", i);
-        fwrite(ad->array_val[i].last_update_date, sizeof(ad->array_val[i].last_update_date), strlen(ad->array_val[i].last_update_date), fp);
-        //Write both sets inside each index
+        size_t date_length = strlen(ad->array_val[i].last_update_date) + 1; // + '\0'
+        fwrite(ad->array_val[i].last_update_date, sizeof(char), date_length, fp);
+        ///Write both sets inside each index
         write_both_sets_to_binfile(&ad->array_val[i].words_holder ,fp);
     }
     fclose(fp);
 }
 
 
-// Writting both Sets into the bin file, ww'll call this in write ad to bin
-
+/// Write both Sets to bin file
 void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp) {
-    //fprintf(fp, "Words set: 1\n");
     write_set_to_binfile(&wordsHolder->s1, fp);
-    //fprintf(fp, "Words set: 2\n");
     write_set_to_binfile(&wordsHolder->s2, fp);
 }
 
-// Will be called inside the write_both_sets_to_binfile
+
 void write_set_to_binfile(const SETS *set, FILE *fp) {
-    //write rowsize (number of words in set) to file
+    ///write rowsize (number of words in set) to file
     fwrite(&set->rowsize, sizeof(set->rowsize), 1,fp);
     for (int i = 0; i < set->rowsize; i++) {
         //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
+        ///Write sizeof each word
         fwrite(&set->arr_word_size[i],sizeof(set->arr_word_size[i]), 1, fp);
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             fwrite(&set->matrix[i][j],sizeof(set->matrix[i][j]), 1, fp);
         }
         //(fp, "\n");
     }
-   // fprintf(fp, "UFP6:\n");
     write_set_ufp6_to_binfile(set, fp);
 }
 
 void write_set_ufp6_to_binfile(const SETS *set, FILE *fp) {
     //fprintf(fp, "UFP6 encode:\n");
     for (int i = 0; i < set->rowsize ; ++i) {
+        ///Write size of UFP6 representation
         fwrite(&set->arr_ufp6_size[i],sizeof(set->arr_ufp6_size[i]),1, fp);
         //fwrite(&set->arr_ufp6_size[i],sizeof(set->arr_ufp6_size[i]) ,1, stdout);
         for (int j = 0; j < set->arr_ufp6_size[i]; j++) {
@@ -1021,15 +1002,14 @@ void write_set_ufp6_to_binfile(const SETS *set, FILE *fp) {
 
 void read_from_bin_to_ad(AD_WORDS_HOLDER **ad, const char *fn, bool flag) {
     FILE *fp = NULL;
-    //read mode
-    fp = fopen(fn, "rb");
 
+    fp = fopen(fn, "rb");
     if(fp == NULL){
         fperror("Opening File in read_from_txt_to_ad");
     }
-    // Read number of elements from file and initialize dynamic array
+    /// Read number of elements from file and initialize dynamic array
     int num_elem = 0;
-    //%*[^:]%*[:] = read until : to void and after read : to void
+    ///%*[^:]%*[:] = read until : to void and after read : to void
     //fscanf(fp, "%*[^:]%*[:] %d", &num_elem);
     fread(&num_elem,sizeof(num_elem),1,fp);
     *ad = dynamic_array_init(num_elem);
@@ -1037,18 +1017,17 @@ void read_from_bin_to_ad(AD_WORDS_HOLDER **ad, const char *fn, bool flag) {
     for (int i = 0; i < (*ad)->size; ++i) {
         //Read line to void
         //fscanf(fp, "%*s");
-        char date[DATE_SIZE];
-        //Read last update date
+        char date[DATE_SIZE] = " ";
+        ///Read last update date
         //fscanf(fp, "%*[^:]%*[:] %s",date);
-        fread(date,sizeof(date),DATE_SIZE,fp);
-        printf("sate %s\n", date);
+        fread(date,sizeof(char),DATE_SIZE,fp);
+        printf("date %s\n", date);
 
-        SETS set1 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set1 = {NULL, NULL, NULL, NULL, 0};
         read_binfile_to_set(&set1, fp);
-
-        SETS set2 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set2 = {NULL, NULL, NULL, NULL, 0};
         read_binfile_to_set(&set2,fp);
-        //Read in chronological order if set to 1
+        ///Insert to Dynamic Array in chronological order ASC if set to 1
         if(flag == 1){
             insert_element_to_AD_in_order(*ad, &set1, &set2,date);
         }else{
@@ -1059,23 +1038,23 @@ void read_from_bin_to_ad(AD_WORDS_HOLDER **ad, const char *fn, bool flag) {
 }
 
 void read_binfile_to_set(SETS *set, FILE *fp) {
-    //read rowsize from file
+    ///Read number of words from file
     //fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
     fread(&set->rowsize, sizeof(set->rowsize),1, fp);
     printf("set %d\n", set->rowsize);
-
     sets_struct_init_v2(set, set->rowsize);
 
-    // Read set of words
+    ///Read set of words
     read_binfile_words(set, fp);
-
-    //Read ufp6 from set
+    ///Read ufp6 from set
     read_ufp6_binfile_to_set(set, fp);
 }
 
 void read_binfile_words(SETS *set, FILE *fp) {
     for (int i = 0; i < set->rowsize; ++i) {
+        ///Read word size to set
         fread(&set->arr_word_size[i], sizeof(set->arr_word_size[i]), 1, fp);
+        ///Allocate memory for each row
         calloc_col_word(&set->matrix[i],set->arr_word_size[i]);
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             //fscanf(fp, "%c",&set->matrix[i][j]);
@@ -1084,15 +1063,16 @@ void read_binfile_words(SETS *set, FILE *fp) {
     }
 }
 
-// Reading from a binaryfile into a set
+
 void read_ufp6_binfile_to_set(SETS *set, FILE *fp) {
     //read UFP6: to void
-   // fscanf(fp, "%*s");
+   //fscanf(fp, "%*s");
     for (int i = 0; i < set->rowsize; ++i) {
        // fscanf(fp, "%d", &set->arr_ufp6_size[i]);
+       ///Read size of UFP6 representation
         fread(&set->arr_ufp6_size[i],sizeof(set->arr_ufp6_size),1,fp);
         //fscanf(fp, "%*[-]");
-        //allocate for each row number of columns read from file
+        ///allocate for each row number of columns read from file
         calloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
         for (int j = 0; j < set->arr_ufp6_size[i]; ++j) {
             //fscanf(fp, "%d",&set->matrix_ufp6[i][j]);
@@ -1103,23 +1083,22 @@ void read_ufp6_binfile_to_set(SETS *set, FILE *fp) {
 
 void write_ll_to_binfile(const LL_WORDS_HOLDER *ll, const char *fn) {
     FILE *fp = NULL;
-    //write mode
-    fp = fopen(fn, "wb");
 
+    fp = fopen(fn, "wb");
     if (fp == NULL) {
         fperror("Opening file in write_ll_to_file");
     }
-    //Write number of elements in dynamic array
+    ///Write number of elements in dynamic array
     //fprintf(fp, "Number of nodes: %d\n", ll->nnodes);
     fwrite(&ll->nnodes, sizeof(ll->nnodes),1, fp);
-    //Pointer to traverse the ll from head to tail
+    ///Pointer to traverse the ll from head to tail
     NODE_LL_WORDS_HOLDER *ncurr = ll->phead;
     int i = 0;
     while(ncurr != NULL){
-        //Write index of ad
+        ///Write index of ad
         //fprintf(fp, "\nNode %d\n", i);
         fwrite(ncurr->last_update_date, sizeof(ncurr->last_update_date), strlen(ncurr->last_update_date),fp);
-        //Write both sets inside each index
+        ///Write both sets inside each index
         write_both_sets_to_binfile(&ncurr->words_holder, fp);
         ncurr = ncurr->pnext;
         i++;
@@ -1129,15 +1108,14 @@ void write_ll_to_binfile(const LL_WORDS_HOLDER *ll, const char *fn) {
 
 void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     FILE *fp = NULL;
-    //read mode
-    fp = fopen(fn, "rb");
 
+    fp = fopen(fn, "rb");
     if(fp == NULL){
-        fperror("Opening File in read_from_txt_to_ad");
+        fperror("Opening File in read_from_binfile_to_ll");
     }
 
     int num_nodes = 0;
-    //%*[^:]%*[:] = read until : to void and after read : to void
+    ///%*[^:]%*[:] = read until : to void and after read : to void
     //fscanf(fp, "%*[^:]%*[:] %d", &num_nodes);
     fread(&num_nodes, sizeof(num_nodes), 1, fp);
     printf("num_nodes %d\n", num_nodes);
@@ -1145,17 +1123,16 @@ void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll, const char *fn, bool flag) {
     for (int i = 0; i < num_nodes; ++i) {
         //Read line to void
         //fscanf(fp, "%*s");
-        char date[DATE_SIZE];
-        //Read last update date
+        char date[DATE_SIZE] = " ";
+        ///Read last update date
        // fscanf(fp, "%*[^:]%*[:] %s",date);
-        fread(date, sizeof(date), DATE_SIZE, fp);
+        fread(date, sizeof(char), DATE_SIZE, fp);
 
-        SETS set1 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set1 = {NULL, NULL, NULL, NULL, 0};
         read_binfile_to_set(&set1, fp);
-
-        SETS set2 = {NULL, NULL, NULL, NULL, 0,0};
+        SETS set2 = {NULL, NULL, NULL, NULL, 0};
         read_binfile_to_set(&set2,fp);
-        //Read in chronological order if set to 1
+        ///Read in chronological order DESC if set to 1
         if(flag == 1){
             insert_node_ll_sorted(ll, &set1, &set2,date);
         }else{

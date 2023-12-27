@@ -6,9 +6,9 @@
 #include "test_functions_1.h"
 #include "../functions/functions_1.h"
 
-#define R 11
-#define  FILE_PATTERN_FOUND_SET "set_words_found.txt"
-#define MSD_VS_MERGES_FILE "sorting_comp.txt"
+#define R 8
+#define  FILE_PATTERN_FOUND_SET "../data/set_words_found.txt"
+#define MSD_VS_MERGES_FILE "../data/sorting_comp.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \

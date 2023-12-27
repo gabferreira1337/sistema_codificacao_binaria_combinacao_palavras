@@ -1,0 +1,40 @@
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100
+Pattern "ol" found in these words from set:
+Index -> 5
+Word = ola | UFP6 = 11000101011010
+Index -> 6
+Word = olas | UFP6 = 1100010101101011100

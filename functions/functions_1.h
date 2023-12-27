@@ -190,7 +190,8 @@ void sort_size(SETS *set,bool flag);
 /**
  * @paragraphThis Quick sort algorithm to sort both matrix and matrix_ufp6,
  * it uses divide and conquer strategy like merge sort,
- * we first shuffle the array using Knuth-Shuffle algorithm
+ * we first shuffle the array using Knuth-Shuffle algorithm,
+ * after we find median between lo mid and hi and exch with lo,
  * then we partition the array so that for pivot,
  * entry a[pivot] is in place , no larger entry to the left of pivot
  * and no smaller entry to the right of pivot
@@ -228,13 +229,12 @@ int partition(SETS *set,int *arr, int lo, int hi, bool flag);
  */
 int findMedian(const int *arr, int lo, int mid, int hi);
 /**
- * @paragraph This function implements the Knuth-shuffle algoritm,
+ * @paragraph This function implements the Knuth-shuffle algorithm,
  * it shuffles the array generating random indexes and swap elements between those index
  * , for better performance in qsort algorithm
- * @param arr - pointer to array with words size
- * @param N - size of array
+ * @param set - pointer to SETS struct
  */
-void knuth_shuffle(int *arr, int N);
+void knuth_shuffle(SETS *set);
 /**
  * @paragraph Exchange items between arr[i] and arr[j]
  * @param arr - pointer to int array
@@ -318,7 +318,46 @@ void generate_combination_without_repetition(int *row, int length);
  * @param w -
  */
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
+/**
+ * @paragraph Not implemented
+ * @param word -
+ * @param arr_bin_sizes -
+ * @param words_bin_sizes -
+ * @param N -
+ * @param w -
+ */
 void generate_combination_without_repetition(int *row, int length);
+/**
+ * @paragraph This function compares two strings starting from position D
+ * @param str1 - pointer to string1
+ * @param str2 - pointer to string2
+ * @param d - start at dth character
+ * @param flag - boolean, if set to 1 compare in ASC order , if set to 0 compare in DESC order
+ * @return if str1 < str2 returns a non-zero number, if str1 > str2 it returns 0
+ */
+int less(char *str1, char *str2, int d, bool flag);
+/**
+ * @paragraph This function sorts a set of words using insertion sort algorithm
+ * Time Complexity: O(N^2) N = number of words
+ * Extra Space: O(1)
+ * @param set - pointer to SETS struct
+ * @param lo - lower bound
+ * @param hi - higher bound
+ * @param d - start at dth character
+ * @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
+ */
+void insertion_sort(SETS *set, int lo, int hi, int d, bool flag);
+/**
+ * @paragraph This function sorts a set of words by their size using insertion sort algorithm
+ * Time Complexity: O(N^2) N = number of words
+ * Extra Space: O(1)
+ * @param set - pointer to SETS struct
+ * @param lo - lower bound
+ * @param hi - higher bound
+ * @param d - start at dth character
+ * @param flag - boolean, if set to 1 sort in ASC order , if set to 0 sort in DESC order
+ */
+void insertion_sort_int(SETS *set, int lo, int hi, bool flag);
 /**
  * @paragraph Sort matrix of words and UFP6 representations in chronological order (ASC or DESC)
  * using mergesort algorithm
@@ -344,6 +383,8 @@ void sort_by_alphabetical_order(SETS *set,const int *sizes_ufp6, bool flag);
 void merge(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int mid, int hi, bool flag);
 /**
 * @paragraph Mergesort recursive function , using "divide and conquer" strategy
+* With 2 improvements implemented : Cutoff to small subarrays (CUTOFF = 10)
+* and stop if already sorted
 * Time Complexity: O(NlogN)
 * Extra Space: O(2N) M = number of words
 * @param set - pointer to SETS struct
@@ -540,16 +581,6 @@ void exch_rows_matrix_ufp6(SETS *set, int i, int j);
  * @param j - index of a row to swap
 */
 void exch_rows_from_both_matrix(SETS *set, int i, int j);
-/**
- * @paragraph This function sorts matrix of words and ufp6 in SETS struct,
- * using insertion sort
- * Time complexity: O(N^2)
- * Extra Space: O(1)
- * @param set - pointer to SETS struct
- * @param N - size of rows
- * @param flag -boolean, if set to 1 sort in ASC order, if set to 0 sort in DESC order
-*/
-void insertion_sort_char(SETS *set, int N,bool flag);
 /**
  * @paragraph This function checks if matrix_words is sorted
  * by alphabetical order

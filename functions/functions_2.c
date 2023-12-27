@@ -45,19 +45,6 @@ int main_functions_2(int argc, char **argv) {
 
     free_ll_words_holder(ll);*/
 
-
-    //
-   // insert_element_to_index_AD(arr_din, &set1, &set2, testDates[1], 10);
-   // insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
-
-   /* insert_word_char(&set1, set1.rowsize, 2);
-    insert_word_char(&set2, set2.rowsize, 1);
-*/
-
-   // encode_matrix_words(&set1, sizes, dic);
-   /* encode_matrix_words(&set1, sizes, dic);
-    encode_matrix_words(&set2, sizes, dic);*/
-
    /* char *testDates[] = {
             "2023-11-25",
             "2023-11-24",
@@ -65,20 +52,6 @@ int main_functions_2(int argc, char **argv) {
             "2023-01-15",
             "2022-08-10",
     };
-
-    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[1]);
-    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[4]);
-    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[3]);
-
-   /* insert_element_to_AD_in_order(arr_din, set1, set2,testDates[3]);
-
-    insert_element_to_AD_in_order(arr_din, set1, set2, testDates[0]);*/
-
-    //insert_element_to_index_AD(arr_din, val_ad_words_holder, testDates[0], 0);
-
-    //print_AD(arr_din);
-
-    //delete_element_index(arr_din, 1);
 
 
    // print_KMP_BinMatches(&set1, index_words_found);
@@ -151,25 +124,23 @@ char *get_current_date() {
 /**
  * @paragraph Insert element to AD in chronological order by date ASC
  * @paragraph function uses binary search to search for the position in AD where
- * new element will be inserted and adjusts the position of the other elements in AD before inserting
- * when array is full double the size of AD S
+ * new element will be inserted and adjusts the position of the other elements in AD before inserting,
+ * when array is full double the size of Dynamic Array
  * @paragraph This insertion function has a time complexity of O(2N +Dlog(N)) , Extra space O(1) (inplace)
- * Shifting elements O(N) , realloc O(N) , binary_search function O(Dlog(N)), insertion O(1)
+ * Shift elements O(N) , realloc O(N) , binary_search function O(Dlog(N))
+ * D = size of date N = num of elements in Dynamic array
  */
-void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,SETS *s1,SETS *s2,const char *last_date) {
+void insert_element_to_AD_in_order(AD_WORDS_HOLDER *ad_holder,const SETS *s1,const SETS *s2,const char *last_date) {
+    ///Check if date is valid
+    if(!is_valid_date(last_date)) fperror("Invalid date");
     /// Double the size when array is full
     if (ad_holder->count == ad_holder->size) {
         realloc_AD(ad_holder, ad_holder->size * 2);
     }
-
+    ///Search for position to insert in Dynamic array using Bsearch
     int pos = bin_search_insert_pos(ad_holder, last_date);
 
-    for (int i = ad_holder->count; i > pos; i--) {
-        ad_holder->array_val[i] = ad_holder->array_val[i - 1];
-    }
-    insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[pos],s1,s2,last_date);
-
-    ad_holder->count++;
+    insert_element_to_index_AD(ad_holder, s1, s2, last_date, pos);
 }
 
 
@@ -202,6 +173,38 @@ void print_AD(const AD_WORDS_HOLDER *ad) {
         print_matrix_int(&((*(ad->array_val + i)).words_holder.s2));
     }
 }
+int compare_dates(const char *date1, const char *date2) {
+    struct tm tm_date1, tm_date2;
+    /// Parse both dates
+    if (strptime(date1, "%Y-%m-%d", &tm_date1) == NULL ||
+        strptime(date2, "%Y-%m-%d", &tm_date2) == NULL) {
+        fprintf(stderr, "Failed to parse date strings\n");
+        return 0;
+    }
+
+    if (tm_date1.tm_year < tm_date2.tm_year) {
+        return -1;
+    } else if (tm_date1.tm_year > tm_date2.tm_year) {
+        return 1;
+    } else {
+        /// Years are equal, compare months
+        if (tm_date1.tm_mon < tm_date2.tm_mon) {
+            return -1;
+        } else if (tm_date1.tm_mon > tm_date2.tm_mon) {
+            return 1;
+        } else {
+            /// Months are equal, compare days of the month
+            if (tm_date1.tm_mday < tm_date2.tm_mday) {
+                return -1;
+            } else if (tm_date1.tm_mday > tm_date2.tm_mday) {
+                return 1;
+            } else {
+                /// Dates are equal
+                return 0;
+            }
+        }
+    }
+}
 
 /**
  * @paragraph binary search to search for the position in AD where
@@ -223,16 +226,17 @@ int bin_search_insert_pos(const AD_WORDS_HOLDER *arr_din,const char *date) {
         } else if (cmp > 0) {
             hi = mid - 1;
         } else {
-            //If elements are equal, insert at the current position
+            ///If elements are equal, insert at the current position
             return mid;
         }
     }
-    // return insert position
+    /// return insert position
     return lo;
 }
 
+
 /**
- * @paragraph Insert element to VAL_AD_WORDS_HOLDER
+ * @paragraph Insert data to VAL_AD_WORDS_HOLDER
  */
 void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder,const SETS *set1,const SETS *set2,const char *last_date) {
     val_ad_words_holder->words_holder.s1 = *set1;
@@ -248,62 +252,112 @@ void insert_to_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_ad_words_holder,cons
 }
 /**
  * @paragraph Insert element to AD in given index
- * @paragraph function shifts elements to insert new element in the given index and fill VAl_AD_WORDS_HOLDER
- * with the values passes in the function
+ * @paragraph This function shifts elements to insert new element at the given index and fill VAl_AD_WORDS_HOLDER
+ * with the values passed to the function
  * @paragraph This insertion function has a time complexity of O(2N + D)) , Extra space O(1) (inplace)
- * Shifting elements O(N) , realloc O(N) , insertion O(1), strcpy date O(D)
+ * Shift elements O(N) , realloc O(N) , insertion O(1), strcpy date O(D)
+ * D = date size N = number of elements in dynamic array
  */
-void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder, SETS *set1, SETS *set2,char*last_date, int index) {
-    // Double the size when array is full or when want to insert in index equal to ad size
+void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder,const SETS *set1,const SETS *set2,const char *last_date, int index) {
+    ///Check if date is valid
+    if(!is_valid_date(last_date)) fperror("Invalid date");
+    /// Double the size when array is full or when index to be inserted is equal
+    /// or greater than ad_holder size
     if (ad_holder->count == ad_holder->size) {
         realloc_AD(ad_holder, ad_holder->size * 2);
     }else if(index >= ad_holder->size){
         realloc_AD(ad_holder, index * 2);
     }
-
+    ///Shift elements from count until given index to insert new element
     for (int i = ad_holder->count; i > index; i--) {
+        ///Copy from next to prev element
         ad_holder->array_val[i] = ad_holder->array_val[i - 1];
     }
-
+    ///Insert element in Dynamic Array
     insert_to_VAL_AD_WORDS_HOLDER(&ad_holder->array_val[index], set1,set2,last_date);
-
     ad_holder->count++;
 }
 
 
 void delete_element_index(AD_WORDS_HOLDER *ad, int index) {
-    ///halve the size when array is one-quarter full
+    if(ad->count == 0){
+        printf("Dynamic Array Empty\n");
+        return;
+    }
+    ///Halve the size when array is one-quarter full
     if (ad->count == (1/4 * ad->size)){
         realloc_AD(ad, ad->size / 2);
     }
-
+    ///Shift elements from next to previous starting from index
     for (int i = index; i < ad->count; ++i) {
        ad->array_val[i] = ad->array_val[i + 1];
     }
-
-    free(ad->array_val[ad->count].last_update_date);
-
+    ///Free Memory of last element
+    if (ad->array_val[ad->count - 1].last_update_date != NULL) {
+        free(ad->array_val[ad->count - 1].last_update_date);
+        freemem_set(&ad->array_val[ad->count - 1].words_holder.s1);
+        freemem_set(&ad->array_val[ad->count - 1].words_holder.s2);
+    }
     ad->count--;
 }
 
+int is_valid_date(const char *date_str) {
+    struct tm tm_date;
+    ///Using strptime function to check if date_str is valid
+    ///strptime returns pointer to NULL if date can't be parsed (wrong format)
+    if (strptime(date_str, "%Y-%m-%d", &tm_date) == NULL || tm_date.tm_year < 0 || tm_date.tm_mon < 0 || tm_date.tm_yday < 0) {
+        return 0;
+    }
+    /// Valid date
+    return 1;
+}
 
-void find_word_ad(const AD_WORDS_HOLDER *arr,const char **words,int W, int lo, int hi,const char *fn,bool flag) {
-    if(lo < 0 || hi >= arr->count){
+int *search_word(const SETS *set,const char *word){
+    int *arr_index = (int*) calloc(set->rowsize,sizeof(int));
+    if(arr_index == NULL){
+        fperror("Calloc arr_index in search_KMP");
+    }
+    ///Start in index 1 to store in index 0 the count of words found in set
+    int l = 1;
+    for (int i = 0; i < set->rowsize; ++i) {
+        if(strcmp(*(set->matrix + i), word) == 0){
+            arr_index[l++] = i;
+        }
+    }
+    ///Store in pos 0 of array the count of words found in set
+    *(arr_index + 0) = l - 1;
+    ///if found words return pointer to array
+    if(*(arr_index + 0) != 0)
+        return arr_index;
+    return NULL;
+}
+
+
+void find_words_ad(const AD_WORDS_HOLDER *arr, const char **words, int W, int start_index, int end_index, const char *fn, bool flag) {
+    if(start_index < 0 || end_index >= arr->count){
         fperror("LO or HI out of bounds");
     }
     int *index_set1 = NULL,*index_set2 = NULL;
     for (int i = 0; i < W; ++i) {
         ///Calculate length of string
         int word_length =(int) strlen(words[i]);
-        ///Check if word is valid in ufp6
-        if(is_ufp6(words[i], word_length) == -1) continue;
-        int dfa[MAX_UFP6][BITS - 1];
-        KMP (words[i], dfa);
-            for (int j = lo; j <= hi; ++j) {
-            index_set1 = search_KMP(&arr->array_val[j].words_holder.s1,dfa ,(int) strlen(words[i]));
-            index_set2 =  search_KMP(&arr->array_val[j].words_holder.s2,dfa ,(int) strlen(words[i]));
-            print_words_found(arr, index_set1, index_set2, j);
-
+        ///Check if word is valid in UFP6
+        if(is_ufp6(words[i], word_length) == -1){
+            printf("Word %s not valid in UFP6\n", words[i]);
+            continue;
+        }
+        for (int j = start_index; j <= end_index; ++j) {
+            index_set1 = search_word(&arr->array_val[j].words_holder.s1, words[i]);
+            index_set2 =  search_word(&arr->array_val[j].words_holder.s2, words[i]);
+            if(index_set1 == NULL && index_set2 == NULL){
+                printf("Word %s not found in element %d\n\n", words[i], j);
+            }else{
+                print_words_found(arr, index_set1, index_set2, j);
+                ///If flag set to 1 output found words and UFP6 to a txt file
+                if(flag == 1 && fn != NULL){
+                    write_words_found_in_da_to_txt(&arr->array_val[j], index_set1, index_set2, fn, j);
+                }
+            }
             free(index_set1);
             index_set1 = NULL;
             free(index_set2);
@@ -324,176 +378,85 @@ void print_words_found(AD_WORDS_HOLDER *arr, int *index_set1, int *index_set2, i
     }
 }
 
-void insert_node_ll_sorted(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date) {
-    //if ll empty
+void insert_node_ll_sorted(LL_WORDS_HOLDER *ll,const SETS *set1,const SETS *set2,const char *last_date) {
+   if(!is_valid_date(last_date)){
+       printf("Date %s", last_date);
+       fperror("Date not valid in insert_node_ll_sorted");
+   }
+    ///If LL is empty
     if(ll->ptail == NULL && ll->phead == NULL){
-        ll->phead = create_words_holder_node(ll, NULL,set1, set2, last_date);
+        ///Add to head
+        ll->phead = create_words_holder_node(set1, set2, last_date);
+        ///Point ll->ptail to ll->phead
         ll->ptail = ll->phead;
         ll->nnodes++;
         return;
     }
-
-    //bin search
-    NODE_LL_WORDS_HOLDER *pos = bin_search_pos_ll(ll, last_date);
-    NODE_LL_WORDS_HOLDER *temp;
-        //add to tail
-        if (pos == NULL) {
-            ll->ptail->pnext = create_words_holder_node(ll, pos, set1, set2, last_date);
-            //point new node to back node
-            ll->ptail->pnext->pback = ll->ptail;
-            //point back node to new node
-            ll->ptail = ll->ptail->pnext;
-            //point new node to NULL
-            ll->ptail->pnext = NULL;
-        } else if (pos->pback == NULL && strcmp(last_date,pos->last_update_date) < 0){
-            //add to head // && strcmp() because binsearch of pos when searching
-            //for a position it returns the left side note and we need to add to the left
-            ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
-            pos->pback = ll->phead;
-            ll->phead->pnext = pos;
-        } else {
-            temp = create_words_holder_node(ll, pos, set1, set2, last_date);
-            pos->pnext->pback = temp;
-            // point the new node to the next to node
-            temp->pnext = pos->pnext;
-            // point the new node to the back node
-            temp->pback = pos;
-            // point the pos node to new n
-            pos->pnext = temp;
-        }
-        ll->nnodes++;
+    ///Search for position using binary search to insert in chronological order
+    NODE_LL_WORDS_HOLDER *curr = ll->phead;;
+    NODE_LL_WORDS_HOLDER *prev = NULL;
+    ///Find current and prev position to add node in chronological order DESC
+    while(curr != NULL && strcmp(curr->last_update_date, last_date) > 0){
+        prev = curr;
+        curr = curr->pnext;
+    }
+    insert_to_ll_given_pointers_node(ll, set1, set2, last_date, curr, prev);
 }
 
-/*NODE_LL_WORDS_HOLDER *bin_search_insert_ll(LL_WORDS_HOLDER *ll, char *date) {
-    int l = 0;
-    int h = ll->nnodes - 1;
-    int mid;
-
-    NODE_LL_WORDS_HOLDER *current = ll->phead;
-    NODE_LL_WORDS_HOLDER *lo = ll->phead;
-    NODE_LL_WORDS_HOLDER *hi = NULL;
-
-    while (l <= h) {
-        mid = l + (h - l) / 2;
-
-        for (int i = 0; i < mid; ++i) {
-            current = current->pnext;
-        }
-
-        int cmp = strcmp(current->last_update_date, date);
-
-        if (cmp < 0) {
-            // mid pointer to next
-            lo = current->pnext;
-            l = mid + 1;
-        } else if (cmp > 0) {
-            hi = current;
-            h = mid - 1;
-        } else {
-            // If elements are equal, modify based on your requirements
-            // For example, return lo or hi for insertion after or before the current node
-            return lo;
-        }
+void insert_to_ll_given_pointers_node(LL_WORDS_HOLDER *ll, const SETS *set1, const SETS *set2, const char *last_date, NODE_LL_WORDS_HOLDER *curr, NODE_LL_WORDS_HOLDER *prev){
+    NODE_LL_WORDS_HOLDER *newn = create_words_holder_node(set1, set2, last_date);
+    ///Insert to tail
+    if (curr == NULL && prev != NULL) {
+        ///point prev node to new node
+        prev->pnext = newn;
+        ///point ptail to new node
+        ll->ptail = newn;
+        ///point new node to previous node
+        newn->pback = prev;
+        ///point new node to NULL
+        newn->pnext = NULL;
+        ///Add to head
+    } else if (curr->pback == NULL && prev == NULL){
+        ///point head to new node
+        ll->phead = newn;
+        ///point current node to new node
+        curr->pback = newn;
+        ///point new node to current
+        newn->pnext = curr;
+        ///point new node to NULL
+        newn->pback = NULL;
+        ///Add between nodes
+    } else {
+        ///point previous node to new node
+        prev->pnext= newn;
+        ///point new node to current
+        newn->pnext = curr;
+        ///point current node to new node
+        curr->pback = newn;
+        ///point new node to pos node
+        newn->pback = prev;
     }
-
-    return lo;
-}*/
-
-//Even if runtime is O(n), we only do O(log n) total comparisons (one per step of bs).
-//Binary search to find  position where the new node should be added (in chronological order ASC)
-//When LL is empty or when the date is higher than all the dates inside LL returns NULL,
-//When newdate is the lowest date the function returns a pointer to the first node
-//When newdate is between two dates the function returns a pointer to the left node
-//Example 1: node1->lastdate 20-01-2023   node2->lastdate 23-01-2023   newdate = 22-01-2023 this functions returns node1 so add to left
-//Example 2: node1->lastdate 20-01-2023 newdate = 19-01-2023 this function returns node1 so we add
-NODE_LL_WORDS_HOLDER *bin_search_pos_ll(LL_WORDS_HOLDER *ll, char *date) {
-    NODE_LL_WORDS_HOLDER *lo = ll->phead;
-    NODE_LL_WORDS_HOLDER *hi = ll->ptail;
-    NODE_LL_WORDS_HOLDER *mid = NULL;
-
-    while (lo != NULL && hi != NULL) {
-        // Find middle
-         mid = find_mid_ll(lo, hi);
-
-        // If empty
-        if (mid == NULL){
-            return NULL;
-        }
-
-        int cmp = strcmp(mid->last_update_date, date);
-
-        // If value is present at middle
-        if (cmp < 0){
-            lo = mid->pnext;
-        }else if (cmp > 0){
-            hi = mid->pback;
-        }else{
-            return mid;
-        }
-    }
-    return lo;
+    ll->nnodes++;
 }
 
 
-NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
-    // calloc to initialize to 0 or NULL
+NODE_LL_WORDS_HOLDER *create_words_holder_node(const SETS *set1,const SETS *set2,const char *last_date) {
+    /// Calloc to initialize to 0 or NULL vals in struct
     NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *) calloc(1,sizeof(NODE_LL_WORDS_HOLDER));
     if(node == NULL){
-        fperror("Calloc NODE_LL_WORDS_HOLDER");
-        // exit(0);
+        fperror("Calloc NODE_LL_WORDS_HOLDER in create_words_holder_node");
     }
-
+    ///Copy to node
     node->words_holder.s1 = *set1;
     node->words_holder.s2 = *set2;
     node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
-    strcpy(node->last_update_date, last_date);
-
     if(node->last_update_date == NULL){
-        fperror("last_update_date malloc");
+        fperror("last_update_date malloc in create_words_holder_node");
     }
+    strcpy(node->last_update_date, last_date);
 
     return node;
 }
-/*NODE_LL_WORDS_HOLDER *create_words_holder_node(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
-    NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *)calloc(1, sizeof(NODE_LL_WORDS_HOLDER));
-    if (node == NULL) {
-        fperror("Calloc NODE_LL_WORDS_HOLDER");
-    }
-
-    node->words_holder.s1 = *set1;
-    node->words_holder.s2 = *set2;
-
-    node->pnext = NULL;
-
-    if (pos != NULL) {
-        // Insert in the middle or at the beginning
-        NODE_LL_WORDS_HOLDER *temp = pos->pnext;
-        pos->pnext = node;
-        node->pnext = temp;1
-    } else {
-        // Insert at the beginning for an empty list
-        node->pnext = ll->phead;
-        ll->phead = node;
-
-        // Update ptail if the list was empty
-        if (ll->ptail == NULL) {
-            ll->ptail = node;
-        }
-    }
-
-    node->last_update_date = (char *)malloc(sizeof(char) * DATE_SIZE);
-    if (node->last_update_date == NULL) {
-        fperror("last_update_date malloc");
-        // Handle the error appropriately
-        free(node);
-        return NULL;
-    }
-
-    strcpy(node->last_update_date, last_date);
-
-    return node;
-}*/
-
 
 void print_ll_words_holder(LL_WORDS_HOLDER *ll) {
     NODE_LL_WORDS_HOLDER *current = ll->phead;
@@ -518,96 +481,46 @@ void free_ll_words_holder(LL_WORDS_HOLDER *ll) {
         for (int i = 0; i < ll->nnodes; ++i) {
             free(current->last_update_date);
 
-            prev = current->pback;  // Save the pointer to the previous node
+            prev = current->pback;  /// store pointer to the previous node
             free(current);
-            current = prev;  // Move to the previous node for the next iteration
+            current = prev;  /// Move to the previous node for the next iteration
         }
         free(ll);
 }
 
 
-void insert_node_ll_index(LL_WORDS_HOLDER *ll, SETS *set1, SETS *set2, char *last_date, int index){
-    NODE_LL_WORDS_HOLDER *pos = NULL;
-
+void insert_node_ll_index(LL_WORDS_HOLDER *ll,const SETS *set1,const SETS *set2,const char *last_date, int index){
+    if(index > ll->nnodes || index < 0){
+        fperror("Index out of bounds in insert_node_ll_index");
+    }
+    if(!is_valid_date(last_date)){
+        printf("Date %s", last_date);
+        fperror("Date not valid in insert_node_ll_sorted");
+    }
+    ///If LL is empty
     if(ll->ptail == NULL && ll->phead == NULL){
-        ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
+        ll->phead = create_words_holder_node(set1, set2, last_date);
         ll->ptail = ll->phead;
         ll->nnodes++;
         return;
     }
-
-    pos = ll->phead;
-    for (int i = 0; i < index - 1 && pos->pnext != NULL; ++i) {
-        pos = pos->pnext;
+    NODE_LL_WORDS_HOLDER *curr = NULL;
+    NODE_LL_WORDS_HOLDER *prev = NULL;
+    if(index != ll->nnodes){
+        curr = ll->phead;
+        for (int i = 0; i < index && curr != NULL; ++i) {
+            prev = curr;
+            curr = curr->pnext;
+        }
+        ///Use pointer to last node in LL_WORDS_HOLDER so don't need to
+        ///traverse linked list
+    }else{
+        curr = NULL;
+        prev = ll->ptail;
     }
-  
-    if (pos->pback != NULL && pos->pnext != NULL) {
-        //insert between two nodes
-        NODE_LL_WORDS_HOLDER *temp = create_words_holder_node(ll, pos, set1, set2, last_date);
-        pos->pnext->pback = temp;
-        temp->pnext = pos->pnext;
-        temp->pback = pos;
-        pos->pnext = temp;
-    } else if (pos->pnext == NULL) {
-        // Insert to tail
-        ll->ptail = create_words_holder_node(ll, pos, set1, set2, last_date);
-        pos->pnext = ll->phead;//ver isto
-        ll->ptail->pback = pos;
-        ll->ptail->pnext = NULL;
-    } else {
-        // Insert at the beginning
-        ll->phead = create_words_holder_node(ll, pos, set1, set2, last_date);
-        pos->pback = ll->phead;
-        ll->phead->pnext = pos;
-    }
-
-    ll->nnodes++;
+    insert_to_ll_given_pointers_node(ll, set1, set2, last_date,curr, prev);
 }
 
-/*NODE_LL_WORDS_HOLDER *create_words_holder_node_index(LL_WORDS_HOLDER *ll, NODE_LL_WORDS_HOLDER *pos, SETS *set1, SETS *set2, char *last_date) {
-    NODE_LL_WORDS_HOLDER *node = (NODE_LL_WORDS_HOLDER *) calloc(1,sizeof(NODE_LL_WORDS_HOLDER)); //New node
-    if(node == NULL){
-        fperror("Calloc NODE_LL_WORDS_HOLDER");
-        // exit(0);
-    }
-
-    node->words_holder.s1 = *set1;
-    node->words_holder.s2 = *set2;
-    node->pnext = NULL; // initialize the pointers
-    node->pback = NULL;
-
- //if is not empty
-    if(pos != NULL) {
-        // insert between 2 nodes //
-        if (pos->pnext != NULL && pos->pback != NULL) {
-            // point the index of node in position  we want to insert to new node added behind
-            pos->pnext->pback = node;
-            // point the new node to the next to node
-            node->pnext = pos->pnext;
-            // point the new node to the back node
-            node->pback = pos;
-            // point the pos node to new n
-            pos->pnext = node;
-           // insert to tail  //
-        } else if(pos->pnext == NULL){
-            pos->pnext = node;
-            node->pback = pos;
-        }else{
-            // insert in pos 1 because pos will point to index 0 //
-            node->pnext = pos;
-            pos->pback = node;
-        }
-    }*/
-
-   /* node->last_update_date = (char*) malloc(sizeof(char) * DATE_SIZE);
-    strcpy(node->last_update_date, last_date);
-
-    if(node->last_update_date == NULL){
-        fperror("last_update_date malloc");
-    }
-
-    return node;
-}*/
 
 /**
  * Find midpoint of Linked List using fast_ptr and slow_ptr, fast_ptr advances two nodes at a time
@@ -622,7 +535,7 @@ NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER
 
     NODE_LL_WORDS_HOLDER *slow_ptr = lo;
     NODE_LL_WORDS_HOLDER *fast_ptr = lo->pnext;
-    //fast_ptr == NULL , end fast_ptr->pnext == NULL indicate that fast_ptr is the last node
+    //fast_ptr == NULL , and fast_ptr->pnext == NULL indicates that fast_ptr is the last node
     while (fast_ptr != NULL && fast_ptr->pnext != NULL) {
         fast_ptr = fast_ptr->pnext->pnext;
         slow_ptr = slow_ptr->pnext;
@@ -631,44 +544,55 @@ NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER
 }
 
 void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
-    if(ll->phead == NULL && ll->ptail == NULL){
-       // printf("EMPTY LL\n");
+    if (ll->phead == NULL && ll->ptail == NULL){
+        printf("EMPTY LL\n");
         return;
     }
-
-    if(index >= ll->nnodes){
+    if (index >= ll->nnodes){
         printf("INDEX ALREADY REMOVED !!!\n");
         return;
     }
 
     NODE_LL_WORDS_HOLDER *pos = NULL;
-    pos = ll->phead;
-
-    for (int i = 0; i < index && pos != NULL; ++i) {
-        pos = pos->pnext;
+    if (index != ll->nnodes){
+        pos = ll->phead;
+        ///Traverse LL to find node at given index to be deleted
+        for (int i = 0; i < index && pos != NULL; ++i) {
+            pos = pos->pnext;
+        }
+        ///Use pointer to last node in LL_WORDS_HOLDER so don't need to
+        ///traverse linked list when deleting last node
+    }else {
+        pos = ll->ptail;
     }
 
+    /// Remove between two nodes
     if (pos->pback != NULL && pos->pnext != NULL) {
-        // Remove between two nodes
+        ///Point previous node to the next node of node to be deleted
         pos->pback->pnext = pos->pnext;
+        ///Point next node of node to be deleted to prev node pointed also by node to be deleted
         pos->pnext->pback = pos->pback;
-        // Remove node in tail (last node)
+        /// Remove node in tail
     } else if (pos->pnext == NULL) {
+        ///Point tail to prev node
         ll->ptail = pos->pback;
+        ///Point prev node to NULL
         pos->pback->pnext = NULL;
+        /// Remove node in head
     } else {
-        // Remove in head (first one)
+        ///Point head to next node
         ll->phead = pos->pnext;
+        ///Point next node to NULL
         pos->pnext->pback = NULL;
     }
+
     free(pos->last_update_date);
     free(pos);
-
     ll->nnodes--;
 }
 
 void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi, const char *fn, bool flag) {
-    //Check if out of bounds
+    ///Check if out of bounds
     if(lo < 0 || hi >= ll->nnodes){
         fperror("LO or HI out of bounds");
         //exit(0);
@@ -686,7 +610,7 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
         int word_length = (int) strlen(words[i]);
         //check if word is valid in ufp6
         if(is_ufp6(words[i], word_length) == -1) continue;
-        int dfa[MAX_UFP6][BITS];
+        int dfa[MAX_UFP6][BITS - 1];
         KMP (words[i], dfa);
         NODE_LL_WORDS_HOLDER *current = lo_node;
         for (int j = lo; j <= hi && current->pnext !=NULL; ++j) {
@@ -694,7 +618,7 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
             index_set2 =  search_KMP(&current->words_holder.s2,dfa ,word_length);
             print_words_found_ll(current, index_set1, index_set2, j);
             if(flag == 1){
-                write_words_found_to_txt(current, index_set1, index_set2,fn, j);
+                write_words_found_in_ll_to_txt(current, index_set1, index_set2, fn, j);
             }
             free(index_set1);
             index_set1 = NULL;
@@ -747,22 +671,45 @@ void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename) {
     fclose(fp);
 }
 
-int write_words_found_to_txt(const NODE_LL_WORDS_HOLDER *current,const int *index_set1,const int *index_set2,const char *filename, int index_ll) {
+int write_words_found_in_da_to_txt(const VAL_AD_WORDS_HOLDER *val_ad, const int *index_set1, const int *index_set2, const char *filename, int index_ad) {
     FILE *fp = fopen(filename, "a+");
 
     if (fp == NULL) {
         fperror("Opening file in write_words_found_to txt");
     }
-    //if found words in set1 or set2
+    ///if found words in set1 or set2
+    if (index_set1 != NULL || index_set2 != NULL){
+        fprintf(fp, "INDEX %d\n", index_ad);
+    }
+    ///if found words in set1
+    if (index_set1 != NULL){
+        fprintf(fp, "->Words set 1\n");
+        write_index_array_words_to_file(&val_ad->words_holder.s1, fp, index_set1);
+    }
+    ///if found words in set2
+    if (index_set2 != NULL){
+        fprintf(fp, "->Words set 2\n");
+        write_index_array_words_to_file(&val_ad->words_holder.s2, fp, index_set2);
+    }
+    fclose(fp);
+    return 0;
+}
+
+int write_words_found_in_ll_to_txt(const NODE_LL_WORDS_HOLDER *current, const int *index_set1, const int *index_set2, const char *filename, int index_ll) {
+    FILE *fp = fopen(filename, "a+");
+    if (fp == NULL) {
+        fperror("Opening file in write_words_found_to txt");
+    }
+    ///If found words in set1 or set2
     if (index_set1 != NULL || index_set2 != NULL){
         fprintf(fp, "NODE %d\n", index_ll);
     }
-    //if found words in set1
+    ///If found words in set1
     if (index_set1 != NULL){
         fprintf(fp, "->Words set 1\n");
         write_index_array_words_to_file(&current->words_holder.s1, fp, index_set1);
     }
-    //if found words in set2
+    ///if found words in set2
     if (index_set2 != NULL){
         fprintf(fp, "->Words set 2\n");
         write_index_array_words_to_file(&current->words_holder.s2, fp, index_set2);
@@ -771,10 +718,11 @@ int write_words_found_to_txt(const NODE_LL_WORDS_HOLDER *current,const int *inde
     return 0;
 }
 
+
 void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *array_index) {
     //count of indexes from the words found in set stored in first position of array
     for (int i = 1; i <= *array_index; i++) {
-        fprintf(fp, "Index -> %d\n",  array_index[i]);
+        fprintf(fp, "Row Index -> %d\n",  array_index[i]);
         fprintf(fp, "Word = %s |",  set->matrix[array_index[i]]);
       
         write_index_array_ufp6_to_file(set, fp, array_index, i);

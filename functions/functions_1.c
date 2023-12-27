@@ -48,7 +48,7 @@ void matrix_init_char(SETS *set){
 }
 
 void print_matrix_int(const SETS *set) {
-    printf("Matrix of UFP6:\n");
+    printf("UFP6:\n");
     for (int i = 0; i < set->rowsize; ++i){
         for (int j = 0; j < *(set->arr_ufp6_size + i); ++j) {
             printf("%d ",*(*(set->matrix_ufp6 + i) + j));
@@ -58,7 +58,7 @@ void print_matrix_int(const SETS *set) {
 }
 
 void print_matrix_char(const SETS *set) {
-    printf("Matrix of strings:\n");
+    printf("Words:\n");
     for (int i = 0; i < set->rowsize; ++i) {
         for (int j = 0; j < *(set->arr_word_size + i); ++j) {
             printf(" %c", *(*(set->matrix + i) + j));
@@ -793,6 +793,17 @@ void realloc_rows_ufp6(SETS *set, int num_words) {
     set->matrix_ufp6 = (int **)realloc(set->matrix_ufp6, num_words * sizeof(int*));
     if(set->matrix_ufp6 == NULL){
         fperror("Realloc matrix in realloc_rows_ufp6");
+    }
+}
+
+void calloc_matrix_words_and_ufp6(SETS *set, int num_words){
+    set->matrix_ufp6 = (int**) calloc(num_words, sizeof(int*));
+    if(set->matrix_ufp6 == NULL){
+        fperror("matrix_ufp6 calloc in calloc_matrix_words_and_ufp6");
+    }
+    set->matrix = (char**) calloc(num_words, sizeof(char*));
+    if(set->matrix == NULL){
+        fperror("matrix calloc in calloc_matrix_words_and_ufp6");
     }
 }
 

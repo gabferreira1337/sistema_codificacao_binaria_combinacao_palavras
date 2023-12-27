@@ -18,6 +18,7 @@ typedef struct{
 
 }VAL_AD_WORDS_HOLDER;
 
+///Dynamic array of VAL_AD_WORDS_HOLDER
 typedef struct{
     int size;                   /// Size of Dynamic array
     int count;                  /// Number of elements in Dynamic array
@@ -34,7 +35,7 @@ typedef struct node_ll_words_holder{
 
 }NODE_LL_WORDS_HOLDER;
 
-
+///Linked List of NODE_LL_WORDS_HOLDER
 typedef struct ll_words_holder{
    int nnodes;                          /// Number of nodes in Linked List
    NODE_LL_WORDS_HOLDER *phead;         /// Pointer to head of Linked List
@@ -54,14 +55,6 @@ AD_WORDS_HOLDER* dynamic_array_init(int size);
  * @param arr - pointer to struct dynamic array of words holder
  */
 void dynamic_array_realloc(AD_WORDS_HOLDER *arr);
-/**
- * @paragraph
- */
-void create_dynamic_array(AD_WORDS_HOLDER *arr);
-/**
- * sets struct
- */
-void init_VAL_AD_WORDS_HOLDER(VAL_AD_WORDS_HOLDER *val_holder);
 /**
  * @paragraph Print dynamic array
  * @param ad - pointer to AD_WORDS_HOLDER struct
@@ -103,9 +96,9 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder,const SETS *set1,cons
 /**
  * @paragraph Find words and respective UFP6 ,only at given indexes of Dynamic array,
  * and write to a txt file the output
- * Time Complexity: O(W * (E - S) * N)
- * W = number of words to search for in dynamic array E - S = number of elements in da to search for words
- * N = greatest number of rows between both sets
+ * Time Complexity: O(W * A * N + M)
+ * W = number of words to search for in dynamic array A = number of elements in da to search for words
+ * N = number of words in set1 , M =  number of words in set2
  * Extra Space: O(N + M)
  * N = number of words in set1 , M =  number of words in set2
  * @param arr - pointer to AD_WORDS_HOLDER
@@ -250,7 +243,7 @@ NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER
  */
 void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
 /**
- * @paragraph search words and their respective ufp6 in given node
+ * @paragraph search words and their respective ufp6 at given node using KMP algorithm
  * @param ll - pointer to Linked List Words Holder
  * @param words - array of words to search in LL
  * @param W - size of words array
@@ -261,15 +254,34 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index);
  */
 void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi,const char *fn, bool flag);
 /**
+ * @paragraph search words and their respective UFP6 representation
+ * between given indexes of nodes
+ * Time Complexity: O(W * L * N + M)
+ * W = number of words to search for in dynamic array L = number of nodes in LL to search for words
+ * N = number of words in set1 M = number of words in set2
+ * Extra Space: O(N + M)
+ * N = number of words in set1 , M =  number of words in set2
+ * @param ll - pointer to Linked List Words Holder
+ * @param words - array of words to search in LL
+ * @param W - size of words array
+ * @param start_index_node - start index node
+ * @param end_index_node - end index node
+ * @param fn - file name
+ * @param flag - if set to 1 write output to a txt file
+ */
+void find_words_ll(const LL_WORDS_HOLDER *ll, const char **words, const char *fn, int W, int start_index_node, int end_index_node, bool flag);
+/**
  * @paragraph Print words found in Linked List
  * @param ll - pointer to Linked List Words Holder
- * @param index_set1 - node of Linked List to be deleted
- * @param index_set1 - node of Linked List to be deleted
-
+ * @param index_set1 - pointer to array holding the indices of rows from set1
+ * and at pos 0 of array store the number of indices
+ * @param index_set2 - pointer to array holding the indices of rows from set2
+ * and at pos 0 of array store the number of indices
+ * @param j - index of node
  */
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
 /**
- * @paragraph Write one set to txt file
+ * @paragraph Write set to txt file
  * Words set:
  * number_words = 5
  *5 r q m t v
@@ -288,20 +300,29 @@ void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index
  */
 void write_set_to_txt(const SETS *set,FILE *fp);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Write UFP6 representations to txt file
+ *Format:
+ *UFP6:
+ *25 1 1 0 1 1 1 1 0 1 0 1 0 1 1 0 1 1 1 0 1 1 1 1 1 1
+ *5 1 0 1 1 1
+ *27 1 1 1 0 1 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1 1 1 1
+ *20 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 1 0 1 0 0
+ *19 1 1 1 1 1 1 0 0 0 1 0 1 1 0 1 1 1 0 0
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer to the file where data will be inserted
  */
 void write_set_ufp6_to_txt(const SETS *set, FILE *fp);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Save set to txt file
+ * @param s1 - pointer to SETS struct
+ * @param filename - pointer to string containing the file name
  */
 int save_set_txt(const SETS *set, char *filename);
-
 /**
- * @paragraph Delete node in a given position/index
- * @param ll - pointer to Linked List Words Holder
- * @param index - node of Linked List to be deleted
+ * @paragraph Save 2 SETS to txt file
+ * @param s1 - pointer to SETS struct
+ * @param s2 - pointer to SETS struct
+ * @param fp - file pointer to the file where data will be inserted
  */
 void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
 /**
@@ -309,8 +330,10 @@ void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
  * with given arrays holding the indexes of all words found in each set at a given node,
  * and at pos 0 of both arrays store the count of words to use in this function
  * @param current - pointer to current NODE_LL_WORDS_HOLDER
- * @param index_set1 - pointer to array containing the indexes of words found in set1 at given node from LL
- * @param index_set2 - pointer to array containing the indexes of words found in set2 at given node from LL
+ * @param index_set1 - pointer to array containing the indices of words found in set1 at given node from LL
+ * and at pos 0 of array the number of indices
+ * @param index_set2 - pointer to array containing the indices of words found in set2 at given node from LL
+ * and at pos 0 of array the number of indices
  * @param filename - pointer to string containing filename
  * @param index_ll - index of LL (node) where words were found
  */
@@ -320,64 +343,88 @@ int write_words_found_in_ll_to_txt(const NODE_LL_WORDS_HOLDER *current, const in
  * with given arrays holding the indexes of all words found in each set at a given index
  * and at pos 0 of both arrays store the count of words to use in this function
  * @param val_ad - pointer to VAL_AD_WORDS_HOLDER
- * @param index_set1 - pointer to array containing the indexes of words found in set1 at given index of dynamic array
- * @param index_set2 - pointer to array containing the indexes of words found in set2 at given index of dynamic array
+ * @param index_set1 - pointer to array containing the indices of words found in set1 at given index of dynamic array
+ * @param index_set2 - pointer to array containing the indices of words found in set2 at given index of dynamic array
  * @param filename - pointer to string containing filename
  * @param index_ad - index of dynamic array where words were found
  */
 int write_words_found_in_da_to_txt(const VAL_AD_WORDS_HOLDER *val_ad, const int *index_set1, const int *index_set2, const char *filename, int index_ad);
 /**
- * @paragraph Delete node in a given position/index
- * @param ll - pointer to Linked List Words Holder
- * @param index - node of Linked List to be deleted
+ * @paragraph Write words found and UFP6 representation to txt file
+ * given array holding indices of words
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
+ * @param index_set1 - pointer to array containing the indices of words found in set at given index
+ * and at pos 0 store the number of indices in array
  */
 void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *index_array);
 /**
- * @paragraph Delete node in a given position/index
- * @param ll - pointer to Linked List Words Holder
- * @param index - node of Linked List to be deleted
+ * @paragraph Write to txt file UFP6 representation of words given array holding correspondent indices
+ * of words in matrix
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
+ * @param index_set1 - pointer to array containing the indices of words found in set at given index
+ * and at pos 0 store the number of indices in array
+ * @param r - row index of word in matrix from SETS struct
  */
 void write_index_array_ufp6_to_file(const SETS *set,FILE *fp,const int *index_array, int r);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Read from txt file to set
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
  */
 void read_txt_to_set(SETS *set, FILE *fp);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Read from txt file a set of words and their respective size
+ * to SETS struct
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
  */
 void read_txt_words(SETS *set, FILE *fp);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
- */
-void read_txt_ufp6(SETS *set, FILE *fp);
-/**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Initialise set while reading data from file
+ * @param set - pointer to SETS struct
+ * @param num_words - number of words in both matrix
  */
 void sets_struct_init_v2(SETS *set, int num_words);
 /**
- * @paragraph Allocate memory for cells in a matrix row and initialize to NULL / 0
- * @param mat_row - row from matrix to allocate memory to store word
+ * @paragraph Allocate memory for n columns in a matrix row and initialize to NULL / 0
+ * @param mat_row - pointer to row from matrix to allocate memory to store word
  * @param col_words_size - number of columns to be allocated
  */
 void calloc_col_word(char **mat_row, int col_words_size);
+void free_index_arrays(int *arr1, int *arr2);
 /**
- * @paragraph Allocate memory for cells in a matrix row and initialize to NULL / 0
- * @param mat_row - row from matrix to allocate memory to store word
+ * @paragraph Allocate memory for n columns in a matrix row and initialize to NULL / 0
+ * @param mat_row - pointer to row from matrix UFP6 to allocate memory to store UFP6 representation
  * @param col_words_size - number of columns to be allocated
  */
 void calloc_col_ufp6(int **mat_row, int col_words_size);
 /**
  * @paragraph Read ufp6 from a txt file and insert to a given set
- * @param set - pointer to set where we want to store the data read from txt
- * @param fp - pointer to a file where we want to read the data
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
  */
 void read_ufp6_file_to_set(SETS *set, FILE *fp);
 /**
  * @paragraph Write Dynamic Array of VAL_AD_WORDS_HOLDER to txt file
+ * File format:
+ *Number of elements: 1
+ *Index 0
+ *Last Update Date: 2022-11-24
+ *Words set: 1
+ *number_words = 5
+ *3-f o G
+ *2-R Q
+ *5-V U c f T
+ *2-p Z
+ *6-E a 5 0 D j
+ *UFP6:
+ *15-1 1 1 1 1 1 0 0 0 1 0 1 0 1 0
+ *12-1 1 0 1 0 1 1 1 0 1 0 0
+ *26-1 1 1 0 0 1 1 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 1 1 1
+ *11-1 1 0 0 1 1 1 1 1 0 1
+ *25-1 0 1 0 0 0 1 0 1 0 1 0 1 0 1 0 0 1 1 1 1 0 0 1 1
  * @param ad - pointer to AD_WORDS_HOLDER
  * @param fn - file name
  */
@@ -390,6 +437,23 @@ void write_ad_to_txt(const AD_WORDS_HOLDER *ad,const char *fn);
 void write_both_sets_to_txt(const WORDS_HOLDER *wordsHolder, FILE *fp);
 /**
  * @paragraph Read from txt file to Dynamic array AD_WORDS_HOLDER
+ * File format:
+ *Number of elements: 1
+ *Index 0
+ *Last Update Date: 2022-11-24
+ *Words set: 1
+ *number_words = 5
+ *3-f o G
+ *2-R Q
+ *5-V U c f T
+ *2-p Z
+ *6-E a 5 0 D j
+ *UFP6:
+ *15-1 1 1 1 1 1 0 0 0 1 0 1 0 1 0
+ *12-1 1 0 1 0 1 1 1 0 1 0 0
+ *26-1 1 1 0 0 1 1 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 1 1 1
+ *11-1 1 0 0 1 1 1 1 1 0 1
+ *25-1 0 1 0 0 0 1 0 1 0 1 0 1 0 1 0 0 1 1 1 1 0 0 1 1
  * @param ad - address of a pointer to AD_WORDS_HOLDER
  * @param fp - file pointer
  * @param flag - if set to 1 read in chronological order ASC
@@ -397,31 +461,41 @@ void write_both_sets_to_txt(const WORDS_HOLDER *wordsHolder, FILE *fp);
 void read_from_txt_to_ad(AD_WORDS_HOLDER **ad,const char *fn, bool flag);
 /**
  * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to txt file
+ * File format:
+ *Number of nodes: 1
+ *Node 0
+ *Last Update Date: 2024-01-15
+ *Words set: 1
+ *number_words = 5
+ *3-n h m
+ *2-p x
+ *2-S 4
+ *4-Y G 6 F
+ *4-Z V Q d
+ *UFP6:
+ *15-1 0 1 1 1 1 0 0 0 1 1 0 1 1 0
+ *11-1 1 0 0 1 1 0 0 0 0 1
+ *9-1 1 0 1 1 0 1 0 0
+ *21-1 1 1 1 0 0 1 0 1 0 1 0 1 1 0 1 0 1 0 0 1
+ *22-1 1 1 1 0 1 1 1 1 0 0 1 1 1 0 1 0 0 1 1 0 1
  * @param ll - pointer to LL_WORDS_HOLDER struct
  * @param fn - file name
  */
 void write_ll_to_txt(const LL_WORDS_HOLDER *ll,const char *fn);
 /**
-* @paragraph Write one set to txt file
-* Words set: number_words = 5
-*5 r q m t v
-*1 n
-*5 e y w w v
-*4 l i u k
-*4 f o m s
-*UFP6:
-*25 1 1 0 1 1 1 1 0 1 0 1 0 1 1 0 1 1 1 0 1 1 1 1 1 1
-*5 1 0 1 1 1
-*27 1 1 1 0 1 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1 1 1 1
-*20 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 1 0 1 0 0
-*19 1 1 1 1 1 1 0 0 0 1 0 1 1 0 1 1 1 0 0
-* @param set - pointer to set
-* @param fp - file pointer to the file where data will be inserted
+* @paragraph Write set of words and UFP6 representations to bin file
+* @param set - pointer to SETS struct
+* @param fp - file pointer
 */
 void write_set_to_binfile(const SETS *set,FILE *fp);
+/**
+* @paragraph Write UFP6 representations to bin file
+* @param set - pointer to SETS struct
+* @param fp - file pointer
+*/
 void write_set_ufp6_to_binfile(const SETS *set, FILE *fp);
 /**
- * @paragraph Write both sets from WORDS_HOLDER to txt file
+ * @paragraph Write both sets from WORDS_HOLDER to bin file
  * @param wordsHolder - pointer to WORDS_HOLDER
  * @param fp - file pointer
  */
@@ -436,39 +510,57 @@ void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp);
 void write_words_found_to_txt_set_with_pattern(const SETS *set, const int *array_index_words_found_set, const char *filename, const char *pattern);
 /**
  * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
- * @param ll - address of a pointer to LL_WORDS_HOLDER
+ * File format:
+ *Number of nodes: 1
+ *Node 0
+ *Last Update Date: 2024-01-15
+ *Words set: 1
+ *number_words = 5
+ *3-n h m
+ *2-p x
+ *2-S 4
+ *4-Y G 6 F
+ *4-Z V Q d
+ *UFP6:
+ *15-1 0 1 1 1 1 0 0 0 1 1 0 1 1 0
+ *11-1 1 0 0 1 1 0 0 0 0 1
+ *9-1 1 0 1 1 0 1 0 0
+ *21-1 1 1 1 0 0 1 0 1 0 1 0 1 1 0 1 0 1 0 0 1
+ *22-1 1 1 1 0 1 1 1 1 0 0 1 1 1 0 1 0 0 1 1 0 1
+ * @param ll - pointer to LL_WORDS_HOLDER
  * @param fp - file pointer
- * @param flag - if set to 1 read in chronological order ASC
+ * @param flag - if set to 1 read in chronological order DESC
  */
 void read_from_txt_to_ll(LL_WORDS_HOLDER *ll,const char *fn, bool flag);
 /**
- * @paragraph Read ufp6 from a txt file and insert to a given set
- * @param set - pointer to set where we want to store the data read from txt
- * @param fp - pointer to a file where we want to read the data
+ * @paragraph Read UFP6 and their respective size from .bin file to SETS struct
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
  */
 void read_ufp6_binfile_to_set(SETS *set, FILE *fp);
 /**
- * @paragraph Read from txt file to Dynamic array AD_WORDS_HOLDER
- * @param ad - address of a pointer to AD_WORDS_HOLDER
+ * @paragraph Read from .bin file to Dynamic array AD_WORDS_HOLDER
+ * @param ad - pointer to AD_WORDS_HOLDER
  * @param fp - file pointer
  * @param flag - if set to 1 read in chronological order ASC
  */
 void read_from_bin_to_ad(AD_WORDS_HOLDER **ad,const char *fn, bool flag);
 /**
- * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to txt file
+ * @paragraph Write Dynamic array  to .bin file
  * @param ll - pointer to LL_WORDS_HOLDER struct
  * @param fn - file name
  */
 void write_ad_to_bin(const AD_WORDS_HOLDER *ad,const char *fn);
 /**
- * @paragraph Write Linked List of NODE_LL_WORDS_HOLDER to txt file
- * @param ll - pointer to LL_WORDS_HOLDER struct
- * @param fn - file name
+ * @paragraph Read data from .bin file to SETS struct
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
  */
 void read_binfile_to_set(SETS *set, FILE *fp);
 /**
- * @paragraph Free Linked List
- * @param arr - pointer to LL_WORDS_HOLDER
+ * @paragraph Read words and their respective size from .bin file to SETS struct
+ * @param set - pointer to SETS struct
+ * @param fp - file pointer
  */
 void read_binfile_words(SETS *set, FILE *fp);
 /**
@@ -478,10 +570,10 @@ void read_binfile_words(SETS *set, FILE *fp);
  */
 void write_ll_to_binfile(const LL_WORDS_HOLDER *ll,const char *fn);
 /**
- * @paragraph Read from txt file to Linked List of NODE_LL_WORDS_HOLDER
- * @param ll - address of a pointer to LL_WORDS_HOLDER
- * @param fp - file pointer
- * @param flag - if set to 1 read in chronological order ASC
+ * @paragraph Read data from .bin file and store in Linked List of NODE_LL_WORDS_HOLDER
+ * @param ll - pointer to LL_WORDS_HOLDER
+ * @param fpn- file name
+ * @param flag - if set to 1 read in chronological order DESC
  */
 void read_from_binfile_to_ll(LL_WORDS_HOLDER *ll,const char *fn, bool flag);
 

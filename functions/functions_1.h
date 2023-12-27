@@ -502,14 +502,11 @@ void realloc_row_remove(SETS *set, int row);
  * @param W - number of words
  */
 void compute_words_size(const char **words,int *words_index, int W);
-
 /**
  * @paragraph Reallocates memory for an array of ints that contains the size of each word
  * @param set - pointer to SETS struct where our array is located so we can realloc
  */
-
 void realloc_arr_words_size(SETS *set);
-
 /**
  * @paragraph Reallocates memory for an array of ints that contains the size of each  UFP6 representation
  * @param set - pointer to SETS struct where our array is located so we can realloc
@@ -541,6 +538,7 @@ void realloc_col_word(char **mat_row, int col_words_size);
  * @param col_words_size - size of word, used to realloc
  */
 void realloc_col_ufp6(int **mat_row, int col_words_size);
+void calloc_matrix_words_and_ufp6(SETS *set, int num_words);
 /**
  * @paragraph - Calculate char index in UFP6 codification
  * @param currentChar - char to calculate

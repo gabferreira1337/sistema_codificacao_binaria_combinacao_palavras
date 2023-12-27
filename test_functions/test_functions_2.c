@@ -9,17 +9,17 @@
 #include "test_functions_2.h"
 
 
-
-#define R 10
+#define R 5
 #define DATE_SIZE 11
 #define AD_SIZE 4
 #define NUM_SETS 8
-#define FILE "set.txt"
+#define FILE "../data/set.txt"
 #define FILE_WORDS_FOUND_AD "../data/words_found_ad.txt"
-#define FILE_AD "ad_history.txt"
-#define FILE_AD_BIN "ad_history.bin"
-#define FILE_LL "LL_history.txt"
-#define FILE_LL_BIN "LL_history.bin"
+#define FILE_WORDS_FOUND_LL "../data/words_found_ll.txt"
+#define FILE_AD "../data/ad_history.txt"
+#define FILE_AD_BIN "../data/ad_history.bin"
+#define FILE_LL "../data/LL_history.txt"
+#define FILE_LL_BIN "../data/LL_history.bin"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -66,22 +66,33 @@ int main_test_functions_2(int argc, char **argv) {
     /**
     * @paragraph Test functions for inserting nodes at specific indices in a linked list
     */
-    test_function_2_9_c();
-    /*Test functions to input and output sets of words
-     and their respective ufp6 representations  with AD// .txt file*/
+    //test_function_2_9_c();
+    /**
+    * @paragraph Test functions to search for words and their respective UFP6 representation only in
+    * specific nodes of a linked list
+    */
+    //test_function_2_9_d();
+    /**
+    * @paragraph Use txt files for input and output of sets of words and their
+    * respective ufp6 representations Dynamic array
+    */
     //test_function_2_10_ad();
-
-    /*Test functions to input and output sets of words
-    and their respective ufp6 representations with LL // .txt file*/
+    /**
+    * @paragraph Use txt files for input and output sets of words and their
+    * respective ufp6 representations Linked List
+    */
     //test_function_2_10_ll();
-    /*Test functions to input and output sets of words
-    and their respective ufp6 representations with AD //.bin file*/
+    /**
+    * @paragraph Use bin files for input and output of sets of words and their
+    * respective ufp6 representations Dynamic Array
+    */
     //test_functions_2_11_ad();
-    /*Test functions to input and output sets of words
-    and their respective ufp6 representations with LL //.bin file*/
-     //test_functions_2_11_ll();
+    /**
+    * @paragraph Use bin files for input and output of sets of words and their
+    * respective ufp6 representations Linked List
+    */
+     test_functions_2_11_ll();
 
-    exit(0);
     return 0;
 }
 
@@ -95,6 +106,8 @@ void test_function_2_8_a() {
      **/
     print_AD(ad);
     free_dynamic_array(ad);
+
+    exit(0);
 }
 
 
@@ -232,7 +245,6 @@ void test_function_2_8_e() {
             "ola",
             "olas",
     };
-
     int isize = sizeof(insert_words_) / sizeof(insert_words_[0]);
 
     ///Insert words to after test search function
@@ -367,216 +379,248 @@ void test_function_2_9_c() {
     exit(0);
 }
 
+void test_function_2_9_d() {
+    int dict[MAX_UFP6][BITS - 1] = {
+            {0, 0},
+            {0, 0}
+    };
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ///Pre-compute UFP6 dictionary and an array storing the sizes of
+    ///each representation of each UFP6 char
+    ufp6_dictionary(dict, sizes_ufp6_dict);
+    LL_WORDS_HOLDER *ll = ll_init();
+    ///Initialize sets with random words and encode them
+    SETS sets[NUM_SETS] = {0};
+    for (int i = 0; i < NUM_SETS; ++i) {
+        sets_struct_init(&sets[i], sizes_ufp6_dict, R);
+        encode_matrix_words(&sets[i], sizes_ufp6_dict, dict);
+    }
+    const char *insert_words_[] = {
+            "ola",
+            "olas",
+    };
+    int isize = sizeof(insert_words_) / sizeof(insert_words_[0]);
+
+    ///Insert words to after test search function
+    insert_words(&sets[0], insert_words_, sizes_ufp6_dict, dict, 1);
+    insert_words(&sets[1], insert_words_, sizes_ufp6_dict, dict, isize);
+
+    const char *testDates[] = {
+            "2023-11-25",
+            "2022-11-24",
+            "2023-10-01",
+            "2024-01-15",
+    };
+    int indexes[] = { 0, 1, 1, 3};
+    ///Insert nodes into LL in chronological order by last modified date DESC
+    for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
+        insert_node_ll_index(ll, &sets[i], &sets[i + 1],testDates[j], indexes[j]);
+    }
+
+    const char *find_words[] = {
+            "ola",
+            "olas",
+            "ol+",      ///Test invalid input
+    };
+    int fsize = sizeof(find_words) / sizeof(find_words[0]);
+    int flag = 1;
+
+    ///Find words in given nodes and output to console
+   // find_words_ll(ll, find_words, NULL,fsize, 0, 1, flag);
+    ///Search for words between index 0 and 1 and write to a txt file and output to console
+    find_words_ll(ll, find_words,FILE_WORDS_FOUND_LL ,fsize, 0, 1,flag);
+
+    free_ll_words_holder(ll);
+    exit(0);
+}
 
 
-/**
- * @paragraph Use txt files for input and output of sets of words and their
- * respective ufp6 representations
- * In this function we test all functions to write a Dynamic array AD_WORDS_HOLDER
- * to txt file and after read that file to aa new Dynamic array
- */
+
 void test_function_2_10_ad() {
-    AD_WORDS_HOLDER *arr_din = dynamic_array_init(AD_SIZE);
-    int dict[MAX_UFP6][BITS - 1];
-    int sizes_ufp6_dict[MAX_UFP6];
-    //Pre-compute ufp6 dictionary
+    int dict[MAX_UFP6][BITS - 1]={
+            {0, 0},
+            {0, 0}
+    };
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ///Pre-compute UFP6 dictionary and an array storing the sizes of
+    ///each representation of each UFP6 char
     ufp6_dictionary(dict, sizes_ufp6_dict);
 
-    SETS *set1 = (SETS *) calloc(1,sizeof(SETS));
-    if(set1 == NULL) fperror("Calloc set1 in test_function_2_10_ad");
-    sets_struct_init(set1, sizes_ufp6_dict, R);
-    SETS *set2 = (SETS *) calloc(1,sizeof(SETS));
-    if(set2 == NULL) fperror("Calloc set2 in test_function_2_10_ad");
-    sets_struct_init(set2, sizes_ufp6_dict, R);
-    SETS *set3 = (SETS *) calloc(1,sizeof(SETS));
-    if(set3 == NULL) fperror("Calloc set3 in test_function_2_10_ad");
-    sets_struct_init(&set3, sizes_ufp6_dict, R);
-    SETS *set4 = (SETS *) calloc(1,sizeof(SETS));
-    if(set4 == NULL) fperror("Calloc set4 in test_function_2_10_ad");
-    sets_struct_init(&set4, sizes_ufp6_dict, R);
+    AD_WORDS_HOLDER *ad_sorted = NULL;
+    ad_sorted = dynamic_array_init(AD_SIZE);
 
-    matrix_rnd_word_gen(set1);
-    matrix_rnd_word_gen(set2);
-    matrix_rnd_word_gen(set3);
-    matrix_rnd_word_gen(set4);
-
-    encode_matrix_words(set1, sizes_ufp6_dict,dict);
-    encode_matrix_words(set2, sizes_ufp6_dict,dict);
-    encode_matrix_words(set3, sizes_ufp6_dict,dict);
-    encode_matrix_words(set4, sizes_ufp6_dict,dict);
+    ///Initialize sets with random words and encode them
+    SETS sets[NUM_SETS] = {0};
+    for (int i = 0; i < NUM_SETS; ++i) {
+        sets_struct_init(&sets[i], sizes_ufp6_dict,R);
+        encode_matrix_words(&sets[i], sizes_ufp6_dict, dict);
+    }
 
     char *testDates[] = {
-            "2023-11-25",
-            "2023-11-24",
-            "2022-12-01",
-            "2023-01-15",
-            "2024-01-24",
+            "2023-11-25",       ///Test insert when empty
+            "2022-11-24",       ///Test insert to first index
+            "2023-10-01",       ///Test insert between two elements
+            "2024-01-15",       ///Test insert in last index
+
     };
+    int indices[] = {0, 1, 2, 3};
+    ///Insert elements to Dynamic array in chronological order ASC
+    for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
+        insert_element_to_AD_in_order(ad_sorted, &sets[i], &sets[i + 1],testDates[j]);
+        //insert_element_to_index_AD(arr_din, &sets[i],&sets[i + 1], testDates[j], indices[j]);
+    }
 
-    insert_element_to_AD_in_order(arr_din, set1,set2, testDates[0]);
-    insert_element_to_AD_in_order(arr_din, set3,set4, testDates[1]);
-
-    //insert_element_to_index_AD(arr_din, &set1,&set2, testDates[0], 0);
-   // insert_element_to_index_AD(arr_din, &set1,&set2, testDates[1], 1);
-
-    write_ad_to_txt(arr_din,FILE_AD);
-
+    //print_AD(ad_sorted);
+    ///Write Dynamic array to txt file
+    write_ad_to_txt(ad_sorted,FILE_AD);
+    ///Read from txt file to arr_din2
     AD_WORDS_HOLDER *arr_din2 = NULL;
-    // Last argument is a flag , if set to 1 read in chronological order
-    //Pass to function adress of pointer arr_din so changes stay outside function
+    /// Last argument is a flag , if set to 1 read in chronological order
+    /// Pass to function address of pointer arr_din so changes stay outside function
     read_from_txt_to_ad(&arr_din2, FILE_AD, 1);
 
     print_AD(arr_din2);
 
-    free_dynamic_array(arr_din);
+    free_dynamic_array(ad_sorted);
     free_dynamic_array(arr_din2);
-
     exit(0);
 }
-/**
- * @paragraph Use txt files for input and output of sets of words and their
- * respective ufp6 representations
- * In this function we test all functions to write a linked list LL_WORDS_HOLDER
- * to txt file and after read that file to a new Linked List
- */
+
+
 void test_function_2_10_ll() {
-    LL_WORDS_HOLDER *ll = ll_init();
-
-    int dict[MAX_UFP6][BITS];
-    int sizes_ufp6_dict[MAX_UFP6];
-    //Pre-compute ufp6 dictionary
-    ufp6_dictionary(dict, sizes_ufp6_dict);
-    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set1, sizes_ufp6_dict, R);
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set2, sizes_ufp6_dict, R);
-
-    //Generate random words
-    matrix_rnd_word_gen(&set1);
-    matrix_rnd_word_gen(&set2);
-    //Encode to ufp6
-    encode_matrix_words(&set1, sizes_ufp6_dict,dict);
-    encode_matrix_words(&set2, sizes_ufp6_dict,dict);
-
-    char *testDates[] = {
-            "2023-11-25",
-            "2023-11-24",
-            "2022-12-01",
-            "2023-01-15",
-            "2024-01-24",
+    int dict[MAX_UFP6][BITS - 1] = {
+            {0, 0},
+            {0, 0}
     };
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ///Pre-compute UFP6 dictionary and an array storing the sizes of
+    ///each representation of each UFP6 char
+    ufp6_dictionary(dict, sizes_ufp6_dict);
+    LL_WORDS_HOLDER *ll = ll_init();
+    ///Initialize sets with random words and encode them
+    SETS sets[NUM_SETS] = {0};
+    for (int i = 0; i < NUM_SETS; ++i) {
+        sets_struct_init(&sets[i], sizes_ufp6_dict, R);
+        encode_matrix_words(&sets[i], sizes_ufp6_dict, dict);
+    }
+    const char *testDates[] = {
+            "2023-11-25",       ///Test Insert to head when empty
+            "2022-11-24",       ///Test Insert to head
+            "2023-10-01",       ///Test Insert between two nodes
+            "2024-01-15",       ///Test Insert to tail
+    };
+   // int indices[] = {0, 1, 2, 3};
+    ///Insert nodes into LL in chronological order by last modified date DESC
+    for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
+        insert_node_ll_sorted(ll, &sets[i], &sets[i + 1],testDates[j]);
+        //insert_node_ll_index(ll, &sets[i],&sets[i + 1], testDates[j], indices[j]);
 
-    insert_node_ll_sorted(ll, &set1,&set2, testDates[0]);
-    insert_node_ll_sorted(ll, &set1,&set2, testDates[1]);
-
+    }
+    ///Write to txt file Linked List
     write_ll_to_txt(ll,FILE_LL);
+    free_ll_words_holder(ll);
 
     LL_WORDS_HOLDER *ll_2 = ll_init();
-    // Last argument is a flag , if set to 1 read in chronological order
-    //Pass to function adress of pointer arr_din so changes stay outside function
-    read_from_txt_to_ll(ll_2,FILE_LL, 1);
+    int flag = 1;
+    /// Last argument is a flag , if set to 1 read in chronological order DESC
+    ///Pass to function address of pointer arr_din so changes stay outside function
+    read_from_txt_to_ll(ll_2,FILE_LL, flag);
     print_ll_words_holder(ll_2);
 
-    free_ll_words_holder(ll);
     free_ll_words_holder(ll_2);
-
     exit(0);
 }
 
 void test_functions_2_11_ad() {
-    AD_WORDS_HOLDER *arr_din = NULL;
-    arr_din = dynamic_array_init(AD_SIZE);
-    int dict[MAX_UFP6][BITS];
-    int sizes_ufp6_dict[MAX_UFP6];
-    //Pre-compute ufp6 dictionary
+    int dict[MAX_UFP6][BITS - 1]={
+            {0, 0},
+            {0, 0}
+    };
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ///Pre-compute UFP6 dictionary and an array storing the sizes of
+    ///each representation of each UFP6 char
     ufp6_dictionary(dict, sizes_ufp6_dict);
 
-    SETS *set1 = (SETS *) calloc(1,sizeof(SETS));
-    if(set1 == NULL) fperror("Calloc set1 in test_function_2_10_ad");
-    sets_struct_init(&set1, sizes_ufp6_dict, R);
-    SETS *set2 = (SETS *) calloc(1,sizeof(SETS));
-    if(set2 == NULL) fperror("Calloc set2 in test_function_2_10_ad");
-    sets_struct_init(&set2, sizes_ufp6_dict, R);
-    SETS *set3 = (SETS *) calloc(1,sizeof(SETS));
-    if(set3 == NULL) fperror("Calloc set3 in test_function_2_10_ad");
-    sets_struct_init(&set3, sizes_ufp6_dict, R);
-    SETS *set4 = (SETS *) calloc(1,sizeof(SETS));
-    if(set4 == NULL) fperror("Calloc set4 in test_function_2_10_ad");
-    sets_struct_init(&set4, sizes_ufp6_dict, R);
+    AD_WORDS_HOLDER *ad_sorted = NULL;
+    ad_sorted = dynamic_array_init(AD_SIZE);
 
-
-    encode_matrix_words(set1, sizes_ufp6_dict,dict);
-    encode_matrix_words(set2, sizes_ufp6_dict,dict);
-    encode_matrix_words(set3, sizes_ufp6_dict,dict);
-    encode_matrix_words(set4, sizes_ufp6_dict,dict);
+    ///Initialize sets with random words and encode them
+    SETS sets[NUM_SETS] = {0};
+    for (int i = 0; i < NUM_SETS; ++i) {
+        sets_struct_init(&sets[i], sizes_ufp6_dict,R);
+        encode_matrix_words(&sets[i], sizes_ufp6_dict, dict);
+    }
 
     char *testDates[] = {
-            "2023-11-25",
-            "2023-11-24",
-            "2022-12-01",
-            "2023-01-15",
-            "2024-01-24",
+            "2023-11-25",       ///Test insert when empty
+            "2022-11-24",       ///Test insert to first index
+            "2023-10-01",       ///Test insert between two elements
+            "2024-01-15",       ///Test insert in last index
+
     };
+    //int indices[] = {0, 1, 2, 3};
+    ///Insert elements to Dynamic array in chronological order ASC
+    for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
+        insert_element_to_AD_in_order(ad_sorted, &sets[i], &sets[i + 1],testDates[j]);
+        //insert_element_to_index_AD(arr_din, &sets[i],&sets[i + 1], testDates[j], indices[j]);
+    }
 
-    insert_element_to_AD_in_order(arr_din, set1,set2, testDates[0]);
-    insert_element_to_AD_in_order(arr_din, set3,set4, testDates[1]);
-
-    //insert_element_to_index_AD(arr_din, &set1,&set2, testDates[0], 0);
-    // insert_element_to_index_AD(arr_din, &set1,&set2, testDates[1], 1);
-
-    write_ad_to_bin(arr_din,FILE_AD_BIN);
+    //print_AD(ad_sorted);
+    write_ad_to_bin(ad_sorted,FILE_AD_BIN);
+    free_dynamic_array(ad_sorted);
 
     AD_WORDS_HOLDER *arr_din2 = NULL;
-    // Last argument is a flag , if set to 1 read in chronological order
-    //Pass to function adress of pointer arr_din so changes stay outside function
+    /// Last argument is a flag , if set to 1 read in chronological order
+    ///Pass to function address of pointer arr_din so changes stay outside function
     read_from_bin_to_ad(&arr_din2, FILE_AD_BIN, 1);
 
     print_AD(arr_din2);
 
-    free_dynamic_array(arr_din);
     free_dynamic_array(arr_din2);
-
     exit(0);
 }
 
 void test_functions_2_11_ll() {
-    LL_WORDS_HOLDER *ll = ll_init();
-
-    int dict[MAX_UFP6][BITS];
-    int sizes_ufp6_dict[MAX_UFP6];
-    //Pre-compute ufp6 dictionary
-    ufp6_dictionary(dict, sizes_ufp6_dict);
-    SETS set1 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set1, sizes_ufp6_dict, R);
-    SETS set2 = {NULL, NULL, NULL, NULL, 0, 0};
-    sets_struct_init(&set2, sizes_ufp6_dict, R);
-
-    //Encode to ufp6
-    encode_matrix_words(&set1, sizes_ufp6_dict,dict);
-    encode_matrix_words(&set2, sizes_ufp6_dict,dict);
-
-    char *testDates[] = {
-            "2023-11-25",
-            "2023-11-24",
-            "2022-12-01",
-            "2023-01-15",
-            "2024-01-24",
+    int dict[MAX_UFP6][BITS - 1] = {
+            {0, 0},
+            {0, 0}
     };
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    ///Pre-compute UFP6 dictionary and an array storing the sizes of
+    ///each representation of each UFP6 char
+    ufp6_dictionary(dict, sizes_ufp6_dict);
+    LL_WORDS_HOLDER *ll = ll_init();
+    ///Initialize sets with random words and encode them
+    SETS sets[NUM_SETS] = {0};
+    for (int i = 0; i < NUM_SETS; ++i) {
+        sets_struct_init(&sets[i], sizes_ufp6_dict, R);
+        encode_matrix_words(&sets[i], sizes_ufp6_dict, dict);
+    }
+    const char *testDates[] = {
+            "2023-11-25",       ///Test Insert to head when empty
+            "2022-11-24",       ///Test Insert to head
+            "2023-10-01",       ///Test Insert between two nodes
+            "2024-01-15",       ///Test Insert to tail
+    };
+    // int indices[] = {0, 1, 2, 3};
+    ///Insert nodes into LL in chronological order by last modified date DESC
+    for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
+        insert_node_ll_sorted(ll, &sets[i], &sets[i + 1],testDates[j]);
+        //insert_node_ll_index(ll, &sets[i],&sets[i + 1], testDates[j], indices[j]);
+    }
 
-    insert_node_ll_sorted(ll, &set1,&set2, testDates[0]);
-    insert_node_ll_sorted(ll, &set1,&set2, testDates[1]);
-
+    ///Write to bin file Linked List
     write_ll_to_binfile(ll,FILE_LL_BIN);
+    free_ll_words_holder(ll);
 
     LL_WORDS_HOLDER *ll_2 = ll_init();
-    // Last argument is a flag , if set to 1 read in chronological order
-    //Pass to function adress of pointer arr_din so changes stay outside function
-    read_from_binfile_to_ll(ll_2,FILE_LL_BIN, 1);
+    int flag = 1;
+    /// Last argument is a flag , if set to 1 read in chronological order
+    ///Pass to function address of pointer arr_din so changes stay outside function
+    read_from_binfile_to_ll(ll_2,FILE_LL_BIN, flag);
     print_ll_words_holder(ll_2);
 
-    free_ll_words_holder(ll);
-   // free_ll_words_holder(ll_2);
+    free_ll_words_holder(ll_2);
     exit(0);
 }
-
 

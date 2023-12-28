@@ -2,7 +2,7 @@
 
 ## Description
 
-This program aims to implement a system for managing sets of words and their corresponding UFP6 codes (binary encoding with custom ASCII). The implementation includes data structures (Linked Lists, Dynamic Arrays), functions for word conversion, insertion and removal of words, exploration of combinations, word search, sorting, and file input/output.
+This program aims to implement a system for managing sets of words and their corresponding UFP6 codes (binary encoding with custom ASCII). The implementation includes data structures (Linked Lists, Dynamic Arrays, Hash tables), functions for word conversion, insertion and removal of words, exploration of combinations, word search, sorting, and file input/output.
 
 The application is designed to be used via function calls in a programming environment. There is no interactive interface or graphical user interface (CLI).
 

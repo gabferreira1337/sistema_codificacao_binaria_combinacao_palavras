@@ -10,7 +10,6 @@
 
 
 int main_functions_2(int argc, char **argv) {
-
     return 0;
 }
 

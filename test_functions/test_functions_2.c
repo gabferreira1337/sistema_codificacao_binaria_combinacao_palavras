@@ -345,7 +345,6 @@ void test_function_2_9_b() {
     exit(0);
 }
 
-
 void test_function_2_9_c() {
     int dict[MAX_UFP6][BITS - 1] = {
             {0, 0},
@@ -438,8 +437,6 @@ void test_function_2_9_d() {
     free_ll_words_holder(ll);
     exit(0);
 }
-
-
 
 void test_function_2_10_ad() {
     int dict[MAX_UFP6][BITS - 1]={
@@ -628,3 +625,4 @@ void test_functions_2_11_ll() {
     free_ll_words_holder(ll_2);
     exit(0);
 }
+

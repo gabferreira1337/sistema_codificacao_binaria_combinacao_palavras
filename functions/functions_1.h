@@ -20,6 +20,22 @@ typedef struct{
     int rowsize;                /// number of words in both matrix (number of rows)
 }SETS;
 
+
+typedef struct ufp6{
+    char *ufp6_encode;      ///string holding UFP6 representation
+    unsigned int number;    /// number of string conversion to int
+    struct ufp6 *pnext;     /// pointer to next node
+}UFP6;
+
+///Struct to hold Hash table
+typedef struct hashtable {
+    int count;        /// number of elements in Hash table
+    int size;        /// size of Hash table
+    UFP6 **table;   /// Hash table
+}HASHTABLE;
+
+
+
 /**
  * @paragraph Initialize SETS struct
  * @param set - pointer to SETS struct
@@ -94,12 +110,6 @@ void insert_word_char(SETS *set,const char *word,int index);
  * @param index - index of word
 */
 void insert_ufp6(SETS *set, const int sizes_ufp6_dict[],const int ufp6_dict[][BITS - 1], const char *word, int index);
-
-/**
- * @paragraph Reallocate memory for an char array of pointers (rows) and for each pointer (cols)
- * @param set - pointer to SETS struct which contains matrix to reallocate
-*/
-void matrix_realloc(SETS *set);
 /**
  * @paragraph Reallocate memory for an int array of pointers (rows) and for each pointer (cols), initialize at 0
  * @param set - pointer to SETS struct which contains array to reallocate
@@ -122,19 +132,19 @@ void matrix_encode_realloc(SETS *set);
 void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict,const int ufp6_dict[][BITS - 1], int num_words);
 
 /**
- * @paragraph Print the size of all words
- * @param set - pointer to SETS struct that contain the array to print
+ * @paragraph Print arr holding words sizes
+ * @param set - pointer to SETS struct
 */
 void print_arr_word_size(const SETS *set);
 
 /**
- * @paragraph Print every single word
- * @param set - pointer to SETS struct that contain the array to print
+ * @paragraph Print matrix of strings
+ * @param set - pointer to SETS struct
 */
 void print_matrix_char(const SETS *set);
 
 /**
- * @paragraph Function to calculate UFP6 representation of all wordsand store in
+ * @paragraph Function to calculate UFP6 representation of all words and store in
  * set arr_ufp6_size at a given index
  * Time Complexity: O(W) = length of word
  * Extra Space: O(1)
@@ -145,7 +155,6 @@ void print_matrix_char(const SETS *set);
  * in UFP6
 */
 void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6);
-
 /**
  * @paragraph Free memory allocated in set
  * @param set - pointer to SETS struct
@@ -292,41 +301,95 @@ void fperror(char *message);
  */
 void encode_word(const char* word, int *encode, int *word_ufp6_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS - 1], int W);
 /**
- * @paragraph Not implemented
- * @param word -
- * @param arr_bin_sizes -
- * @param words_bin_sizes -
- * @param N -
- * @param w -
+ * @paragraph Find equal combination of UFP6 representations from 2 sets using
+ * Backtracking method and a dynamic Hash Table to store and check equal combinations
+ * Time Complexity: O (M + 2( R * BITS - 1 ) + (p! / r) + N) M = init Hash table
+ * (R * Bits - 1) parse matrix to string (p! / r) = n! = number of permutations n = number of repeated bits (1's and 0's)
+ * N = Reashing hash table
+ * Extra Space: O (M + L + S) M = size of hash table L = lenghth of string2
+ * S = length of string2
+ * @param set1 - pointer to SETS struct
+ * @param set2 - pointer to SETS struct
  */
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
 /**
- * @paragraph Not implemented
- * @param word -
- * @param arr_bin_sizes -
- * @param words_bin_sizes -
- * @param N -
- * @param w -
+ * @paragraph Generate permutations without repetition using Backtracking method and insert
+ * into hash table to check if a permutation from a set was already generated from another set
+ * and if so output to console equal combination
+ * Time Complexity: O(n! / r) n! = number of permutations n = number of repeated bits (1's and 0's)
+ * Extra Space O(N + H) H = hash table N = length of string a
+ * @param hash_table - pointer to HASHTABLE struct
+ * @param a - pointer to array containing string with UFP6 representation
+ * @param l - start index
+ * @param r - end index
  */
-void generate_combination_without_repetition(int *row, int length);
+void generate_permutations_ufp6(HASHTABLE *hash_table,char *a, int l, int r);
 /**
- * @paragraph Not implemented
- * @param word -
- * @param arr_bin_sizes -
- * @param words_bin_sizes -
- * @param N -
- * @param w -
+ * @paragraph Initialize HASHTABLE struct , initializing hash table pointers to NULL
+ * @param hash_table - pointer to pointer to HASHTABLE struct
+ * @param size - size of hash table
+ * @param count - number of elements in Hash table
  */
-void combination_ufp6_in_both_sets(SETS *set1, SETS *set2);
+void init_hash_table(HASHTABLE **hash_table, int size, int count);
 /**
- * @paragraph Not implemented
- * @param word -
- * @param arr_bin_sizes -
- * @param words_bin_sizes -
- * @param N -
- * @param w -
+ * @paragraph Print hash table
+ * @param hash_table - pointer to array of pointers of type UFP6 (hash table)
  */
-void generate_combination_without_repetition(int *row, int length);
+void print_table(UFP6 **hash_table);
+/**
+ * @paragraph Generate Hash value using Jenkins One-at-a-Time hash algorithm to minimize collisions.
+ * This function iterates over each byte of the input data (ufp6_encode). For each byte:
+ * hash is updated by adding the current byte value.
+ * hash is left-shifted by 10 bits.
+ * The result is XORed with the right-shifted value of hash by 6 bits.
+ * After processing each byte, additional mixing is performed:
+ *hash is left-shifted by 3 bits.
+ *hash is XORed with the right-shifted value of hash by 11 bits.
+ *hash is left-shifted by 15 bits.
+ * Time Complexity : O(S) S = string length
+ * @param ufp6_encode - pointer to string containing the UFP6 representation
+ * @param size - size of hash table
+ * @return hash value
+ */
+unsigned int hash(const char *ufp6_encode, int size);
+/**
+ * @paragraph Insert new node to Hash table , If there are collisions create Linked List of nodes in Bucket
+ * Time Complexity: O(S) S = length of string
+ * @param hash_table - pointer to struct HASHTABLE
+ * @param new - pointer to new UFP6 node
+ */
+void hash_table_insert(HASHTABLE *hash_table, UFP6 *new);
+/**
+ * @paragraph Rehash elements from Hash table
+ * Time Complexity: O (N)  N = number of elements in hash table
+ * @param hash_table - pointer to array of pointers of type UFP6 (hash table)
+ * @param size - new size of hash table
+ */
+void rehash(HASHTABLE **hash_table, int size);
+void swapc(char *x,char *y);
+/**
+ * @paragraph Lookup for a given string in hash table
+ * Time Complexity: O(N) N = number of nodes in bucket
+ * Extra Space: O(1)
+ * @param hash_table - pointer to HASHTABLE struct
+ * @param ufp6 - pointer to string containing the UFP6 representation
+ * @return pointer to node containing the string
+ */
+UFP6 *hash_table_lookup(HASHTABLE *hash_table, char *ufp6);
+/**
+ * @paragraph Convert matrix of UFP6 representations to string
+ * Time Complexity: O (R * BITS - 1) R = number of rows Bits - 1 : Max number of columns
+ * Extra Space: O(S) S = sum of all bits in matrix
+ * @param set - pointer to SETS struct
+ * @return pointer to string containing all the UFP6 representations concatenated
+ */
+char *matrix_to_string(const SETS *set);
+/**
+ * @paragraph Create and Insert node in Hash table
+ * @param str - pointer to string containing UFP6 representation
+ */
+void insert_new_UFP6_node(HASHTABLE *hash_table, const char *str);
+void free_hash_table(UFP6 **hash_table);
 /**
  * @paragraph This function compares two strings starting from position D
  * @param str1 - pointer to string1

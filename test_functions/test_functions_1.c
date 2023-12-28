@@ -7,8 +7,8 @@
 #include "../functions/functions_1.h"
 
 #define R 8
-#define  FILE_PATTERN_FOUND_SET "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/set_words_found.txt"
-#define MSD_VS_MERGES_FILE "/Users/gabrielferreira/Desktop/projeto_aed1_lp1/data/sorting_comp.txt"
+#define  FILE_PATTERN_FOUND_SET ../data/set_words_found.txt"
+#define MSD_VS_MERGES_FILE "../data/sorting_comp.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -33,10 +33,9 @@ int main_test_functions_1(int argc, char **argv) {
      * shifting rows
     */
    //test_function1_feature3();
-    /**4) Test functions to search words in a given set of words and their respective UFP6
-     * representation and output into console and txt file
+    /**4) Test functions to find equal combinations of UFP6 representations from 2 sets
      */
-    //test_function1_feature4();
+    test_function1_feature4();
    /**5) Test functions to search for a pattern in a set of words and their respective UFP6
     * representation and output into console and txt file
     */
@@ -45,7 +44,7 @@ int main_test_functions_1(int argc, char **argv) {
      * (ASC and DESC) also
     */
      //test_functions1_feature6();
-     test_cmp_msd_mergesort();
+     //test_cmp_msd_mergesort();
      //TIMER_STOP();
    // fprintf(stdout, "time_delta %f\n", time_delta);
 
@@ -235,7 +234,7 @@ void test_function1_feature4() {
             {0, 0},
             {0, 0}
     };
-    // sizes of each binary representation
+    /// sizes of each binary representation
     int sizes_ufp6_dict[MAX_UFP6] = {0};
     ufp6_dictionary(ufp6_dict,sizes_ufp6_dict);
     SETS set1 = {NULL, NULL, NULL, NULL, 0};
@@ -243,20 +242,33 @@ void test_function1_feature4() {
     int  num_words_set1 = 1;
     int  num_words_set2 = 1;
 
-    //Initialize sets with random words
+    ///Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict,num_words_set1);
     sets_struct_init(&set2, sizes_ufp6_dict, num_words_set2);
 
     encode_matrix_words(&set1, sizes_ufp6_dict,ufp6_dict);
+    encode_matrix_words(&set2, sizes_ufp6_dict,ufp6_dict);
 
-   const char *words[] = {
-        "o"
+    remove_word_from_set(&set1, 0);
+    remove_word_from_set(&set2, 0);
+
+    const char *words1[] = {
+        "10",
+        "10",
     };
+    const char *words2[] = {
+            "0",
+            "5",
+    };
+    int num_words = sizeof(words1) / sizeof(words1[0]);
 
-    insert_words(&set1, words, sizes_ufp6_dict, ufp6_dict, 1);
-    print_matrix_int(&set1);
+    insert_words(&set1, words1, sizes_ufp6_dict, ufp6_dict, num_words);
+    insert_words(&set2, words2, sizes_ufp6_dict, ufp6_dict, num_words);
+
+    //print_matrix_int(&set1);
+   // print_matrix_int(&set2);
+
     combination_ufp6_in_both_sets(&set1, &set2);
-
     freemem_set(&set1);
     freemem_set(&set2);
 }

@@ -8,11 +8,8 @@
 #include "functions_2.h"
 
 #define CUTOFF 10
+#define TABLE_SIZE 10
 
-
-int main_functions_1(int argc , char **argv){
-    return 0;
-}
 
 void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char){
     /// Allocate memory for array of pointers
@@ -104,11 +101,11 @@ void encode(SETS *set){
 }
 
 void rnd_word_size_gen(int *word_length_arr, int W) {
-    /* seed to generate random numbers */
+    /// seed to generate random numbers */
     seed_random();
     for (int i = 0; i < W; ++i) {
-        /* Generate numbers from 1 to BITS - 1 // sum + 1 to the result so never generates 0 */
-        /* And store in word_length */
+        /// Generate numbers from 1 to BITS - 1 // sum + 1 to the result so never generates 0 */
+        /// And store in word_length */
         word_length_arr[i] = (rand() % (BITS - 1)) + 1;
     }
 }
@@ -130,7 +127,7 @@ char gen_rnd_char(){
         ///for example: 'a' + 10 - 10 = 'a'
         return (char) ('a' + (random_number - 10));
         /// 'A' to 'Z' (uppercase letters)
-    } else if(random_number < RADIX){
+    } else{
         ///In here subtract 36 because  '0' to 'z' = 36 and the random number will be from 36 to RADIX
         ///and to get ASCII from 'A' to 'Z' start from '0' and sum 'A'
         return (char) ('A' + (random_number - 36));
@@ -156,17 +153,13 @@ void matrix_rnd_word_gen(SETS *set) {
 
 void insert_word_char(SETS *set,const char *word,int index) {
         for (int j = 0; j < set->arr_word_size[index]; ++j) {
-            //printf("%c", word[j]);
             *(*(set->matrix + index) + j) = word[j];
-            /* if the word is smaller than colsize_char fill the rest with ' ' */
-            /*if (j >= strlen(words[k]))
-                *(*(set->matrix + i) + j) = ' ';*/
         }
 }
 
 
 void freemem_set(SETS *set){
-    //Free each row from matrix of words and ufp6
+    ///Free each row from matrix of words and ufp6
     for (int i = 0; i < set->rowsize; ++i) {
         free(set->matrix_ufp6[i]);
         set->matrix_ufp6[i] =NULL;
@@ -174,34 +167,20 @@ void freemem_set(SETS *set){
         free(set->matrix[i]);
         set->matrix[i] =NULL;
     }
-    //Free pointer to matrix
+    ///Free pointer to matrix
     free(set->matrix);
     set->matrix =NULL;
-    //Free pointer to matrix_ufp6
+    ///Free pointer to matrix_ufp6
     free(set->matrix_ufp6);
     set->matrix_ufp6 =NULL;
-    //Free pointer to array with words size
+    ///Free pointer to array with words size
     free(set->arr_word_size);
     set->arr_word_size = NULL;
-    //Free pointer to array with ufp6 size
+    ///Free pointer to array with ufp6 size
     free(set->arr_ufp6_size);
     set->arr_ufp6_size = NULL;
 }
 
-void matrix_realloc(SETS *set){
-    print_arr_word_size(set);
-        set->matrix = (char **) realloc(set->matrix,set->rowsize * sizeof(char *));
-
-        if(set->matrix == NULL){
-            printf("Realloc set->matrix failed !\n");
-            freemem_set(set);
-            exit(0);
-        }
-
-        for (int i = 0; i < set->rowsize; ++i) {
-            realloc_col_word(&*(set->matrix +i),*(set->arr_word_size + i));
-        }
-}
 
 void init_arr_word_size(SETS *set){
     set->arr_word_size = (int *) calloc(set->rowsize, sizeof(int));
@@ -615,7 +594,9 @@ void remove_word_from_set (SETS *set, int index_remove) {
 
         ///free row and clear stored size
         free(set->matrix[set->rowsize]);
+        set->matrix[set->rowsize] = NULL;
         free(set->matrix_ufp6[set->rowsize]);
+         set->matrix_ufp6[set->rowsize] = NULL;
         set->arr_word_size[set->rowsize] = 0;
         set->arr_ufp6_size[set->rowsize] = 0;
 }
@@ -742,9 +723,14 @@ void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict,cons
             ///Store word size and ufp6 size calculated ,of new word to be inserted
             set->arr_word_size[i] = (int) strlen(words[k]);
             calc_ufp6_size(set, i, words[k], sizes_ufp6_dict);
-            ///reallocate memory for both matrix
-            realloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
-            realloc_col_word(&set->matrix[i], set->arr_word_size[i]);
+            ///If already allocated memory for both matrix , realloc to correct number of columns
+            if(set->matrix_ufp6[i] != NULL && set->matrix[i] != NULL){
+                realloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
+                realloc_col_word(&set->matrix[i], set->arr_word_size[i]);
+            }else{
+                calloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
+                calloc_col_word(&set->matrix[i], set->arr_word_size[i]);
+            }
             ///Insert word into both matrix
             insert_word_char(set, words[k], i);
             insert_ufp6(set, sizes_ufp6_dict, ufp6_dict, words[k], i);
@@ -1057,32 +1043,223 @@ void is_sorted_sizes(const SETS *set, int N, bool flag) {
             printf("Set sorted properly by words size DESC !!!\n");
         }
 }
-void generatePermutations(int a[], int size, int N) {
-    if (size == 1) {
-        for (int i = 0; i < N; i++) {
-            printf("%d ", a[i]);
-        }
-        putchar('\n');
-        return;
-    }
 
-    for (int i = 0; i < size; i++) {
-        generatePermutations(a, size - 1, N);
-        // Swap elements based on the parity of 'size'
-        if (size % 2 == 1) {
-            exch(a, 0, size - 1);
-        } else {
-            exch(a, i, size - 1);
-        }
-    }
-}
 void combination_ufp6_in_both_sets(SETS *set1, SETS *set2) {
-    int arr[10] = {1,0, 0,1};
-    //generate_combination_without_repetition(set1->matrix_ufp6[1], set1->arr_ufp6_size[1]);
-    //generate_combination_without_repetition(arr, 2);
-    generatePermutations(arr, 4, 4);
+    HASHTABLE *hash_table = NULL;
+    init_hash_table(&hash_table, TABLE_SIZE, 0);
+    ///Convert both Matrix UFP6 to array
+    char *ufp6_1 = matrix_to_string(set1);
+    char *ufp6_2 = matrix_to_string(set2);
+    ///Generate and search for equal combinations between both sets
+    generate_permutations_ufp6(hash_table, ufp6_1, 0,(int)strlen(ufp6_1) - 1);
+    ///If number of elements in hash table greater than 4 times hash table
+    ///Execute reashing copying data to a new hash table of 4 times the size
+    if(hash_table->count >= TABLE_SIZE * 4){
+        rehash(&hash_table, TABLE_SIZE * 4);
+    }
+    generate_permutations_ufp6(hash_table, ufp6_2, 0,(int) strlen(ufp6_2) - 1);
+
+    //print_table(hash_table->table);
+    free_hash_table(hash_table->table);
+    free(hash_table);
+    free(ufp6_1);
+    free(ufp6_2);
 }
 
+char *matrix_to_string(const SETS *set){
+    int ufp6_size_sum = 0;
+    ///Calculate exact size to allocate for buffer
+    for (int i = 0; i < set->rowsize; ++i) {
+      ufp6_size_sum += set->arr_ufp6_size[i];
+    }
+    /// for '\0'
+    ufp6_size_sum++;
+    char *buff = calloc(ufp6_size_sum, sizeof(char));
+    if(buff == NULL){
+        fperror("Calloc buff in matrix_to_string");
+    }
+    for (int i = 0; i < set->rowsize; ++i) {
+        for (int j = 0; j < *(set->arr_ufp6_size + i); ++j) {
+            /// Use snprintf to concatenate numbers to the buffer
+            int written = snprintf(buff, ufp6_size_sum, "%s%d", buff, set->matrix_ufp6[i][j]);
+            /// Check for snprintf errors or buffer overflow
+            if (written < 0 || written >= ufp6_size_sum) {
+                fperror("Buffer overflow or snprintf failure");
+            }
+        }
+    }
+    return buff;
+}
+
+///Initialize hash table pointers to NULL
+void init_hash_table(HASHTABLE **hash_table, int size, int count){
+    *hash_table = (HASHTABLE *)calloc(1,sizeof(HASHTABLE));
+    if(hash_table == NULL){
+        fperror("calloc hash_table in init_hash_table");
+    }
+    (*hash_table)->count = count;
+    (*hash_table)->size = size;
+    ///Allocate mem for hash table (by init array of pointers to NULL)
+    (*hash_table)->table = (UFP6 **)calloc(size, sizeof(UFP6 *));
+    if((*hash_table)->table == NULL){
+        fperror("calloc table in init_hash_table");
+    }
+}
+
+void print_table(UFP6 **hash_table){
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        if(hash_table[i] == NULL){
+            printf("\t%i\t---\n",i);
+        }else{
+            printf("\t%i\t", i);
+            UFP6 *curr = hash_table[i];
+            while(curr != NULL){
+                printf("%s - ",curr->ufp6_encode);
+                curr = curr->pnext;
+            }
+            putchar('\n');
+        }
+    }
+}
+
+unsigned int hash(const char *ufp6_encode, int size) {
+    unsigned int hash = 0;
+    unsigned int len = (unsigned int) strlen(ufp6_encode);
+    int i;
+
+    for (i = 0; i < len; ++i) {
+        hash += (unsigned char)ufp6_encode[i];
+        ///hash left-shift 10 bits
+        hash += (hash << 10);
+        ///XORed with the right-shifted value of hash by 6 bits
+        hash ^= (hash >> 6);
+    }
+    ///hash left-shift 3 bits
+    hash += (hash << 3);
+    ///XORed with the right-shifted value of hash by 11 bits
+    hash ^= (hash >> 11);
+    ///hash left-shift 15 bits
+    hash += (hash << 15);
+    ///Reduce to modulo of TABLE_SIZE
+    return hash % size;
+}
+
+void hash_table_insert(HASHTABLE *hash_table,UFP6 *new){
+    if(new == NULL) return;
+    ///Get hash value
+    unsigned  int index = hash(new->ufp6_encode, hash_table->size);
+    ///Point new node to prev node
+    new->pnext = hash_table->table[index];
+    ///Add to head
+    hash_table->table[index] = new;
+    hash_table->count++;
+}
+
+///chech if value is in hash table
+UFP6 *hash_table_lookup (HASHTABLE *hash_table, char *ufp6){
+   unsigned int index = hash(ufp6, hash_table->size);
+    ///Pointer to head of LL
+    UFP6 *curr = hash_table->table[index];
+    ///Traverse LL
+    while(curr != NULL && strcmp(curr->ufp6_encode, ufp6) != 0){
+        curr = curr->pnext;
+    }
+    return curr;
+}
+/// Function to rehash the elements from the old hash table to the new one
+void rehash(HASHTABLE **hash_table, int size) {
+    HASHTABLE *new_hash_table = NULL;
+    init_hash_table(&new_hash_table, size, (*hash_table)->count);
+
+    /// Iterate through old hash table
+    for (int i = 0; i < (*hash_table)->size; i++) {
+        UFP6 *current = (*hash_table)->table[i];
+        while (current != NULL) {
+        /// Reinsert each element into the new hash table
+         unsigned int index = hash(current->ufp6_encode, size);
+         UFP6 *newn = (UFP6 *)calloc(1,sizeof(UFP6));
+         if(newn == NULL){
+             fperror("calloc newn in reash function");
+         }
+         ///Copy string to new node
+         newn->ufp6_encode = strdup(current->ufp6_encode);
+         newn->number = current->number;
+         ///Point new node to next
+         newn->pnext = new_hash_table->table[index];
+         ///Add to head
+         new_hash_table[index].table = &newn;
+         current = current->pnext;
+        }
+    }
+    free_hash_table((*hash_table)->table);
+    free(hash_table);
+    /// Update the pointer to the new hash table
+    *hash_table = new_hash_table;
+}
+
+void swapc(char *x,char *y){
+    char temp;
+    temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+void insert_new_UFP6_node(HASHTABLE *hash_table,const char *str){
+    UFP6 *new = calloc(1,sizeof(UFP6));
+    if(new == NULL){
+        fperror("Calloc new node in insert_new_UFP6_node");
+    }
+    ///Allocate memory for ufp6_encode and copy str
+    new->ufp6_encode = strdup(str);
+    hash_table_insert(hash_table, new);
+}
+
+//perguntar extra space hash table
+void generate_permutations_ufp6(HASHTABLE *hash_table,char *a, int l, int r){
+    int i;
+    if (l == r) {
+        ///Print equal combination from set1 and 2
+        if(hash_table_lookup(hash_table, a) != NULL){
+            ///Convert to int to eliminate leading zero's
+            int ufp6 = (int)strtol(a, (char **)NULL, 10);
+            printf("Found equal combination set 1[ %d ] = set 2 [ %d ]\n",ufp6,ufp6);
+            ///Insert permutation to hash table if not already inserted
+        }else{
+            insert_new_UFP6_node(hash_table, a);
+        }
+    } else {
+        for (i = l; i <= r; i++) {
+            int is_duplicate = 0;
+            /// Check if the current character is a duplicate of any previous characters
+           for (int k = l; k < i; k++) {
+                if (a[k] == a[i]) {
+                    is_duplicate = 1;
+                    break;
+                }
+            }
+            /// Skip swap for duplicate elements at different indice
+            if (is_duplicate) continue;
+            swapc(&a[l], &a[i]);
+            generate_permutations_ufp6(hash_table,a, l + 1, r);
+            ///Backtrack
+            swapc(&a[l], &a[i]);
+        }
+    }
+}
+
+void free_hash_table(UFP6 **hash_table) {
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        /// Free the linked list in each bucket
+        UFP6 *current = hash_table[i];
+        while (current != NULL) {
+            UFP6 *temp = current;
+            current = current->pnext;
+            free(temp);
+        }
+        /// Set the bucket to NULL after freeing the linked list
+        hash_table[i] = NULL;
+    }
+}
 
 void sort(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int hi, bool flag) {
      if(hi <= lo) return;

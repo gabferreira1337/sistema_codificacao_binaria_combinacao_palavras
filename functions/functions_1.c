@@ -19,7 +19,7 @@ void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char){
     }
     ///Allocate memory for each pointer to arrays
     for (int i = 0; i < set->rowsize; ++i) {
-        ///Calculate each UFP6 representation to allocate exact number of columns
+        ///Calculate each UFP6 representation to allocate exact size of columns
         calc_ufp6_size(set, i, *(set->matrix + i), sizes_ufp6_char);
         *(set->matrix_ufp6 + i) = (int*)calloc(*(set->arr_ufp6_size + i), sizeof(int));
         if (*(set->matrix_ufp6 + i) == NULL) {
@@ -64,42 +64,6 @@ void print_matrix_char(const SETS *set) {
     }
 }
 
-void encode(SETS *set){
-    int charCalc = 0;
-    int  j=0;
-    for (int i = 0; i < set->rowsize; ++i) {
-        j =0;
-        //calculate_ufp6_sizes ( *(*(set->));
-        for (int k = 0;k < *(set->arr_word_size + i); k++) {
-            charCalc = (unsigned char) *(*(set->matrix + i) + k) ;
-            if (charCalc >= '0' && charCalc <= '9') {
-                int digit = charCalc - '0';
-                for (int l = BITS - 1; l >= 0 && j < set->arr_ufp6_size[i] ; l--, j++) {
-                    *(*(set->matrix_ufp6 + i) + j) = (digit >> l) & 1;
-                }
-            } else if (charCalc >= 'a' && charCalc <= 'z') {
-                /* 10 represents the beginning of letters */
-                int letter = charCalc - 'a' + 10;
-                for (int l = BITS -1; l >= 0 && j < set->arr_ufp6_size[i]; l--, j++) {
-                    /* when last digit is 0 break from the loop, so it won't store the left 0's */
-                    if ((letter >> l) == 0) {
-                        *(*(set->matrix_ufp6 + i) + j) = -1;
-                    } else {
-                        *(*(set->matrix_ufp6 + i) + j) = (letter >> l) & 1;
-                    }
-                }
-            } else if (charCalc >= 'A' && charCalc <= 'Z') {
-                /* 'a' is the value 36 (A = 10 a = 10 + 26) */
-                int letter = charCalc - 'A' + 36;
-                for (int l = BITS -1; l >= 0 && j < set->arr_ufp6_size[i]; l--, j++) {
-                    if((letter >>l) == 0) break;
-                    *(*(set->matrix_ufp6 + i) + j) = (letter >> l) & 1;
-                }
-            }
-        }
-    }
-}
-
 void rnd_word_size_gen(int *word_length_arr, int W) {
     /// seed to generate random numbers */
     seed_random();
@@ -112,7 +76,7 @@ void rnd_word_size_gen(int *word_length_arr, int W) {
 
 char gen_rnd_char(){
     int random_number;
-    ///Generate random number between 0 and MAX_UFP6
+    ///Generate random size between 0 and MAX_UFP6
     random_number =  rand() % MAX_UFP6;
     /// '0' to '9' (digits)
     if (random_number < 10) {
@@ -121,14 +85,14 @@ char gen_rnd_char(){
     } else if (random_number < 36 ) {
         /// 'a' + (random_number - 10 ) because in ASCII table
         /// 'a' = 97 dec but in UFP6 'a' = 10 so for example
-        /// if random number = 10 we need to get char 'a'
+        /// if random size = 10 we need to get char 'a'
         ///so  subtract 10 because from '0' to '9' it has digits
         ///and need to get the ASCII code from 'a' starting in '0' and sum the first char ('a')
         ///for example: 'a' + 10 - 10 = 'a'
         return (char) ('a' + (random_number - 10));
         /// 'A' to 'Z' (uppercase letters)
     } else{
-        ///In here subtract 36 because  '0' to 'z' = 36 and the random number will be from 36 to RADIX
+        ///In here subtract 36 because  '0' to 'z' = 36 and the random size will be from 36 to RADIX
         ///and to get ASCII from 'A' to 'Z' start from '0' and sum 'A'
         return (char) ('A' + (random_number - 36));
     }
@@ -335,7 +299,7 @@ void ufp6_dictionary(int ufp6_dict[][BITS - 1], int *size_ufp6) {
         if(digit - '0' == 0){
             size_ufp6[index] = 1;
         }else{
-            /// We know the number of bits to represent a given value by doing
+            /// We know the size of bits to represent a given value by doing
             /// log2((digit)) + 1
             size_ufp6[index] = (int) log2((digit - '0')) + 1;
         }
@@ -359,7 +323,7 @@ void ufp6_dictionary(int ufp6_dict[][BITS - 1], int *size_ufp6) {
 
 
 void charToUFP6(int c, int *result, int numBits_ufp6_char) {
-    /// Use numBits_ufp6_char to only store the right number of bits of each value
+    /// Use numBits_ufp6_char to only store the right size of bits of each value
     ///Convert filling array in reverse order
     for (int i = numBits_ufp6_char - 1; i >= 0; i--) {
        /// c >> i =  right-shifts the bits of c by i times
@@ -418,7 +382,7 @@ void encode_word(const char* word, int *encoded, int *word_ufp6_size, int k, con
 
 /**@paragraph This function encodes a matrix of words from set using
  * encode_word function to encode each word into matrix_ufp6 in set
- * Time complexity: O (N (W * M)) N = number of words W = length of each word
+ * Time complexity: O (N (W * M)) N = size of words W = length of each word
  * M = UFP6 size representation
  * Extra Space: O(1)
  */
@@ -549,13 +513,13 @@ void print_found_words_and_ufp6(const SETS *set,const int *array_index) {
 /**
  * Find patterns in a given set using KMP Algorithm
  * Time Complexity of O(P (M + N * M))
- * M = length of longest pattern N = number of rows (words in set) P = number of patterns to search for
+ * M = length of longest pattern N = size of rows (words in set) P = size of patterns to search for
  * Extra Space: O(MAX_UFP6 * BITS - 1 + P) MAX_UFP6 * BITS - 1 for DFA
  * and P = array to store indexes of words with given pattern
  */
 void find_words_with_pattern(const SETS *set, const char **patterns, int W, const char *fn, bool flag) {
     if (W <= 0) {
-        fperror("Incorrect number patterns (less or equal to 0) in find_words_with_pattern");
+        fperror("Incorrect size patterns (less or equal to 0) in find_words_with_pattern");
     }
 
     ///Array to store the indexes of the patterns found in set
@@ -571,7 +535,7 @@ void find_words_with_pattern(const SETS *set, const char **patterns, int W, cons
 }
 /**
  * Function to remove word and UFP6 representation of given word and adjust rows from both matrix in set
- * Time Complexity: O(N) N = number of words in UFP6 matrix
+ * Time Complexity: O(N) N = size of words in UFP6 matrix
  * Extra Space: O(1)
  * @param set - pointer to SETS struct
  * @param index - index of word (row) to be removed
@@ -589,7 +553,7 @@ void remove_word_from_set (SETS *set, int index_remove) {
             remove_UFP6(set, i);
         }
 
-        ///adjust number of rows of both matrix after deleting
+        ///adjust size of rows of both matrix after deleting
         set->rowsize--;
 
         ///free row and clear stored size
@@ -619,7 +583,7 @@ void compute_words_size(const char **words, int *words_index ,int W) {
 }
 
 void sets_struct_init(SETS *set,const int *sizes_ufp6, int num_words) {
-    ///Store number of words (rows) of both matrix in set
+    ///Store size of words (rows) of both matrix in set
     set->rowsize = num_words;
     ///Initialize arrays to store words size and UFP6 words representation
     init_arr_word_size(set);
@@ -700,13 +664,13 @@ void calc_ufp6_size(SETS *set, int index,const char *word, const int *sizes_ufp6
 
 
 void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict,const int ufp6_dict[][BITS - 1], int num_words) {
-    /// Store number of words supported
+    /// Store size of words supported
     int num_words_supported = num_words;
     /// Check if words to be inserted are supported in UFP6
     check_words_supported_UFP6(set,words,num_words, &num_words_supported);
 
     /// Realloc memory for arr_word_size and arr_ufp6_size
-    /// Time complexity: O(N) N = number of rows in set
+    /// Time complexity: O(N) N = size of rows in set
     realloc_arr_words_size(set);
     realloc_arr_ufp6_size(set);
 
@@ -723,7 +687,7 @@ void insert_words(SETS *set, const char **words, const int *sizes_ufp6_dict,cons
             ///Store word size and ufp6 size calculated ,of new word to be inserted
             set->arr_word_size[i] = (int) strlen(words[k]);
             calc_ufp6_size(set, i, words[k], sizes_ufp6_dict);
-            ///If already allocated memory for both matrix , realloc to correct number of columns
+            ///If already allocated memory for both matrix , realloc to correct size of columns
             if(set->matrix_ufp6[i] != NULL && set->matrix[i] != NULL){
                 realloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
                 realloc_col_word(&set->matrix[i], set->arr_word_size[i]);
@@ -818,11 +782,11 @@ void find_word_with_pattern(const SETS *set, const char *pattern, int **array_in
 /**
  * Function remove given Words and UFP6 representation from set
  * Time Complexity: O(W * N)
- * N = number of words in set W = number of words to remove
+ * N = size of words in set W = size of words to remove
  * Extra Space: O(1)
  * @param set - pointer to SETS struct
  * @param words - pointer to an array of strings (words to be removed)
- * @param W - number of words to be removed
+ * @param W - size of words to be removed
  */
 void remove_Words(SETS *set, const char **words, int W) {;
     for (int i = 0; i < W; ++i) {
@@ -833,7 +797,7 @@ void remove_Words(SETS *set, const char **words, int W) {;
 /**
  * Function to find all occurrences given word in set comparing each word with given word
  * and remove all and shift all rows in both matrix and matrix_ufp6
- * Time Complexity: O(N) N = number of words in set //strcmp has a really low time complexity
+ * Time Complexity: O(N) N = size of words in set //strcmp has a really low time complexity
  * because UFP6 words have MAX 7 bits
  * Extra Space: O(1)
  * @param set - pointer to SETS struct
@@ -851,7 +815,7 @@ void find_word_in_set_and_remove(SETS *set,const char *word){
 
 /**
  * Function to remove UFP6 representation of given word adjusting rows from matrix_ufp6
- * Time Complexity: O(N) N = number of words in UFP6 matrix
+ * Time Complexity: O(N) N = size of words in UFP6 matrix
  * Extra Space: O(1)
  * @param set - pointer to SETS struct
  * @param index - index of UFP6 representation to be removed
@@ -1044,22 +1008,51 @@ void is_sorted_sizes(const SETS *set, int N, bool flag) {
         }
 }
 
-void combination_ufp6_in_both_sets(SETS *set1, SETS *set2) {
-    HASHTABLE *hash_table = NULL;
-    init_hash_table(&hash_table, TABLE_SIZE, 0);
+
+void print_combinations_found(HASHTABLE *hash_table, int size){
+    for (int i = 0; i < hash_table->size; ++i) {
+        if(hash_table->table[i] == NULL){
+            //printf("\t%i\t---\n",i);
+        }else{
+            UFP6 *curr = hash_table->table[i];
+            while(curr != NULL){
+                ///Only print if repeated flag is > 1 and odd number
+                if(curr->repeated % 2 == 1 && curr->repeated > 1){
+                    printf("SET1 [ %d ] = SET2 [ %d ]",atoi(curr->ufp6_encode), atoi(curr->ufp6_encode));
+                }
+                curr = curr->pnext;
+            }
+            putchar('\n');
+        }
+    }
+}
+
+void combination_ufp6_in_both_sets(const SETS *set1,const SETS *set2, int size) {
     ///Convert both Matrix UFP6 to array
     char *ufp6_1 = matrix_to_string(set1);
     char *ufp6_2 = matrix_to_string(set2);
+    ///If size of string greater than size of combination
+    if(size > strlen(ufp6_1) || size > strlen(ufp6_2)){
+        free(ufp6_1);
+        free(ufp6_2);
+        printf("Invalid combination size\n");
+        return;
+    }
+
+    HASHTABLE *hash_table = NULL;
+    init_hash_table(&hash_table, TABLE_SIZE, 0);
     ///Generate and search for equal combinations between both sets
-    generate_permutations_ufp6(hash_table, ufp6_1, 0,(int)strlen(ufp6_1) - 1);
-    ///If number of elements in hash table greater than 4 times hash table
+    generate_permutations_ufp6(hash_table, ufp6_1, 0,size - 1, 1);
+    ///If number of elements in hash table is greater than 4 times hash table
     ///Execute reashing copying data to a new hash table of 4 times the size
     if(hash_table->count >= TABLE_SIZE * 4){
         rehash(&hash_table, TABLE_SIZE * 4);
     }
-    generate_permutations_ufp6(hash_table, ufp6_2, 0,(int) strlen(ufp6_2) - 1);
 
-    //print_table(hash_table->table);
+    generate_permutations_ufp6(hash_table, ufp6_2, 0,size - 1, 2);
+
+    print_combinations_found(hash_table, size - 1);
+    print_table(hash_table->table);
     free_hash_table(hash_table->table);
     free(hash_table);
     free(ufp6_1);
@@ -1114,7 +1107,7 @@ void print_table(UFP6 **hash_table){
             printf("\t%i\t", i);
             UFP6 *curr = hash_table[i];
             while(curr != NULL){
-                printf("%s - ",curr->ufp6_encode);
+                printf("%s - %d",curr->ufp6_encode, curr->repeated);
                 curr = curr->pnext;
             }
             putchar('\n');
@@ -1183,16 +1176,16 @@ void rehash(HASHTABLE **hash_table, int size) {
          }
          ///Copy string to new node
          newn->ufp6_encode = strdup(current->ufp6_encode);
-         newn->number = current->number;
+         newn->size = current->size;
          ///Point new node to next
          newn->pnext = new_hash_table->table[index];
          ///Add to head
-         new_hash_table[index].table = &newn;
+         new_hash_table->table[index] = newn;
          current = current->pnext;
         }
     }
     free_hash_table((*hash_table)->table);
-    free(hash_table);
+    free(*hash_table);
     /// Update the pointer to the new hash table
     *hash_table = new_hash_table;
 }
@@ -1204,34 +1197,54 @@ void swapc(char *x,char *y){
     *y = temp;
 }
 
-void insert_new_UFP6_node(HASHTABLE *hash_table,const char *str){
+void insert_new_UFP6_node(HASHTABLE *hash_table,const char *str, int size, int flag){
     UFP6 *new = calloc(1,sizeof(UFP6));
     if(new == NULL){
         fperror("Calloc new node in insert_new_UFP6_node");
     }
     ///Allocate memory for ufp6_encode and copy str
     new->ufp6_encode = strdup(str);
+    new->size = size;
+    new->repeated = 0;
     hash_table_insert(hash_table, new);
 }
 
-//perguntar extra space hash table
-void generate_permutations_ufp6(HASHTABLE *hash_table,char *a, int l, int r){
+int calculate_decimal_size(int num) {
+    int size = 0;
+    if (num == 0) {
+        ///has 1 digit
+        size = 1;
+    } else {
+        while (num != 0) {
+            /// Divide by 10 to remove the last digit
+            num = num / 10;
+            size++;
+        }
+    }
+    return size;
+}
+/*
+void generate_permutations_ufp6(HASHTABLE *hash_table,char *a, int l, int r, int flag){
     int i;
     if (l == r) {
-        ///Print equal combination from set1 and 2
-        if(hash_table_lookup(hash_table, a) != NULL){
-            ///Convert to int to eliminate leading zero's
-            int ufp6 = (int)strtol(a, (char **)NULL, 10);
-            printf("Found equal combination set 1[ %d ] = set 2 [ %d ]\n",ufp6,ufp6);
+        ///Convert to int to eliminate leading zero's
+        int ufp6 = (int)strtol(a, (char **)NULL, 10);
+        ///Calculate size of UFP6
+        int size =  calculate_decimal_size(ufp6);
+        UFP6 *newn = hash_table_lookup(hash_table, a);
+        ///If already insert put flag to 1
+        if (newn != NULL && newn->repeated == 0) {
+            newn->repeated = 1;
+            printf("SET 1: [ %s ] = SET 2 [ %s ] \n", a, a);
             ///Insert permutation to hash table if not already inserted
-        }else{
-            insert_new_UFP6_node(hash_table, a);
+        }else if(newn == NULL && size == r + 1){
+            insert_new_UFP6_node(hash_table, a, size, flag);
         }
     } else {
         for (i = l; i <= r; i++) {
             int is_duplicate = 0;
             /// Check if the current character is a duplicate of any previous characters
-           for (int k = l; k < i; k++) {
+            for (int k = l; k < i; k++) {
                 if (a[k] == a[i]) {
                     is_duplicate = 1;
                     break;
@@ -1240,8 +1253,48 @@ void generate_permutations_ufp6(HASHTABLE *hash_table,char *a, int l, int r){
             /// Skip swap for duplicate elements at different indice
             if (is_duplicate) continue;
             swapc(&a[l], &a[i]);
-            generate_permutations_ufp6(hash_table,a, l + 1, r);
+            generate_permutations_ufp6(hash_table,a, l + 1, r, flag);
             ///Backtrack
+            swapc(&a[l], &a[i]);
+        }
+    }
+}*/
+
+void generate_permutations_ufp6(HASHTABLE *hash_table, char *a, int l, int r, int flag) {
+    int i;
+    if (l == r) {
+        /// Convert to int to eliminate leading zero's
+        int ufp6_r = (int)strtol(a, (char **)NULL, 10);
+        ///Calculate size of string without leading 0's
+        int size_a = calculate_decimal_size(ufp6_r);
+        //printf("SET 1: [ %d ] = SET 2 [ %d ] %d\n", ufp6_r, ufp6_r, flag);
+        UFP6 *res = hash_table_lookup(hash_table, a);
+        ///Insert into hash table if val never added
+        if(res == NULL){
+            insert_new_UFP6_node(hash_table, a, size_a, flag);
+        }else{
+            /// Handle equal combinations based on the flag
+            if (flag == 2) {
+                /// change repeated variable if flag == 2 by +=2
+                ///To after check if combination appeared in both sets
+                ///If so the val of repeated should be an odd value > than 1
+                res->repeated += 2;
+            } else {
+                ///If only repeated on set1 the val of repeated should stay 1
+                res->repeated = 1;
+            }
+        }
+        return;
+    } else {
+        for (i = 0; i <= r; i++) {
+            swapc(&a[l], &a[i]);
+            int ufp6 = (int)strtol(a, (char **)NULL, 10);
+            int size = calculate_decimal_size(ufp6);
+            ///Generate combinations only with desired size
+            if(size == r + 1){
+                generate_permutations_ufp6(hash_table, a, l + 1, r, flag);
+            }
+            /// Backtrack (swap back elements l and i)
             swapc(&a[l], &a[i]);
         }
     }

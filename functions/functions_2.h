@@ -84,7 +84,7 @@ void print_words_found(AD_WORDS_HOLDER *arr,int *index_set1, int *index_set2, in
  * with the values passed to the function
  * @paragraph Time complexity : O(2N + D)) ,
  * Shifting elements O(N) , realloc O(N) , insertion O(1), strcpy date O(D)
- * D = date size N = number of elements in dynamic array
+ * D = date size N = size of elements in dynamic array
  * Extra space : O(1) (inplace)
  * @param ad_holder - pointer to AD_WORDS_HOLDER
  * @param set1 - pointer to set of matrix with words and ufp6
@@ -97,13 +97,13 @@ void insert_element_to_index_AD(AD_WORDS_HOLDER *ad_holder,const SETS *set1,cons
  * @paragraph Find words and respective UFP6 ,only at given indexes of Dynamic array,
  * and write to a txt file the output
  * Time Complexity: O(W * A * N + M)
- * W = number of words to search for in dynamic array A = number of elements in da to search for words
- * N = number of words in set1 , M =  number of words in set2
+ * W = size of words to search for in dynamic array A = size of elements in da to search for words
+ * N = size of words in set1 , M =  size of words in set2
  * Extra Space: O(N + M)
- * N = number of words in set1 , M =  number of words in set2
+ * N = size of words in set1 , M =  size of words in set2
  * @param arr - pointer to AD_WORDS_HOLDER
  * @param words - pointer to an array of pointers to strings containing the words to be found
- * @param W - number of words to find
+ * @param W - size of words to find
  * @param start_index - first index of Dynamic array to search for each word
  * @param end_index - last index of Dynamic array to search for each word
  * @param fn - pointer to string containing filename
@@ -114,11 +114,11 @@ void find_words_ad(const AD_WORDS_HOLDER *arr, const char **words, int W, int st
  * @paragraph Find word and respective UFP6 ,only at given indexes of Dynamic array
  * Time Complexity: O(N)
  * Extra Space: O(N)
- * N = number of words in set
+ * N = size of words in set
  * @param set - pointer to SETS struct
  * @param word - pointer to a string containing the word to be found
  * @return if word is found in set return a pointer to an array containing the index of rows containing each word from given set and index
- * of Dynamic array and at pos 0 it stores the number of indexes stored in array
+ * of Dynamic array and at pos 0 it stores the size of indexes stored in array
  * If the word is not found, return a pointer to NULL
  */
 int *search_word(const SETS *set,const char *word);
@@ -193,7 +193,7 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(const SETS *set1,const SETS *set2
 /**
  * @paragraph Insert node into LL in chronological order by last modified date
  * in DESC order
- * Time Complexity: O(N) N = number of nodes in LL
+ * Time Complexity: O(N) N = size of nodes in LL
  * Extra space: O(1)
  * @param ll - pointer to LL_WORDS_HOLDER
  * @param set1 - pointer to SETS struct
@@ -203,7 +203,7 @@ NODE_LL_WORDS_HOLDER *create_words_holder_node(const SETS *set1,const SETS *set2
 void insert_node_ll_sorted(LL_WORDS_HOLDER *ll,const SETS *set1,const SETS *set2,const char *last_date);
 /**
  * @paragraph Insert node into LL at given index
- * Time Complexity: O(N - 1) N = number of nodes in LL
+ * Time Complexity: O(N - 1) N = size of nodes in LL
  * Extra space: O(1)
  * @param ll - pointer to LL_WORDS_HOLDER
  * @param set1 - pointer to SETS struct
@@ -236,7 +236,7 @@ void insert_to_ll_given_pointers_node(LL_WORDS_HOLDER *ll, const SETS *set1, con
 NODE_LL_WORDS_HOLDER *find_mid_ll(NODE_LL_WORDS_HOLDER *lo, NODE_LL_WORDS_HOLDER *hi);
 /**
  * @paragraph Delete node at a given position/index
- * Time Complexity: O(N - 1) N = number of nodes in LL
+ * Time Complexity: O(N - 1) N = size of nodes in LL
  * Extra Space: O(1)
  * @param ll - pointer to Linked List Words Holder
  * @param index - index of node in Linked List to be deleted
@@ -257,10 +257,10 @@ void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int lo, int hi
  * @paragraph search words and their respective UFP6 representation
  * between given indexes of nodes
  * Time Complexity: O(W * L * N + M)
- * W = number of words to search for in dynamic array L = number of nodes in LL to search for words
- * N = number of words in set1 M = number of words in set2
+ * W = size of words to search for in dynamic array L = size of nodes in LL to search for words
+ * N = size of words in set1 M = size of words in set2
  * Extra Space: O(N + M)
- * N = number of words in set1 , M =  number of words in set2
+ * N = size of words in set1 , M =  size of words in set2
  * @param ll - pointer to Linked List Words Holder
  * @param words - array of words to search in LL
  * @param W - size of words array
@@ -274,9 +274,9 @@ void find_words_ll(const LL_WORDS_HOLDER *ll, const char **words, const char *fn
  * @paragraph Print words found in Linked List
  * @param ll - pointer to Linked List Words Holder
  * @param index_set1 - pointer to array holding the indices of rows from set1
- * and at pos 0 of array store the number of indices
+ * and at pos 0 of array store the size of indices
  * @param index_set2 - pointer to array holding the indices of rows from set2
- * and at pos 0 of array store the number of indices
+ * and at pos 0 of array store the size of indices
  * @param j - index of node
  */
 void print_words_found_ll(NODE_LL_WORDS_HOLDER *ll, int  *index_set1, int *index_set2, int j);
@@ -331,9 +331,9 @@ void save_both_sets_to_txt(const SETS *s1, const SETS *s2, char *filename);
  * and at pos 0 of both arrays store the count of words to use in this function
  * @param current - pointer to current NODE_LL_WORDS_HOLDER
  * @param index_set1 - pointer to array containing the indices of words found in set1 at given node from LL
- * and at pos 0 of array the number of indices
+ * and at pos 0 of array the size of indices
  * @param index_set2 - pointer to array containing the indices of words found in set2 at given node from LL
- * and at pos 0 of array the number of indices
+ * and at pos 0 of array the size of indices
  * @param filename - pointer to string containing filename
  * @param index_ll - index of LL (node) where words were found
  */
@@ -355,7 +355,7 @@ int write_words_found_in_da_to_txt(const VAL_AD_WORDS_HOLDER *val_ad, const int 
  * @param set - pointer to SETS struct
  * @param fp - file pointer
  * @param index_set1 - pointer to array containing the indices of words found in set at given index
- * and at pos 0 store the number of indices in array
+ * and at pos 0 store the size of indices in array
  */
 void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *index_array);
 /**
@@ -364,7 +364,7 @@ void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *index_a
  * @param set - pointer to SETS struct
  * @param fp - file pointer
  * @param index_set1 - pointer to array containing the indices of words found in set at given index
- * and at pos 0 store the number of indices in array
+ * and at pos 0 store the size of indices in array
  * @param r - row index of word in matrix from SETS struct
  */
 void write_index_array_ufp6_to_file(const SETS *set,FILE *fp,const int *index_array, int r);
@@ -384,20 +384,20 @@ void read_txt_words(SETS *set, FILE *fp);
 /**
  * @paragraph Initialise set while reading data from file
  * @param set - pointer to SETS struct
- * @param num_words - number of words in both matrix
+ * @param num_words - size of words in both matrix
  */
 void sets_struct_init_v2(SETS *set, int num_words);
 /**
  * @paragraph Allocate memory for n columns in a matrix row and initialize to NULL / 0
  * @param mat_row - pointer to row from matrix to allocate memory to store word
- * @param col_words_size - number of columns to be allocated
+ * @param col_words_size - size of columns to be allocated
  */
 void calloc_col_word(char **mat_row, int col_words_size);
 void free_index_arrays(int *arr1, int *arr2);
 /**
  * @paragraph Allocate memory for n columns in a matrix row and initialize to NULL / 0
  * @param mat_row - pointer to row from matrix UFP6 to allocate memory to store UFP6 representation
- * @param col_words_size - number of columns to be allocated
+ * @param col_words_size - size of columns to be allocated
  */
 void calloc_col_ufp6(int **mat_row, int col_words_size);
 /**
@@ -505,7 +505,7 @@ void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp);
 * @param set - pointer to SETS struct
 * @param filename - pointer to string containing file name
 * @param array_index_words_found_set - array holding indexes of words from set with
-* pattern , in first pos of array it stores the number of words found
+* pattern , in first pos of array it stores the size of words found
 */
 void write_words_found_to_txt_set_with_pattern(const SETS *set, const int *array_index_words_found_set, const char *filename, const char *pattern);
 /**

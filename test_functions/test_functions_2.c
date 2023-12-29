@@ -270,6 +270,7 @@ void test_function_2_8_e() {
             "olas",
             "ol+",      ///Test invalid input
     };
+
     int fsize = sizeof(find_words) / sizeof(find_words[0]);
 
     ///Search for words between index 0 and 1 and write to a txt file and print
@@ -391,6 +392,7 @@ void test_function_2_9_d() {
     int sizes_ufp6_dict[MAX_UFP6] = {0};
     ///Pre-compute UFP6 dictionary and an array storing the sizes of
     ///each representation of each UFP6 char
+
     ufp6_dictionary(dict, sizes_ufp6_dict);
     LL_WORDS_HOLDER *ll = ll_init();
     ///Initialize sets with random words and encode them
@@ -408,7 +410,6 @@ void test_function_2_9_d() {
     ///Insert words to after test search function
     insert_words(&sets[0], insert_words_, sizes_ufp6_dict, dict, 1);
     insert_words(&sets[1], insert_words_, sizes_ufp6_dict, dict, isize);
-
     const char *testDates[] = {
             "2023-11-25",
             "2022-11-24",
@@ -426,6 +427,7 @@ void test_function_2_9_d() {
             "olas",
             "ol+",      ///Test invalid input
     };
+  
     int fsize = sizeof(find_words) / sizeof(find_words[0]);
     int flag = 1;
 
@@ -437,6 +439,7 @@ void test_function_2_9_d() {
     free_ll_words_holder(ll);
     exit(0);
 }
+
 
 void test_function_2_10_ad() {
     int dict[MAX_UFP6][BITS - 1]={
@@ -463,7 +466,6 @@ void test_function_2_10_ad() {
             "2022-11-24",       ///Test insert to first index
             "2023-10-01",       ///Test insert between two elements
             "2024-01-15",       ///Test insert in last index
-
     };
     int indices[] = {0, 1, 2, 3};
     ///Insert elements to Dynamic array in chronological order ASC

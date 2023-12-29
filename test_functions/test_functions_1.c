@@ -22,7 +22,7 @@ float time_delta;
 int main_test_functions_1(int argc, char **argv) {
    // TIMER_START();
     /**1) Test functions to initialize set with random words
-     * and with exact number of columns in each matrix to hold words
+     * and with exact size of columns in each matrix to hold words
      * and their UFP6 representation
      */
     test_function1_feature1();
@@ -33,7 +33,7 @@ int main_test_functions_1(int argc, char **argv) {
      * shifting rows
     */
    //test_function1_feature3();
-    /**4) Test functions to find equal combinations of UFP6 representations from 2 sets
+    /**4) Test functions to find equal combinations of UFP6 representations from 2 sets given size
      */
     test_function1_feature4();
    /**5) Test functions to search for a pattern in a set of words and their respective UFP6
@@ -196,7 +196,6 @@ void test_functions1_feature6() {
     int  num_words_set1 = R;
     ///Initialize sets with random words
     sets_struct_init(&set1, sizes_ufp6_dict, num_words_set1);
-
     encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
     printf("Before sort\n");
     print_matrix_char(&set1);
@@ -270,6 +269,11 @@ void test_function1_feature4() {
 
     //print_matrix_int(&set1);
    // print_matrix_int(&set2);
+    ///Check if there is any equal combination from sets of given size
+    combination_ufp6_in_both_sets(&set1, &set2, 4);
+
+    //print_matrix_int(&set1);
+   // print_matrix_int(&set2);
 
     combination_ufp6_in_both_sets(&set1, &set2);
     freemem_set(&set1);
@@ -289,7 +293,6 @@ void test_cmp_msd_mergesort() {
     int flag = 1; ///Sort in ASC order
     float time_delta_msd = 0.0f;
     float time_delta_merge_s = 0.0f;
-
     int arr_num_words[] = {1000, 1000000, 4000000,10000000};
     for (int i = 0; i < 4; ++i) {
         SETS set1 = {NULL, NULL, NULL, NULL, 0};

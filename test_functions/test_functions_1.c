@@ -7,7 +7,7 @@
 #include "../functions/functions_1.h"
 
 #define R 8
-#define  FILE_PATTERN_FOUND_SET ../data/set_words_found.txt"
+#define  FILE_PATTERN_FOUND_SET "../data/set_words_found.txt"
 #define MSD_VS_MERGES_FILE "../data/sorting_comp.txt"
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
@@ -22,10 +22,10 @@ float time_delta;
 int main_test_functions_1(int argc, char **argv) {
    // TIMER_START();
     /**1) Test functions to initialize set with random words
-     * and with exact number of columns in each matrix to hold words
+     * and with exact size of columns in each matrix to hold words
      * and their UFP6 representation
      */
-    //test_function1_feature1();
+    test_function1_feature1();
     /**2) Test functions to encode to UFP6 a matrix of words
     */
    //test_function1_feature2();
@@ -33,9 +33,9 @@ int main_test_functions_1(int argc, char **argv) {
      * shifting rows
     */
    //test_function1_feature3();
-    /**4) Test functions to find equal combinations of UFP6 representations from 2 sets
+    /**4) Test functions to find equal combinations of UFP6 representations from 2 sets given size
      */
-    test_function1_feature4();
+    //test_function1_feature4();
    /**5) Test functions to search for a pattern in a set of words and their respective UFP6
     * representation and output into console and txt file
     */
@@ -267,8 +267,9 @@ void test_function1_feature4() {
 
     //print_matrix_int(&set1);
    // print_matrix_int(&set2);
+    ///Check if there is any equal combination from sets of given size
+    combination_ufp6_in_both_sets(&set1, &set2, 4);
 
-    combination_ufp6_in_both_sets(&set1, &set2);
     freemem_set(&set1);
     freemem_set(&set2);
 }

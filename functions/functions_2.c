@@ -519,6 +519,7 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
     free(pos);
     ll->nnodes--;
 }
+
 /*
 void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int start_index_node, int end_index_node, const char *fn, bool flag) {
     ///Check if out of bounds

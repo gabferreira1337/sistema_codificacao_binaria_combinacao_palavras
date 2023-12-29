@@ -1008,6 +1008,7 @@ void is_sorted_sizes(const SETS *set, int N, bool flag) {
         }
 }
 
+
 void print_combinations_found(HASHTABLE *hash_table, int size){
     for (int i = 0; i < hash_table->size; ++i) {
         if(hash_table->table[i] == NULL){

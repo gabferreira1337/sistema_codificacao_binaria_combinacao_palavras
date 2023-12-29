@@ -30,7 +30,7 @@ typedef struct ufp6{
 
 ///Struct to hold Hash table
 typedef struct hashtable {
-    int count;        /// size of elements in Hash table
+    int count;        /// number of elements in Hash table
     int size;        /// size of Hash table
     UFP6 **table;   /// Hash table
 }HASHTABLE;

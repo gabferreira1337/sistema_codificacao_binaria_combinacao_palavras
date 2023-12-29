@@ -35,7 +35,7 @@ int main_test_functions_1(int argc, char **argv) {
    //test_function1_feature3();
     /**4) Test functions to find equal combinations of UFP6 representations from 2 sets given size
      */
-    //test_function1_feature4();
+    test_function1_feature4();
    /**5) Test functions to search for a pattern in a set of words and their respective UFP6
     * representation and output into console and txt file
     */
@@ -202,6 +202,7 @@ void test_functions1_feature6() {
     print_matrix_int(&set1);
 
     int flag = 1; // ASC
+    char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
      *  if flag set to 1 = ASC ,if set to 0 = DESC
      *  */
@@ -225,6 +226,7 @@ void test_functions1_feature6() {
     print_matrix_int(&set1);
     //print_arr_word_size(&set1);
     is_sorted_sizes(&set1, set1.rowsize, flag);
+  
     freemem_set(&set1);
     exit(0);
 }
@@ -270,6 +272,10 @@ void test_function1_feature4() {
     ///Check if there is any equal combination from sets of given size
     combination_ufp6_in_both_sets(&set1, &set2, 4);
 
+    //print_matrix_int(&set1);
+   // print_matrix_int(&set2);
+
+    combination_ufp6_in_both_sets(&set1, &set2);
     freemem_set(&set1);
     freemem_set(&set2);
 }

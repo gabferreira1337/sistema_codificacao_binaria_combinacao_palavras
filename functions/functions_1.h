@@ -30,7 +30,7 @@ typedef struct ufp6{
 
 ///Struct to hold Hash table
 typedef struct hashtable {
-    int count;        /// size of elements in Hash table
+    int count;        /// number of elements in Hash table
     int size;        /// size of Hash table
     UFP6 **table;   /// Hash table
 }HASHTABLE;
@@ -708,6 +708,7 @@ void read_words_from_txt_to_set(SETS *set, FILE *fp, const int *sizes_ufp6);
  * @param fn - pointer to string containing file name
 */
 void read_words_from_txt(SETS *set, const char *fn, const int *sizes_ufp6);
+
 
 
 

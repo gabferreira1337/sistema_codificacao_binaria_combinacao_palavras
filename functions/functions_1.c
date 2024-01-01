@@ -7,6 +7,7 @@
 #include "functions_1.h"
 #include "functions_2.h"
 
+
 #define CUTOFF 10           ///CUTOFF in sorting Algorithms for small sub-arrays (size 10 max)
 #define TABLE_SIZE 10       ///Size of Hash Table
 
@@ -272,6 +273,9 @@ void msdRadixSort(SETS *set,const int *array_sizes_ufp6 ,int lo, int hi, bool fl
 
     msdRadixSort_r(set, aux,aux_ufp6,array_sizes_ufp6, lo, hi - 1, 0,flag);
     calculate_sizes_words_and_ufp6_from_set(set, array_sizes_ufp6);
+
+    calculate_sizes_words_and_ufp6_from_set(set, array_sizes_ufp6);
+
 
     free(aux);
 }
@@ -547,6 +551,7 @@ void remove_word_from_set (SETS *set, int index_remove) {
         free(set->matrix[set->rowsize]);
         set->matrix[set->rowsize] = NULL;
         free(set->matrix_ufp6[set->rowsize]);
+  
         set->matrix_ufp6[set->rowsize] = NULL;
         set->arr_word_size[set->rowsize] = 0;
         set->arr_ufp6_size[set->rowsize] = 0;
@@ -571,6 +576,7 @@ void compute_words_size(const char **words, int *words_index ,int W) {
 
 void sets_struct_init(SETS *set,const int *sizes_ufp6, int num_words) {
     if(num_words <= 0) fperror("Invalid number of words");
+
     ///Store size of words (rows) of both matrix in set
     set->rowsize = num_words;
     ///Initialize arrays to store words size and UFP6 words representation
@@ -996,6 +1002,7 @@ void is_sorted_sizes(const SETS *set, int N, bool flag) {
         }
 }
 
+
 void print_combinations_found(HASHTABLE *hash_table, int size){
     for (int i = 0; i < hash_table->size; ++i) {
         if(hash_table->table[i] == NULL){
@@ -1039,6 +1046,7 @@ void combination_ufp6_in_both_sets(const SETS *set1,const SETS *set2, int size) 
     generate_permutations_ufp6(hash_table, ufp6_2, 0,size - 1, 2);
 
     print_combinations_found(hash_table, size - 1);
+
     //print_table(hash_table->table);
     free_hash_table(hash_table->table);
     free(hash_table);
@@ -1309,6 +1317,7 @@ void sort(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int hi, b
         insertion_sort(set, lo, hi, 0, flag);
         return;
     }
+
     int mid = lo + (hi - lo) / 2;
     sort(set, aux_matrix, aux_matrix_ufp6, lo, mid, flag);
     sort(set, aux_matrix, aux_matrix_ufp6, mid + 1, hi, flag);
@@ -1362,6 +1371,45 @@ void merge(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int mid,
     }
 }
 
+
+
+void sort_by_alphabetical_order(SETS *set,const int *sizes_ufp6, bool flag){
+    ///Allocate memory for auxiliary arrays of pointers to use in mergesort algorithm
+    char **aux_mat = (char**) calloc(sizeof(char*), set->rowsize);
+    if (aux_mat == NULL){
+        fperror("Calloc aux_mat in sort_by_alphabetical_order");
+    }
+    int **aux_mat_ufp6 =  (int**) calloc(sizeof(int*), set->rowsize);
+    if (aux_mat_ufp6 == NULL){
+        fperror("Calloc aux_mat_ufp6 in sort_by_alphabetical_order");
+    }
+
+    sort(set, aux_mat, aux_mat_ufp6, 0, set->rowsize - 1, flag);
+    ///After sort calculate sizes of words and UFP6 from set of words
+    ///and store in both arrays in struct, instead of exchanging inside sort algorithm, to have less extra space
+    ///This function has a time complexity of O(N) so it won't change much about mergesort Time Complexity
+    calculate_sizes_words_and_ufp6_from_set(set, sizes_ufp6);
+
+    free(aux_mat);
+    free(aux_mat_ufp6);
+}
+
+void calculate_sizes_words_and_ufp6_from_set(SETS *set, const int *sizes_ufp6){
+    for (int i = 0; i < set->rowsize; ++i) {
+        set->arr_word_size[i] = (int) strlen(set->matrix[i]);
+        calc_ufp6_size(set, i, set->matrix[i], sizes_ufp6);
+    }
+}
+
+void write_to_txt_benchmark_sorting(char *fn, float time_delta_merge_s, float time_delta_msd, unsigned long number_words) {
+    FILE *fp = fopen(fn, "a");
+    if(fp == NULL){
+        fperror("Error opening file in write_to_txt_benchmark_sorting");
+    }
+    fprintf(fp, "Benchmark for %lu words\n", number_words);
+    fprintf(fp,"MSD time_delta : %2.6f MERGE SORT time_delta : %2.5f\n ", time_delta_msd, time_delta_merge_s);
+    fclose(fp);
+}
 
 void sort_by_alphabetical_order(SETS *set,const int *sizes_ufp6, bool flag){
     ///Allocate memory for auxiliary arrays of pointers to use in mergesort algorithm

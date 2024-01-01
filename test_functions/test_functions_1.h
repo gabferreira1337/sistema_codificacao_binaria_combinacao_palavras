@@ -1,7 +1,6 @@
 #ifndef PROJETO_AED1_LP1_TEST_FUNCTIONS_1_H
 #define PROJETO_AED1_LP1_TEST_FUNCTIONS_1_H
 
-#include "../functions/functions_1.h"
 
 void test_function1_feature1();
 
@@ -17,6 +16,7 @@ void test_functions1_feature6();
 
 void test_cmp_msd_mergesort();
 
+void test_read_words_from_file_to_set();
 
 int main_test_functions_1(int argc, char **argv);
 

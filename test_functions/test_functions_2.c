@@ -10,10 +10,8 @@
 
 
 #define R 5
-#define DATE_SIZE 11
 #define AD_SIZE 4
 #define NUM_SETS 8
-#define FILE "../data/set.txt"
 #define FILE_WORDS_FOUND_AD "../data/words_found_ad.txt"
 #define FILE_WORDS_FOUND_LL "../data/words_found_ll.txt"
 #define FILE_AD "../data/ad_history.txt"
@@ -34,7 +32,7 @@ int main_test_functions_2(int argc, char **argv) {
     /**
     * @paragraph Test functions to init, reallocate and print Dynamic array AD_WORDS_HOLDER
     */
-    //test_function_2_8_a();
+    test_function_2_8_a();
     /**
     * @paragraph Test functions to insert an element in chronological order
     * (by last modified date ASC) in Dynamic array ,
@@ -62,9 +60,9 @@ int main_test_functions_2(int argc, char **argv) {
     /**
     * @paragraph Test functions for inserting nodes at specific indices in a linked list
     */
-    // test_function_2_9_b();
+    //test_function_2_9_b();
     /**
-    * @paragraph Test functions for inserting nodes at specific indices in a linked list
+    * @paragraph Test functions to remove node given position / index
     */
     //test_function_2_9_c();
     /**
@@ -91,7 +89,7 @@ int main_test_functions_2(int argc, char **argv) {
     * @paragraph Use bin files for input and output of sets of words and their
     * respective ufp6 representations Linked List
     */
-     test_functions_2_11_ll();
+    //test_functions_2_11_ll();
 
     return 0;
 }
@@ -287,7 +285,7 @@ void test_function_2_9_a() {
     ///each representation of each UFP6 char
     ufp6_dictionary(dict, sizes_ufp6_dict);
     LL_WORDS_HOLDER *ll = ll_init();
-    ///Initialize sets with random words and encode them
+    ///Initialize sets with random words and encode them into set
     SETS sets[NUM_SETS] = {0};
     for (int i = 0; i < NUM_SETS; ++i) {
         sets_struct_init(&sets[i], sizes_ufp6_dict, R);
@@ -558,11 +556,11 @@ void test_functions_2_11_ad() {
             "2024-01-15",       ///Test insert in last index
 
     };
-    //int indices[] = {0, 1, 2, 3};
+    int indices[] = {0, 1, 2, 3};
     ///Insert elements to Dynamic array in chronological order ASC
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
         insert_element_to_AD_in_order(ad_sorted, &sets[i], &sets[i + 1],testDates[j]);
-        //insert_element_to_index_AD(arr_din, &sets[i],&sets[i + 1], testDates[j], indices[j]);
+        //insert_element_to_index_AD(ad_sorted, &sets[i],&sets[i + 1], testDates[j], indices[j]);
     }
 
     //print_AD(ad_sorted);
@@ -570,9 +568,10 @@ void test_functions_2_11_ad() {
     free_dynamic_array(ad_sorted);
 
     AD_WORDS_HOLDER *arr_din2 = NULL;
+    int flag = 1; /// Read from file to dynamic array in chronological order ASC
     /// Last argument is a flag , if set to 1 read in chronological order
     ///Pass to function address of pointer arr_din so changes stay outside function
-    read_from_bin_to_ad(&arr_din2, FILE_AD_BIN, 1);
+    read_from_bin_to_ad(&arr_din2, FILE_AD_BIN, flag);
 
     print_AD(arr_din2);
 
@@ -605,7 +604,7 @@ void test_functions_2_11_ll() {
     // int indices[] = {0, 1, 2, 3};
     ///Insert nodes into LL in chronological order by last modified date DESC
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
-        insert_node_ll_sorted(ll, &sets[i], &sets[i + 1],testDates[j]);
+         insert_node_ll_sorted(ll, &sets[i], &sets[i + 1],testDates[j]);
         //insert_node_ll_index(ll, &sets[i],&sets[i + 1], testDates[j], indices[j]);
     }
 
@@ -614,7 +613,7 @@ void test_functions_2_11_ll() {
     free_ll_words_holder(ll);
 
     LL_WORDS_HOLDER *ll_2 = ll_init();
-    int flag = 1;
+    int flag = 1;       /// Read from bin file to LL in chronological order DESC
     /// Last argument is a flag , if set to 1 read in chronological order
     ///Pass to function address of pointer arr_din so changes stay outside function
     read_from_binfile_to_ll(ll_2,FILE_LL_BIN, flag);

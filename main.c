@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
     //main_functions_1(argc,argv);
-    main_test_functions_1(argc, argv);
+     main_test_functions_1(argc, argv);
     //main_functions_2(argc,argv);
     //main_test_functions_2(argc, argv);
 

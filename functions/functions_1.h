@@ -399,7 +399,7 @@ void free_hash_table(UFP6 **hash_table);
  * @param str1 - pointer to string1
  * @param str2 - pointer to string2
  * @param d - start at dth character
- * @param flag - boolean, if set to 1 compare in ASC order , if set to 0 compare in DESC order
+ * @param flag - boolean, if set to 1 compare to ASC order , if set to 0 compare to DESC order
  * @return if str1 < str2 returns a non-zero size, if str1 > str2 it returns 0
  */
 int less(char *str1, char *str2, int d, bool flag);
@@ -677,8 +677,9 @@ void check_words_supported_UFP6(SETS *set, char **words, int W, int *prev_num_wo
 /**
  * @paragraph This function calculates the words and UFP6 sizes from a set of words and it stores
  * in arr_word_size and arr_ufp6_size from SETS struct
+ * Time Complexity: O(N) N = number of rows in matrix
  * @param set - pointer to SETS struct
- * @param words - pointer to array holding sizes of UFP6 of each char
+ * @param sizes_ufp6 - pointer to array holding sizes of pre-computed UFP6 representations of each char
 */
 void calculate_sizes_words_and_ufp6_from_set(SETS *set, const int *sizes_ufp6);
 /**
@@ -688,6 +689,25 @@ void calculate_sizes_words_and_ufp6_from_set(SETS *set, const int *sizes_ufp6);
  * @param words - pointer to array holding sizes of UFP6 of each char
 */
 void write_to_txt_benchmark_sorting(char *fn, float time_delta_merge_s, float time_delta_msd, unsigned long number_words);
+/**
+ * @paragraph Read words from .txt file to set
+ * File format
+ *number_words = 5
+ *6-e 2 D b A h
+ *5-Z f z 0 h
+ *7-6 U 2 z S m 0
+ *2-U H
+ *5-h 7 e Q q
+ * @param set - pointer to SETS struct
+ * @param fp - pointer to file
+*/
+void read_words_from_txt_to_set(SETS *set, FILE *fp, const int *sizes_ufp6);
+/**
+ * @paragraph Read words from txt file to set
+ * @param set - pointer to SETS struct
+ * @param fn - pointer to string containing file name
+*/
+void read_words_from_txt(SETS *set, const char *fn, const int *sizes_ufp6);
 
 
 

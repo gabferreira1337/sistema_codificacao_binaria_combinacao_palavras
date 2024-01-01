@@ -9,16 +9,14 @@
 #define DATE_SIZE 11
 
 
-int main_functions_2(int argc, char **argv) {
-    return 0;
-}
-
 AD_WORDS_HOLDER *dynamic_array_init(int size) {
+    if(size <= 0) fperror("Invalid size");
+
     AD_WORDS_HOLDER *arr = (AD_WORDS_HOLDER*) calloc(1,sizeof(AD_WORDS_HOLDER));
     if(arr == NULL) {
         fperror("Dynamic_array_init array_val calloc");
     }
-    //store size of array
+
     arr->size = size;
     arr->array_val = (VAL_AD_WORDS_HOLDER*) calloc(size,sizeof(VAL_AD_WORDS_HOLDER));
     if(arr->array_val == NULL) {
@@ -391,6 +389,7 @@ void print_ll_words_holder(LL_WORDS_HOLDER *ll) {
     NODE_LL_WORDS_HOLDER *current = ll->phead;
 
     for (int i = 0; i < ll->nnodes; ++i) {
+        printf("NODE: %d\n", i);
         puts("SET1");
         printf("last update: %s\n", current->last_update_date);
         print_matrix_char(&current->words_holder.s1);
@@ -775,6 +774,7 @@ void read_txt_words(SETS *set, FILE *fp) {
  * Function to initialize set while reading from file
  */
 void sets_struct_init_v2(SETS *set, int num_words) {
+    if(num_words <= 0) fperror("Invalid number of words");
     set->rowsize = num_words;
     ///Initialise array to hold each word size
     init_arr_word_size(set);
@@ -966,28 +966,29 @@ void write_ad_to_bin(const AD_WORDS_HOLDER *ad, const char *fn) {
 
 /// Write both Sets to bin file
 void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp) {
+    if(fp == NULL) fperror("Error opening file");
     write_set_to_binfile(&wordsHolder->s1, fp);
     write_set_to_binfile(&wordsHolder->s2, fp);
 }
 
 
 void write_set_to_binfile(const SETS *set, FILE *fp) {
+    if(fp == NULL) fperror("Error opening file");
+
     ///write rowsize (size of words in set) to file
     fwrite(&set->rowsize, sizeof(set->rowsize), 1,fp);
     for (int i = 0; i < set->rowsize; i++) {
-        //fwrite(set->matrix[i], sizeof(char), set->arr_word_size[i], fp);  // Write each row
         ///Write sizeof each word
         fwrite(&set->arr_word_size[i],sizeof(set->arr_word_size[i]), 1, fp);
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
             fwrite(&set->matrix[i][j],sizeof(set->matrix[i][j]), 1, fp);
         }
-        //fwrite(&set->matrix[i],sizeof(char), set->arr_word_size[i] + 1, fp);
-        //(fp, "\n");
     }
     write_set_ufp6_to_binfile(set, fp);
 }
 
 void write_set_ufp6_to_binfile(const SETS *set, FILE *fp) {
+    if(fp == NULL) fperror("Error opening file");
     //fprintf(fp, "UFP6 encode:\n");
     for (int i = 0; i < set->rowsize ; ++i) {
         ///Write size of UFP6 representation
@@ -1007,19 +1008,14 @@ void read_from_bin_to_ad(AD_WORDS_HOLDER **ad, const char *fn, bool flag) {
     }
     /// Read size of elements from file and initialize dynamic array
     int num_elem = 0;
-    ///%*[^:]%*[:] = read until : to void and after read : to void
-    //fscanf(fp, "%*[^:]%*[:] %d", &num_elem);
+
     fread(&num_elem,sizeof(num_elem),1,fp);
     *ad = dynamic_array_init(num_elem);
 
     for (int i = 0; i < (*ad)->size; ++i) {
-        //Read line to void
-        //fscanf(fp, "%*s");
         char date[DATE_SIZE] = " ";
         ///Read last update date
-        //fscanf(fp, "%*[^:]%*[:] %s",date);
         fread(date,sizeof(char),DATE_SIZE,fp);
-        printf("date %s\n", date);
 
         SETS set1 = {NULL, NULL, NULL, NULL, 0};
         read_binfile_to_set(&set1, fp);
@@ -1036,10 +1032,10 @@ void read_from_bin_to_ad(AD_WORDS_HOLDER **ad, const char *fn, bool flag) {
 }
 
 void read_binfile_to_set(SETS *set, FILE *fp) {
+    if(fp == NULL) fperror("Error opening file");
+
     ///Read size of words from file
-    //fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
     fread(&set->rowsize, sizeof(set->rowsize),1, fp);
-    printf("set size %d\n", set->rowsize);
     sets_struct_init_v2(set, set->rowsize);
 
     ///Read set of words
@@ -1052,30 +1048,23 @@ void read_binfile_words(SETS *set, FILE *fp) {
     for (int i = 0; i < set->rowsize; ++i) {
         ///Read word size to set
         fread(&set->arr_word_size[i], sizeof(set->arr_word_size[i]), 1, fp);
-        printf("size: %d\n", set->arr_word_size[i]);
         ///Allocate memory for each row
         calloc_col_word(&set->matrix[i],set->arr_word_size[i]);
         for (int j = 0; j < set->arr_word_size[i]; ++j) {
-            //fscanf(fp, "%c",&set->matrix[i][j]);
+            ///Read each char to matrix
             fread(&set->matrix[i][j], sizeof(char), 1, fp);
-            printf("set- %c", set->matrix[i][j]);
         }
     }
 }
 
 
 void read_ufp6_binfile_to_set(SETS *set, FILE *fp) {
-    //read UFP6: to void
-   //fscanf(fp, "%*s");
     for (int i = 0; i < set->rowsize; ++i) {
-       // fscanf(fp, "%d", &set->arr_ufp6_size[i]);
        ///Read size of UFP6 representation
-        fread(&set->arr_ufp6_size[i],sizeof(set->arr_ufp6_size),1,fp);
-        //fscanf(fp, "%*[-]");
+        fread(&set->arr_ufp6_size[i],sizeof(int),1,fp);
         ///allocate for each row size of columns read from file
         calloc_col_ufp6(&set->matrix_ufp6[i], set->arr_ufp6_size[i]);
         for (int j = 0; j < set->arr_ufp6_size[i]; ++j) {
-            //fscanf(fp, "%d",&set->matrix_ufp6[i][j]);
             fread(&set->matrix_ufp6[i][j], sizeof(set->matrix_ufp6[i][j]),1 ,fp);
         }
     }

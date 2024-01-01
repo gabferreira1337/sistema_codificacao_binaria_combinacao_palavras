@@ -7,8 +7,8 @@
 #include "functions_1.h"
 #include "functions_2.h"
 
-#define CUTOFF 10
-#define TABLE_SIZE 10
+#define CUTOFF 10           ///CUTOFF in sorting Algorithms for small sub-arrays (size 10 max)
+#define TABLE_SIZE 10       ///Size of Hash Table
 
 
 void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char){
@@ -34,7 +34,6 @@ void matrix_init_char(SETS *set){
     if (set->matrix == NULL) {
         fperror("Matrix init malloc in matrix_init_char");
     }
-
     for (int i = 0; i < set->rowsize; ++i) {
         /// Allocate memory for each pointer to arrays (cols) // + 1 for '\0'
         *(set->matrix + i) = (char*)calloc(*(set->arr_word_size + i) +  1, sizeof(char));
@@ -101,7 +100,6 @@ char gen_rnd_char(){
 void matrix_rnd_word_gen(SETS *set) {
     /// seed to generate random numbers
     seed_random();
-    //srand((unsigned int)time(NULL));
     int j = 0;
     for (int i = 0; i < set->rowsize; ++i) {
         ///generate random char to fill word
@@ -178,16 +176,7 @@ void matrix_encode_realloc(SETS *set) {
             }
         }
 }
-/*void char_to_bin(SETS *set) {
-    for (int l = 6; l >= 0 && j < (set->arr_word_size[i]) * 7;l--, j++) {
-        // when last digit is 0 break from the loop, so it won't store the left 0's
-        if ((letter >> l) == 0) {
-            *(*(set->matrix_ufp6 + i) + j) = -1;
-        } else {
-            *(*(set->matrix_ufp6 + i) + j) = (letter >> l) & 1;
-        }
-    }
-}*/
+
 
 void fperror(char *message) {
     fprintf(stderr, "ERROR: %s\n", message);
@@ -282,9 +271,7 @@ void msdRadixSort(SETS *set,const int *array_sizes_ufp6 ,int lo, int hi, bool fl
     }
 
     msdRadixSort_r(set, aux,aux_ufp6,array_sizes_ufp6, lo, hi - 1, 0,flag);
-
     calculate_sizes_words_and_ufp6_from_set(set, array_sizes_ufp6);
-
 
     free(aux);
 }
@@ -560,7 +547,7 @@ void remove_word_from_set (SETS *set, int index_remove) {
         free(set->matrix[set->rowsize]);
         set->matrix[set->rowsize] = NULL;
         free(set->matrix_ufp6[set->rowsize]);
-         set->matrix_ufp6[set->rowsize] = NULL;
+        set->matrix_ufp6[set->rowsize] = NULL;
         set->arr_word_size[set->rowsize] = 0;
         set->arr_ufp6_size[set->rowsize] = 0;
 }
@@ -583,6 +570,7 @@ void compute_words_size(const char **words, int *words_index ,int W) {
 }
 
 void sets_struct_init(SETS *set,const int *sizes_ufp6, int num_words) {
+    if(num_words <= 0) fperror("Invalid number of words");
     ///Store size of words (rows) of both matrix in set
     set->rowsize = num_words;
     ///Initialize arrays to store words size and UFP6 words representation
@@ -1051,7 +1039,7 @@ void combination_ufp6_in_both_sets(const SETS *set1,const SETS *set2, int size) 
     generate_permutations_ufp6(hash_table, ufp6_2, 0,size - 1, 2);
 
     print_combinations_found(hash_table, size - 1);
-    print_table(hash_table->table);
+    //print_table(hash_table->table);
     free_hash_table(hash_table->table);
     free(hash_table);
     free(ufp6_1);
@@ -1321,7 +1309,6 @@ void sort(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int hi, b
         insertion_sort(set, lo, hi, 0, flag);
         return;
     }
-
     int mid = lo + (hi - lo) / 2;
     sort(set, aux_matrix, aux_matrix_ufp6, lo, mid, flag);
     sort(set, aux_matrix, aux_matrix_ufp6, mid + 1, hi, flag);
@@ -1412,4 +1399,24 @@ void write_to_txt_benchmark_sorting(char *fn, float time_delta_merge_s, float ti
     fprintf(fp, "Benchmark for %lu words\n", number_words);
     fprintf(fp,"MSD time_delta : %2.6f MERGE SORT time_delta : %2.5f\n ", time_delta_msd, time_delta_merge_s);
     fclose(fp);
+}
+
+void read_words_from_txt(SETS *set, const char *fn,const int *sizes_ufp6) {
+    FILE *fp = fopen(fn, "r");
+    if(fp == NULL){
+        fperror("Opening file in read_words_from_txt");
+    }
+    read_words_from_txt_to_set(set, fp,sizes_ufp6);
+    fclose(fp);
+}
+
+void read_words_from_txt_to_set(SETS *set, FILE *fp,const int *sizes_ufp6) {
+    ///read rowsize from file
+    fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
+    ///Initialize set
+    sets_struct_init_v2(set, set->rowsize);
+    /// Read set of words
+    read_txt_words(set, fp);
+    ///Initialize matrix UFP6
+    matrix_ufp6_init(set, sizes_ufp6);
 }

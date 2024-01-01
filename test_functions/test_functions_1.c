@@ -5,8 +5,11 @@
 #include <sys/time.h>
 #include "test_functions_1.h"
 #include "../functions/functions_1.h"
+#include "../functions/functions_2.h"
+
 
 #define R 8
+#define FILE_SET_TXT "../data/words_to_set.txt"
 #define  FILE_PATTERN_FOUND_SET "../data/set_words_found.txt"
 #define MSD_VS_MERGES_FILE "../data/sorting_comp.txt"
 
@@ -35,7 +38,7 @@ int main_test_functions_1(int argc, char **argv) {
    //test_function1_feature3();
     /**4) Test functions to find equal combinations of UFP6 representations from 2 sets given size
      */
-    test_function1_feature4();
+   // test_function1_feature4();
    /**5) Test functions to search for a pattern in a set of words and their respective UFP6
     * representation and output into console and txt file
     */
@@ -46,9 +49,13 @@ int main_test_functions_1(int argc, char **argv) {
      //test_functions1_feature6();
      //test_cmp_msd_mergesort();
      //TIMER_STOP();
-   // fprintf(stdout, "time_delta %f\n", time_delta);
+    // fprintf(stdout, "time_delta %f\n", time_delta);
+    /**3.2) Test functions to Read words from txt file to set
+     * and encode them to UFP6
+    */
+    //test_read_words_from_file_to_set();
+    //exit(0);
 
-   // exit(0);
     return 0;
 }
 
@@ -69,9 +76,11 @@ void test_function1_feature1(){
     sets_struct_init(&set1, sizes_ufp6_dict,num_words_set1);
 
     /// Print set1
-    printf("SET 1 !!!!\n");
+    printf("SET !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
+
+    freemem_set(&set1);
 }
 
 void test_function1_feature2() {
@@ -88,7 +97,7 @@ void test_function1_feature2() {
 
     //print_ufp6_dictionary(dict, sizes_ufp6_dict);
 
-    char word[] = "1";
+    char word[] = "ol4";
     int W = 1;
     ///result of ufp6 representation
     int result[strlen(word) * BITS - 1];
@@ -96,6 +105,7 @@ void test_function1_feature2() {
     int size[W];
     encode_word(word, result,size, 0, sizes_ufp6_dict, dict,(int) strlen(word));
     ///Print UFP6 representation
+    printf("Word: %s -> ", word);
     for (int i = 0; i < size[0]; ++i) {
         printf("%d", result[i]);
     }
@@ -109,9 +119,11 @@ void test_function1_feature2() {
     /// Encode SET1
     encode_matrix_words(&set1, sizes_ufp6_dict, dict);
 
-    printf("\nSET 1 !!!!\n");
+    printf("\nSET  !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
+
+    freemem_set(&set1);
 }
 
 void test_function1_feature3() {
@@ -144,12 +156,14 @@ void test_function1_feature3() {
     ///Remove words and UFP6 from set
     const char *remove_words1[] = {"ol4"};
     int N2 = sizeof(remove_words1) / sizeof(remove_words1[0]);
-
+    printf("\nAfter removing \n");
     remove_Words(&set1, remove_words1, N2);
 
-    printf("SET 1 !!!!\n");
+    printf("SET !!!!\n");
     print_matrix_char(&set1);
     print_matrix_int(&set1);
+
+    freemem_set(&set1);
 }
 
 void test_functions1_feature5(){
@@ -172,7 +186,7 @@ void test_functions1_feature5(){
     int num_words = sizeof(words_insert)/sizeof(words_insert[0]);
     ///Insert words in set
     insert_words(&set1, words_insert, sizes_ufp6_dict, ufp6_dict, num_words);
-    const  char *pattern_search[] = {"-", "ol"};
+    const  char *pattern_search[] = {"-", "ol", "a"};
     int num_pattern_search = sizeof(pattern_search)/sizeof(pattern_search[0]);
     ///Search for words and their respective ufp6 representation with a given pattern without writing to a txt file
     find_words_with_pattern(&set1, pattern_search, num_pattern_search, NULL, 0);
@@ -208,10 +222,10 @@ void test_functions1_feature6() {
      *  */
     printf("\nSort by alphabetical order\n");
     sort_by_alphabetical_order(&set1, sizes_ufp6_dict,flag);
-    is_sorted_matrix(&set1, set1.rowsize,flag);
     // msdRadixSort(&set1, sizes_ufp6_dict, 0, set1.rowsize, flag);
     print_matrix_char(&set1);
     print_matrix_int(&set1);
+    is_sorted_matrix(&set1, set1.rowsize,flag);
     /* TIMER_START();
     insertion_sort_char(&set2, set2.rowsize, 1);
     TIMER_STOP();
@@ -272,10 +286,6 @@ void test_function1_feature4() {
     ///Check if there is any equal combination from sets of given size
     combination_ufp6_in_both_sets(&set1, &set2, 4);
 
-    //print_matrix_int(&set1);
-   // print_matrix_int(&set2);
-
-    combination_ufp6_in_both_sets(&set1, &set2);
     freemem_set(&set1);
     freemem_set(&set2);
 }
@@ -318,5 +328,28 @@ void test_cmp_msd_mergesort() {
         //write_to_txt_benchmark_sorting(MSD_VS_MERGES_FILE, time_delta_merge_s, time_delta_msd, num_words_set1);
         //is_sorted_matrix(&set1, set1.rowsize, flag);
        // is_sorted_matrix(&set2, set2.rowsize, flag);
+        freemem_set(&set1);
+        freemem_set(&set2);
     }
+    exit(0);
+}
+
+void test_read_words_from_file_to_set() {
+    int ufp6_dict[MAX_UFP6][BITS - 1]={
+            {0, 0},
+            {0, 0}
+    };
+    /// Sizes of each ufp6 representation
+    int sizes_ufp6_dict[MAX_UFP6] = {0};
+    /// Pre-Compute UFP6 dictionary
+    ufp6_dictionary(ufp6_dict, sizes_ufp6_dict);
+    SETS set1 = {NULL, NULL, NULL, NULL, 0};
+
+    read_words_from_txt(&set1, FILE_SET_TXT, sizes_ufp6_dict);
+    print_matrix_char(&set1);
+    encode_matrix_words(&set1, sizes_ufp6_dict, ufp6_dict);
+    print_matrix_int(&set1);
+
+    freemem_set(&set1);
+    exit(0);
 }

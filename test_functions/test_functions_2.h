@@ -34,7 +34,7 @@ void test_function_2_9_a();
  */
 void test_function_2_9_b();
 /**
- * @paragraph Test functions for delete nodes at specific index in a linked list
+ * @paragraph Test functions to remove node given position / index
  */
 void test_function_2_9_c();
 /**

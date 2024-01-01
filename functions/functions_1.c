@@ -1303,7 +1303,7 @@ void free_hash_table(UFP6 **hash_table) {
 
 void sort(SETS *set, char **aux_matrix, int **aux_matrix_ufp6, int lo, int hi, bool flag) {
      if(hi <= lo) return;
-    ///Cutoff to insertion sort for small subarrays
+    ///Cutoff to insertion sort for small sub-arrays
     ///CUTOFF = 10
     if(hi <= lo + CUTOFF - 1){
         insertion_sort(set, lo, hi, 0, flag);

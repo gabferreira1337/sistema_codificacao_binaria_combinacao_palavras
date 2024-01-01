@@ -4,14 +4,14 @@
 #include <time.h>
 #include "functions_1.h"
 
-
+///Struct holding 2 sets
 typedef struct{
     SETS s1;        ///Set with matrix of words and their UFP6 representation
     SETS s2;
 
 }WORDS_HOLDER;
 
-
+///Struct holding last_update date and WORDS_HOLDER struct
 typedef struct{
     WORDS_HOLDER words_holder;  ///Copy of WORDS_HOLDER
     char *last_update_date;     ///String containing last update date of WORDS_HOLDER
@@ -26,7 +26,7 @@ typedef struct{
 
 }AD_WORDS_HOLDER;
 
-
+///Node of LL_WORDS_HOLDER
 typedef struct node_ll_words_holder{
     WORDS_HOLDER words_holder;          ///Copy of WORDS_HOLDER
     char *last_update_date;             ///String containing last update date of WORDS_HOLDER

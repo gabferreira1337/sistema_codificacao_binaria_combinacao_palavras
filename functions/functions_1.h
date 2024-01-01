@@ -9,9 +9,7 @@
 #define M_KMP BITS     ///MAX_SIZE for KMP DFA columns
 
 
-/**
- * sets struct
- */
+///sets struct
 typedef struct{
     char **matrix;              /// matrix with words
     int **matrix_ufp6;          /// matrix with ufp6 representations
@@ -20,7 +18,7 @@ typedef struct{
     int rowsize;                /// size of words in both matrix (size of rows)
 }SETS;
 
-
+///Hash table
 typedef struct ufp6{
     char *ufp6_encode;      ///string holding UFP6 representation
     unsigned int size;    /// size of string without leading 0's
@@ -30,7 +28,7 @@ typedef struct ufp6{
 
 ///Struct to hold Hash table
 typedef struct hashtable {
-    int count;        /// size of elements in Hash table
+    int count;        /// number of elements in Hash table
     int size;        /// size of Hash table
     UFP6 **table;   /// Hash table
 }HASHTABLE;

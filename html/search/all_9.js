@@ -1,0 +1,17 @@
+var searchData=
+[
+  ['each_20pointer_20cols_20initialize_20at_200_0',['memory for an int array of pointers (rows) and for each pointer (cols), initialize at 0',['../functions__1_8h.html#Reallocate',1,'']]],
+  ['each_20word_1',['Each word',['../functions__1_8h.html#Reallocates',1,'memory for an array of ints that contains the size of each word'],['../functions__2_8h.html#Allocate',1,'memory for matrix to store words, given array with pre-generated sizes of each word']]],
+  ['element_20from_20dynamic_20array_20by_20shifting_20the_20elements_2',['element from Dynamic array by shifting the elements,',['../functions__2_8h.html#Delete',1,'']]],
+  ['elements_3',['element from Dynamic array by shifting the elements,',['../functions__2_8h.html#Delete',1,'']]],
+  ['elements_20from_20hash_20table_4',['elements from Hash table',['../functions__1_8h.html#Rehash',1,'']]],
+  ['encode_5fmatrix_5fwords_5',['encode_matrix_words',['../functions__1_8c.html#a60eb8453a79b7b6156b9b58a468b640c',1,'encode_matrix_words(SETS *set, int *sizes_ufp6_dict, int ufp6_dict[][BITS - 1]):&#160;functions_1.c'],['../functions__1_8h.html#a44131f42fbfc8732c48223cefbc89f2b',1,'encode_matrix_words(SETS *set, int sizes_ufp6_dict[], int ufp6_dict[][BITS - 1]):&#160;functions_1.h']]],
+  ['encode_5fword_6',['encode_word',['../functions__1_8c.html#a980fe58391b845ccad11ea581bef8b31',1,'encode_word(const char *word, int *encoded, int *word_ufp6_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS - 1], int W):&#160;functions_1.c'],['../functions__1_8h.html#ab2933044bef3e1e95cbdb3337b295933',1,'encode_word(const char *word, int *encode, int *word_ufp6_size, int k, const int sizes_ufp6[], const int ufp6_dict[][BITS - 1], int W):&#160;functions_1.c']]],
+  ['encodes_20a_20word_20into_20an_20array_20using_20pre_20computed_20ufp6_20dictionary_20and_7',['function encodes a word into an array , using pre-computed UFP6 dictionary and',['../functions__2_8h.html#This',1,'']]],
+  ['end_20of_20both_20matrix_8',['words and their ufp6 representation at the end of both matrix',['../functions__2_8h.html#Insert',1,'']]],
+  ['exch_9',['exch',['../functions__1_8c.html#a1330d54bcd4ea316647d71670388d795',1,'exch(int *arr, int i, int j):&#160;functions_1.c'],['../functions__1_8h.html#a1330d54bcd4ea316647d71670388d795',1,'exch(int *arr, int i, int j):&#160;functions_1.c']]],
+  ['exch_5frows_5ffrom_5fboth_5fmatrix_10',['exch_rows_from_both_matrix',['../functions__1_8c.html#ae63ac05bfffb294b6a73a1426e276b75',1,'exch_rows_from_both_matrix(SETS *set, int i, int j):&#160;functions_1.c'],['../functions__1_8h.html#ae63ac05bfffb294b6a73a1426e276b75',1,'exch_rows_from_both_matrix(SETS *set, int i, int j):&#160;functions_1.c']]],
+  ['exch_5frows_5fmatrix_5fchar_11',['exch_rows_matrix_char',['../functions__1_8c.html#a6fbd6f856771294de0d4979da04d627f',1,'exch_rows_matrix_char(SETS *set, int i, int j):&#160;functions_1.c'],['../functions__1_8h.html#a6fbd6f856771294de0d4979da04d627f',1,'exch_rows_matrix_char(SETS *set, int i, int j):&#160;functions_1.c']]],
+  ['exch_5frows_5fmatrix_5fufp6_12',['exch_rows_matrix_ufp6',['../functions__1_8c.html#a3aaa0fe3dd45f8a8445613a4bccf15b8',1,'exch_rows_matrix_ufp6(SETS *set, int i, int j):&#160;functions_1.c'],['../functions__1_8h.html#a3aaa0fe3dd45f8a8445613a4bccf15b8',1,'exch_rows_matrix_ufp6(SETS *set, int i, int j):&#160;functions_1.c']]],
+  ['extra_20space_20o_201_20inplace_13',['O(log(N)) , strcmp O(D), Time complexity O(Dlog(N)) , Extra Space O(1) (inplace)',['../functions__2_8h.html#binary_search',1,'']]]
+];

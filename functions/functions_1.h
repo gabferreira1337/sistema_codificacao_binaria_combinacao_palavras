@@ -9,9 +9,7 @@
 #define M_KMP BITS     ///MAX_SIZE for KMP DFA columns
 
 
-/**
- * sets struct
- */
+///sets struct
 typedef struct{
     char **matrix;              /// matrix with words
     int **matrix_ufp6;          /// matrix with ufp6 representations
@@ -21,6 +19,7 @@ typedef struct{
 }SETS;
 
 
+///Hash table
 typedef struct ufp6{
     char *ufp6_encode;      ///string holding UFP6 representation
     unsigned int size;    /// size of string without leading 0's
@@ -708,7 +707,6 @@ void read_words_from_txt_to_set(SETS *set, FILE *fp, const int *sizes_ufp6);
  * @param fn - pointer to string containing file name
 */
 void read_words_from_txt(SETS *set, const char *fn, const int *sizes_ufp6);
-
 
 
 

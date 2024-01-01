@@ -12,7 +12,8 @@
 #define R 5
 #define AD_SIZE 4
 #define NUM_SETS 8
-  
+
+
 #define FILE_WORDS_FOUND_AD "../data/words_found_ad.txt"
 #define FILE_WORDS_FOUND_LL "../data/words_found_ll.txt"
 #define FILE_AD "../data/ad_history.txt"
@@ -91,7 +92,7 @@ int main_test_functions_2(int argc, char **argv) {
     * @paragraph Use bin files for input and output of sets of words and their
     * respective ufp6 representations Linked List
     */
-    //test_functions_2_11_ll();
+   //test_functions_2_11_ll();
 
     return 0;
 }
@@ -136,7 +137,6 @@ void test_function_2_8_b() {
             "2022-11-24",       ///Test insert to first index
             "2023-10-01",       ///Test insert between two elements
             "2024-01-15",       ///Test insert in last index
-
     };
     ///Insert elements to Dynamic array in chronological order ASC
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
@@ -147,6 +147,7 @@ void test_function_2_8_b() {
     free_dynamic_array(ad_sorted);
     exit(0);
 }
+
 
 void test_function_2_8_c() {
     int dict[MAX_UFP6][BITS - 1]={
@@ -176,7 +177,7 @@ void test_function_2_8_c() {
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
         insert_element_to_index_AD(ad, &sets[i], &sets[i + 1],testDates[j], indexes[j]);
     }
-  
+
     print_AD(ad);
     free_dynamic_array(ad);
     exit(0);
@@ -211,7 +212,7 @@ void test_function_2_8_d() {
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
         insert_element_to_index_AD(ad, &sets[i], &sets[i + 1],testDates[j], indexes[j]);
     }
-  
+
     //print_AD(ad);
 
     int delete_element = 3;
@@ -390,6 +391,7 @@ void test_function_2_9_d() {
     ///each representation of each UFP6 char
     ufp6_dictionary(dict, sizes_ufp6_dict);
     LL_WORDS_HOLDER *ll = ll_init();
+
     ///Initialize sets with random words and encode them
     SETS sets[NUM_SETS] = {0};
     for (int i = 0; i < NUM_SETS; ++i) {
@@ -437,6 +439,7 @@ void test_function_2_9_d() {
 }
 
 
+
 void test_function_2_10_ad() {
     int dict[MAX_UFP6][BITS - 1]={
             {0, 0},
@@ -479,10 +482,6 @@ void test_function_2_10_ad() {
     /// Last argument is a flag , if set to 1 read in chronological order
     /// Pass to function address of pointer arr_din so changes stay outside function
     read_from_txt_to_ad(&arr_din2, FILE_AD, 1);
-
-    ///Insert words to after test search function
-    insert_words(&sets[0], insert_words_, sizes_ufp6_dict, dict, 1);
-    insert_words(&sets[1], insert_words_, sizes_ufp6_dict, dict, isize);
     const char *testDates[] = {
             "2023-11-25",
             "2022-11-24",
@@ -500,7 +499,6 @@ void test_function_2_10_ad() {
             "olas",
             "ol+",      ///Test invalid input
     };
-  
     int fsize = sizeof(find_words) / sizeof(find_words[0]);
     int flag = 1;
 
@@ -515,7 +513,7 @@ void test_function_2_10_ll() {
             {0, 0},
             {0, 0}
     };
-  
+    
     int sizes_ufp6_dict[MAX_UFP6] = {0};
     ///Pre-compute UFP6 dictionary and an array storing the sizes of
     ///each representation of each UFP6 char
@@ -582,7 +580,6 @@ void test_functions_2_11_ad() {
             "2024-01-15",       ///Test insert in last index
 
     };
-
     int indices[] = {0, 1, 2, 3};
     ///Insert elements to Dynamic array in chronological order ASC
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {

@@ -7,6 +7,10 @@
 #include "functions_1.h"
 #include "functions_2.h"
 
+
+#define CUTOFF 10           ///CUTOFF in sorting Algorithms for small sub-arrays (size 10 max)
+#define TABLE_SIZE 10       ///Size of Hash Table
+
 #define CUTOFF 10           ///CUTOFF in sorting Algorithms for small sub-arrays (size 10 max)
 #define TABLE_SIZE 10       ///Size of Hash Table
 
@@ -996,6 +1000,7 @@ void is_sorted_sizes(const SETS *set, int N, bool flag) {
         }
 }
 
+
 void print_combinations_found(HASHTABLE *hash_table, int size){
     for (int i = 0; i < hash_table->size; ++i) {
         if(hash_table->table[i] == NULL){
@@ -1039,6 +1044,7 @@ void combination_ufp6_in_both_sets(const SETS *set1,const SETS *set2, int size) 
     generate_permutations_ufp6(hash_table, ufp6_2, 0,size - 1, 2);
 
     print_combinations_found(hash_table, size - 1);
+
     //print_table(hash_table->table);
     free_hash_table(hash_table->table);
     free(hash_table);

@@ -12,12 +12,15 @@
 #define R 5
 #define AD_SIZE 4
 #define NUM_SETS 8
+
+
 #define FILE_WORDS_FOUND_AD "../data/words_found_ad.txt"
 #define FILE_WORDS_FOUND_LL "../data/words_found_ll.txt"
 #define FILE_AD "../data/ad_history.txt"
 #define FILE_AD_BIN "../data/ad_history.bin"
 #define FILE_LL "../data/LL_history.txt"
 #define FILE_LL_BIN "../data/LL_history.bin"
+
 
 #define TIMER_START() gettimeofday(&tv1, NULL)
 #define TIMER_STOP() \
@@ -134,7 +137,6 @@ void test_function_2_8_b() {
             "2022-11-24",       ///Test insert to first index
             "2023-10-01",       ///Test insert between two elements
             "2024-01-15",       ///Test insert in last index
-
     };
     ///Insert elements to Dynamic array in chronological order ASC
     for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
@@ -145,6 +147,7 @@ void test_function_2_8_b() {
     free_dynamic_array(ad_sorted);
     exit(0);
 }
+
 
 void test_function_2_8_c() {
     int dict[MAX_UFP6][BITS - 1]={
@@ -232,6 +235,7 @@ void test_function_2_8_e() {
     ufp6_dictionary(dict, sizes_ufp6_dict);
     AD_WORDS_HOLDER *ad = NULL;
     ad = dynamic_array_init(AD_SIZE);
+
     ///Initialize sets with random words and encode them
     SETS sets[NUM_SETS] = {0};
     for (int i = 0; i < NUM_SETS; ++i) {
@@ -387,12 +391,14 @@ void test_function_2_9_d() {
     ///each representation of each UFP6 char
     ufp6_dictionary(dict, sizes_ufp6_dict);
     LL_WORDS_HOLDER *ll = ll_init();
+
     ///Initialize sets with random words and encode them
     SETS sets[NUM_SETS] = {0};
     for (int i = 0; i < NUM_SETS; ++i) {
         sets_struct_init(&sets[i], sizes_ufp6_dict, R);
         encode_matrix_words(&sets[i], sizes_ufp6_dict, dict);
     }
+  
     const char *insert_words_[] = {
             "ola",
             "olas",
@@ -476,8 +482,25 @@ void test_function_2_10_ad() {
     /// Last argument is a flag , if set to 1 read in chronological order
     /// Pass to function address of pointer arr_din so changes stay outside function
     read_from_txt_to_ad(&arr_din2, FILE_AD, 1);
+    const char *testDates[] = {
+            "2023-11-25",
+            "2022-11-24",
+            "2023-10-01",
+            "2024-01-15",
+    };
+    int indexes[] = { 0, 1, 1, 3};
+    ///Insert nodes into LL in chronological order by last modified date DESC
+    for (int i = 0, j = 0; i < NUM_SETS && j < sizeof(testDates) / sizeof(testDates[0]); i+=2, j++) {
+        insert_node_ll_index(ll, &sets[i], &sets[i + 1],testDates[j], indexes[j]);
+    }
 
-    print_AD(arr_din2);
+    const char *find_words[] = {
+            "ola",
+            "olas",
+            "ol+",      ///Test invalid input
+    };
+    int fsize = sizeof(find_words) / sizeof(find_words[0]);
+    int flag = 1;
 
     free_dynamic_array(ad_sorted);
     free_dynamic_array(arr_din2);
@@ -490,6 +513,7 @@ void test_function_2_10_ll() {
             {0, 0},
             {0, 0}
     };
+    
     int sizes_ufp6_dict[MAX_UFP6] = {0};
     ///Pre-compute UFP6 dictionary and an array storing the sizes of
     ///each representation of each UFP6 char

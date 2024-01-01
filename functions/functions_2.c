@@ -9,6 +9,7 @@
 #define DATE_SIZE 11
 
 
+
 AD_WORDS_HOLDER *dynamic_array_init(int size) {
     if(size <= 0) fperror("Invalid size");
 
@@ -518,6 +519,8 @@ void delete_ll_node_index(LL_WORDS_HOLDER *ll, int index) {
     free(pos);
     ll->nnodes--;
 }
+
+
 /*
 void find_word_ll(const LL_WORDS_HOLDER *ll, char **words, int W, int start_index_node, int end_index_node, const char *fn, bool flag) {
     ///Check if out of bounds
@@ -626,6 +629,7 @@ void free_index_arrays(int *arr1, int *arr2){
 
 void write_set_to_txt(const SETS *set, FILE *fp) {
     if (fp == NULL) fperror("Error opening file");
+    
     ///write rowsize (size of words in set) to file
     fprintf(fp, "number_words = %d\n", set->rowsize);
     for (int i = 0; i < set->rowsize; i++) {
@@ -705,6 +709,7 @@ int write_words_found_in_ll_to_txt(const NODE_LL_WORDS_HOLDER *current, const in
 
 void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *array_index) {
     if (fp == NULL) fperror("Error opening file");
+
     ///count of indexes from the words found in set stored in first position of array
     for (int i = 1; i <= *array_index; i++) {
         fprintf(fp, "Row Index -> %d\n",  array_index[i]);
@@ -717,6 +722,7 @@ void write_index_array_words_to_file(const SETS *set,FILE *fp,const int *array_i
 
 void write_index_array_ufp6_to_file(const SETS *set, FILE *fp, const int *array_index, int r) {
     if (fp == NULL) fperror("Error opening file");
+
     fprintf(fp," UFP6 = ");
     for (int i = 0; i < *(set->arr_ufp6_size + (*(array_index + r))); i++) {
         // fprintf(fp,"%d", *(*(set->matrix_ufp6 + (*(array_index + k))))+ i);
@@ -739,6 +745,7 @@ int save_set_txt(const SETS *set, char *filename) {
 
 void write_set_ufp6_to_txt(const SETS *set, FILE *fp) {
     if (fp == NULL) fperror("Error opening file");
+
     for (int i = 0; i < set->rowsize ; ++i) {
         fprintf(fp,"%d-", *((*set).arr_ufp6_size + i));
         for (int j = 0; j < set->arr_ufp6_size[i]; j++) {
@@ -751,6 +758,7 @@ void write_set_ufp6_to_txt(const SETS *set, FILE *fp) {
 
 void read_txt_to_set(SETS *set, FILE *fp) {
     if(fp == NULL) fperror("Error opening file");
+
     ///read rowsize from file
     fscanf(fp, "%*[^=]%*[=] %d", &set->rowsize);
     ///Initialize set
@@ -842,6 +850,7 @@ void write_ad_to_txt(const AD_WORDS_HOLDER *ad,const char *fn) {
 
 void write_both_sets_to_txt(const WORDS_HOLDER *wordsHolder, FILE *fp) {
     if(fp == NULL) fperror("Error opening file");
+
     fprintf(fp, "Words set: 1\n");
     write_set_to_txt(&wordsHolder->s1, fp);
     fprintf(fp, "Words set: 2\n");
@@ -974,6 +983,7 @@ void write_ad_to_bin(const AD_WORDS_HOLDER *ad, const char *fn) {
 /// Write both Sets to bin file
 void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp) {
     if (fp == NULL) fperror("Error opening file");
+
     write_set_to_binfile(&wordsHolder->s1, fp);
     write_set_to_binfile(&wordsHolder->s2, fp);
 }
@@ -981,6 +991,7 @@ void write_both_sets_to_binfile(const WORDS_HOLDER *wordsHolder, FILE *fp) {
 
 void write_set_to_binfile(const SETS *set, FILE *fp) {
     if (fp == NULL) fperror("Error opening file");
+
     ///write rowsize (size of words in set) to file
     fwrite(&set->rowsize, sizeof(set->rowsize), 1,fp);
     for (int i = 0; i < set->rowsize; i++) {

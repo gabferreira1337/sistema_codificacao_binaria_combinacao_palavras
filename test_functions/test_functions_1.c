@@ -215,6 +215,7 @@ void test_functions1_feature6() {
     print_matrix_int(&set1);
 
     int flag = 1; // ASC
+    char **aux_mat = (char**) calloc(sizeof(char*) , set1.rowsize);
     /** @paragraph Sort by alphabetical order (ASC and DESC)
      *  if flag set to 1 = ASC ,if set to 0 = DESC
      *  */
@@ -238,6 +239,7 @@ void test_functions1_feature6() {
     print_matrix_int(&set1);
     //print_arr_word_size(&set1);
     is_sorted_sizes(&set1, set1.rowsize, flag);
+  
     freemem_set(&set1);
     exit(0);
 }

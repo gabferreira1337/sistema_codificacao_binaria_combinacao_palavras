@@ -18,6 +18,7 @@ typedef struct{
     int rowsize;                /// size of words in both matrix (size of rows)
 }SETS;
 
+
 ///Hash table
 typedef struct ufp6{
     char *ufp6_encode;      ///string holding UFP6 representation

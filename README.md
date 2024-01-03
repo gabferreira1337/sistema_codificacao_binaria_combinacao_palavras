@@ -1,4 +1,4 @@
-# Binary_Encode_System_Sets_Words
+# Binary_Encode_System_Words_Combinations
 
 ## Description
 

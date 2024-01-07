@@ -11,9 +11,6 @@
 #define CUTOFF 10           ///CUTOFF in sorting Algorithms for small sub-arrays (size 10 max)
 #define TABLE_SIZE 10       ///Size of Hash Table
 
-#define CUTOFF 10           ///CUTOFF in sorting Algorithms for small sub-arrays (size 10 max)
-#define TABLE_SIZE 10       ///Size of Hash Table
-
 
 void matrix_ufp6_init(SETS *set,const int *sizes_ufp6_char){
     /// Allocate memory for array of pointers
